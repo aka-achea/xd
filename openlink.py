@@ -21,7 +21,7 @@ def oplink(URL):
     req = Request(URL,headers=headers)
     try:
         html = urlopen(req)
-        time.sleep(random.uniform(1,3))
+        time.sleep(random.uniform(2,3))
         #l.verbose(html.info())
         #l.debug(html.getcode())
         status = html.getcode()
@@ -29,6 +29,12 @@ def oplink(URL):
         status = e #5xx,4xx
         html = 0
     return html,status #return array object
+
+def opsel(URL):
+    
+    pass
+
+
 
 if __name__=='__main__':
 

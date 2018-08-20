@@ -48,24 +48,12 @@ class mylogger():
         self.logger.debug(msg)
 
 if __name__=='__main__': #Usage
-    # funcname = 'AAA'
-    # logfilelevel = 10 # Debug
-    # logfile = 'E:\\app.log'
-    # setup(logfile,logfilelevel,funcname)    
-    # debug('This is Debug')
-    # info('This is info')
-    # warning("this is a warning message")
-    # error("this is an error message")
-    # critical("this is a critical message")
-    # verbose('vvvvv')
-
-
-    funcname = 'mylog'
+    funcname = __name__
     logfilelevel = 10 # Debug
     logfile = 'E:\\app.log'
     l = mylogger(logfile,logfilelevel,funcname)    
     l.debug('This is Debug')
-    l.info('This is info')
+    l.info('ール・デ')
     l.error('error log')
     l.warning('warning log')
     l.critical("this is a critical message")

@@ -2,10 +2,17 @@
 decry.py - decrypt code to download link
 modstr.py - filter character
 mylog.py - redirect log
-tag.py - create tag for mp3
-openlink.py - open web link
+tag.py - add tag for mp3
+openlink.py - open/save web link
+xd_album.py - analyze album , single song page
+xd_xml.py - analyze song location
 
-Change log
+
+Change log:
+2018.8.18 fix unpublished track issue v5.8
+2018.8.17 fix multi disc issue v5.7
+2018.8.16 rebuild xml analysis v5.6
+2018.8.15 rebuild album analysis v5.5
 2018.8.4 optimize mylog v5.4
 2018.4.11 optimize log module, split modstr,decry module v5.3
 2018.4.9 split log module v5.2

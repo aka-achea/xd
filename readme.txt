@@ -4,8 +4,10 @@ modstr.py - filter character
 mylog.py - redirect log
 tag.py - add tag for mp3
 openlink.py - open/save web link
-xd_album.py - analyze album , single song page
-xd_xml.py - analyze song location
+xd_ana.py - analyze xiami album , single song page
+xd_xml.py - get xiami song location from id
+xd_dl.py - create folder, download song
+
 
 
 Change log:

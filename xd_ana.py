@@ -13,10 +13,10 @@ logfilelevel = 10 # Debug
 logfile = 'E:\\app.log'
 
 #not convenient to get song name , move to xml
-def xd_album(web):
+def xd_album(page):
     funcname = 'xd_ana.xd_album'
     l = ml.mylogger(logfile,logfilelevel,funcname)   
-    html = urlopen(web)
+    html = urlopen(page)
     bsObj = BeautifulSoup(html,"html.parser") #;print(bsObj)
     album_name = bsObj.find('meta',{'property':'og:title'})
     album_name = modificate(album_name.attrs['content'])
@@ -81,10 +81,10 @@ def xd_album(web):
     l.debug(aDict)
     return aDict
 
-def xd_song(web):
+def xd_song(page):
     funcname = 'xd_ana.xd_album'
     l = ml.mylogger(logfile,logfilelevel,funcname) 
-    html = urlopen(web)
+    html = urlopen(page)
     bsObj = BeautifulSoup(html,"html.parser") #;print(bsObj)
     song_id = bsObj.find('meta',{'name':'mobile-agent'})
     l.debug(song_id)

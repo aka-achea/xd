@@ -7,10 +7,13 @@ openlink.py - open/save web link
 xd_ana.py - analyze xiami album , single song page
 xd_xml.py - get xiami song location from id
 xd_dl.py - create folder, download song
+qd_ana.py - analyze QQ music album, single song page
+qd_dl.py - download QQ music
 
 
 
 Change log:
+2018.8.23 build basic download function for QQ music v5.9
 2018.8.18 fix unpublished track issue v5.8
 2018.8.17 fix multi disc issue v5.7
 2018.8.16 rebuild xml analysis v5.6

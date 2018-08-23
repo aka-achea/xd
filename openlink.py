@@ -2,7 +2,7 @@
 #coding:utf-8
 # Python3
 
-import random,time
+import random,time,requests
 from urllib.request import urlopen,Request,HTTPError
 
 def oplink(URL):
@@ -15,7 +15,6 @@ def oplink(URL):
         # "User-Agent":"Mozilla/5.0 (X11; Linux i686) AppleWebKit/537.36 "\
         #     "(KHTML, like Gecko) Chrome/32.0.1700.77 Safari/537.36",
         "User-Agent":"Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36",
-
         #"Referer":"www.xiami.com"
         }
     req = Request(URL,headers=headers)
@@ -30,11 +29,20 @@ def oplink(URL):
         html = 0
     return html,status #return array object
 
-def opsel(URL):
-    
+def opsel(URL):    
     pass
 
-
+def oprqs(URL,para=''):
+    headers = {
+        "Accept":"text/html,application/xhtml+xml,application/xml; " \
+            "q=0.9,image/webp,*/*;q=0.8",
+        "Accept-Encoding":"text/html",
+        "Accept-Language":"en-US,en;q=0.8,zh-CN;q=0.6,zh;q=0.4,zh-TW;q=0.2",
+        "Content-Type":"application/x-www-form-urlencoded",
+        "User-Agent":"Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36",
+        }
+    html = requests.get(url=URL,params=para,headers=headers)
+    return html
 
 if __name__=='__main__':
 

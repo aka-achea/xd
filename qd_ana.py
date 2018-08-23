@@ -28,6 +28,9 @@ def qd_album(page):
     year = bsObj.find(text = re.compile('^发行时间'))[5:9]
     l.debug(year)
 
+    cover = bsObj.find('img',{'id':'albumImg'})
+    l.info(cover.attrs['src'])
+
     aDict = {'album':album_name,'artist':artist_name,'year':year }
 
     song = bsObj.findAll('div',{'class':'songlist__number'})
@@ -39,7 +42,7 @@ def qd_album(page):
         midid = midid.find('span',{'class':'songlist__songname_txt'}).a.attrs['href']
         midid = midid.split('/')[-1][:-5]
         l.info(midid)
-        aDict[tracknumber]=midid
+        aDict[int(tracknumber)]=midid
 
 
 

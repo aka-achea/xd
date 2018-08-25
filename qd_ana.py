@@ -6,7 +6,7 @@ from bs4 import BeautifulSoup
 from urllib.request import urlopen,Request,HTTPError,unquote
 from html.parser import HTMLParser
 from modstr import modificate
-import re
+import re,wget
 
 import mylog as ml
 logfilelevel = 10 # Debug
@@ -16,6 +16,7 @@ def qd_album(page):
     funcname = 'qd_ana.qd_album'
     l = ml.mylogger(logfile,logfilelevel,funcname)   
     html = urlopen(page)
+
     bsObj = BeautifulSoup(html,"html.parser") #;print(bsObj)
     album_name = bsObj.find('h1',{'class':'data__name_txt'})
     album_name = modificate(album_name.text)
@@ -29,23 +30,26 @@ def qd_album(page):
     l.debug(year)
 
     cover = bsObj.find('img',{'id':'albumImg'})
-    l.info(cover.attrs['src'])
+    cover = 'http:'+cover.attrs['src']
+    l.info(cover)
+    wget.download(str(cover),'a.jpg')
 
     aDict = {'album':album_name,'artist':artist_name,'year':year }
 
     song = bsObj.findAll('div',{'class':'songlist__number'})
+    n = 0
     for i in song:
+        n = n+1
         # l.info(i)
         tracknumber = i.text
-        l.info(tracknumber)
+        l.debug(tracknumber)
         midid = i.next_sibling.next_sibling
         midid = midid.find('span',{'class':'songlist__songname_txt'}).a.attrs['href']
         midid = midid.split('/')[-1][:-5]
-        l.info(midid)
-        aDict[int(tracknumber)]=midid
+        l.debug(midid)
+        aDict[int(tracknumber)] = midid
 
-
-
+    aDict['TrackNum'] = n
     l.debug(aDict)
 
     return aDict

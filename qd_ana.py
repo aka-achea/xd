@@ -6,7 +6,7 @@ from bs4 import BeautifulSoup
 from urllib.request import urlopen,Request,HTTPError,unquote
 from html.parser import HTMLParser
 from modstr import modificate
-import re,wget
+import re
 
 import mylog as ml
 logfilelevel = 10 # Debug
@@ -31,24 +31,22 @@ def qd_album(page):
 
     cover = bsObj.find('img',{'id':'albumImg'})
     cover = 'http:'+cover.attrs['src']
-    l.info(cover)
-    wget.download(str(cover),'a.jpg')
-
-    aDict = {'album':album_name,'artist':artist_name,'year':year }
+    l.debug(cover)
+    aDict = {'album':album_name,'artist':artist_name,'year':year,'cover':cover }
 
     song = bsObj.findAll('div',{'class':'songlist__number'})
     n = 0
     for i in song:
         n = n+1
-        # l.info(i)
+        # l.si(i)
         tracknumber = i.text
         l.debug(tracknumber)
-        midid = i.next_sibling.next_sibling
-        midid = midid.find('span',{'class':'songlist__songname_txt'}).a.attrs['href']
-        midid = midid.split('/')[-1][:-5]
-        l.debug(midid)
-        aDict[int(tracknumber)] = midid
-
+        si = i.next_sibling.next_sibling
+        si = si.find('span',{'class':'songlist__songname_txt'}).a
+        songmid = si.attrs['href'].split('/')[-1][:-5]
+        songname = si.text
+        si = [songmid, songname]
+        aDict[int(tracknumber)] = si
     aDict['TrackNum'] = n
     l.debug(aDict)
 

@@ -9,6 +9,7 @@
 import wget,os
 from xd_ana import xd_song, xd_album
 from xd_xml import get_location_one, get_location_album
+from comm import create_folder
 from tag import addtag
 import mylog as ml
 
@@ -17,25 +18,6 @@ logfile = 'E:\\app.log'
 
 workfolder = 'F:\\XM'
 
-
-
-def create_folder(aDict):
-    funcname = 'xd_dl.create_folder'
-    l = ml.mylogger(logfile,logfilelevel,funcname)
-    album = aDict['album']
-    artist = aDict['artist']
-    year = aDict['year']
-    albumdir = artist+' - '+year+' - '+album
-    l.info('Create folder: '+albumdir)
-    os.chdir(workfolder)
-    albumfulldir = workfolder +"\\"+albumdir
-    if not os.path.exists(albumfulldir):
-        os.makedirs(albumfulldir)
-        os.chdir(albumfulldir)
-    else:
-        l.error('---- Album folder already exists !')
-        os.chdir(albumfulldir)
-    return albumdir
 
 def dl_one(web): 
     funcname = 'xd_dl.dl_one'
@@ -64,7 +46,7 @@ def dl_album(web):
     funcname = 'xd_dl.dl_album'
     l = ml.mylogger(logfile,logfilelevel,funcname) 
     aDict = xd_album(web)
-    albumdir = create_folder(aDict)
+    albumdir = create_folder(workfolder,aDict)
     albumfulldir = workfolder +"\\"+albumdir
     l.debug(albumfulldir)
     os.chdir(albumfulldir)
@@ -145,9 +127,6 @@ def dl_album(web):
                     addtag(fname,m_song,m_album,m_artist,m_singer,m_cover,\
                             m_year,m_trackid,m_cd) 
                 t = t+1
-
-
-
 
     else:  # one disc
         for s in range(1,aDict['TrackNum']+1):

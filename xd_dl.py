@@ -6,7 +6,7 @@
 
 # from html.parser import HTMLParser
 
-import wget,os
+import wget,os,time
 from xd_ana import xd_song, xd_album
 from xd_xml import get_location_one, get_location_album
 from comm import create_folder
@@ -142,6 +142,7 @@ def dl_album(web):
                 l.debug(mp3)
                 if os.path.isfile(mp3):
                     l.error('---- Track download already !') 
+                    time.sleep(2)
                 else:
                     wget.download(SongDic['location'],out=mp3) 
                     print('\n')                         

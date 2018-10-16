@@ -85,8 +85,13 @@ def dl_album(web):
                     if os.path.isfile(mp3):
                         l.error('---- Track download already !') 
                     else:
-                        wget.download(SongDic['location'],out=mp3) 
-                        print('\n')                         
+                        try:
+                            wget.download(SongDic['location'],out=mp3) 
+                            print('\n')   
+                        except urllib.error.ContentTooShortError:
+                            l.error("Content incomplete -> retry")
+                            wget.download(SongDic['location'],out=mp3) 
+                            print('\n')
                     fname = albumfulldir+'\\'+mp3
                     m_song = SongDic['song']
                     m_singer = SongDic['singer']

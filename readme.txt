@@ -13,6 +13,7 @@ qd_dl.py - download QQ music
 
 
 Change log:
+2018.10.18 build archive function v6.0
 2018.8.23 build basic download function for QQ music v5.9
 2018.8.18 fix unpublished track issue v5.8
 2018.8.17 fix multi disc issue v5.7

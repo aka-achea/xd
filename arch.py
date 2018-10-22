@@ -4,6 +4,7 @@
 
 
 import os,re,shutil
+from comm import readtag 
 
 import mylog as ml
 logfilelevel = 10 # Debug
@@ -11,7 +12,9 @@ logfile = 'E:\\app.log'
 
 
 def path_art(artist):
-    topdir = 'F:\\mp3'
+    funcname = 'arch.path_art'
+    l = ml.mylogger(logfile,logfilelevel,funcname) 
+    topdir = 'F:\\Music\\_Archived'
     p_art = ''
     for dirpath, dirnames, files in os.walk(topdir):
         for name in dirnames:
@@ -21,10 +24,33 @@ def path_art(artist):
     return p_art #return last result
 
 
+
+def rename_mp3(topdir):
+    funcname = 'arch.rename_mp3'
+    l = ml.mylogger(logfile,logfilelevel,funcname) 
+    for mp3 in os.listdir(topdir):        
+        p_mp3 = os.path.join(topdir,mp3)
+        if p_mp3[-3:] == 'mp3':
+            # print(mp3[:-3])
+            d = readtag(p_mp3)
+            singer = str(d[0])
+            title = str(d[1])
+            songname = singer+' - '+title+'.mp3'
+            if mp3 != songname:
+                l.info('Change '+mp3+'  --->  '+songname)
+                src = p_mp3
+                dst = os.path.join(topdir,songname)
+                l.debug(src)
+                l.debug(dst)
+                os.rename(src,dst)
+
+
+
+
 def archive_al():
     funcname = 'arch.archive_al'
     l = ml.mylogger(logfile,logfilelevel,funcname) 
-    topdir = 'F:\\XM\\_'
+    topdir = 'F:\\Music\\_'
     for dirname in os.listdir(topdir):  
         al_src = os.path.join(topdir, dirname)             
         if os.path.isdir(al_src) == True:
@@ -51,11 +77,11 @@ def archive_al():
                     if os.path.isdir(al_dst) == True: 
                         l.info("Archive complete")               
                 elif os.path.isdir(os.path.join(topdir, m[0])) == True:
-                    l.info('Already prearchive -> move album '+dirname)
+                    l.warning('Already prearchive -> move album '+dirname)
                     al_dst = os.path.join(topdir,m[0])
                     shutil.move(al_src,al_dst)
                 else:
-                    l.info('Prearchive '+m[0]+' -> move album '+dirname)
+                    l.warning('Prearchive '+m[0]+' -> move album '+dirname)
                     os.mkdir(os.path.join(topdir, m[0]))
                     al_dst = os.path.join(topdir,m[0])
                     shutil.move(al_src,al_dst)
@@ -72,5 +98,11 @@ def archive_al():
 if __name__=='__main__':
     # path = path_art("Funky DL")
     # print(path)
-    archive_al()
+
+    topdir = 'F:\\Music'
+    rename_mp3(topdir)
+
+
+    # archive_al()
+
 

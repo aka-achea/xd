@@ -95,10 +95,27 @@ def addtag(fname,m_artist,m_cover,m_year='',m_trackid='',m_album='',\
     tags["APIC"] = APIC(encoding=3, mime=u'image/png',type=3,desc=u'Cover',data=cover)
     tags.save(fname,v2_version=3)
 
+def readtag(fname):
+    l = ml.mylogger(logfile,logfilelevel,'comm.readtag')
+    tags = ID3(fname)
+    title = tags["TIT2"]
+    singer = tags['TPE1']
+    l.debug(singer)
+    l.debug(title)
+    return singer,title
+
 
 if __name__=='__main__':
-    text1 = 'ル・デ'
-    modstr(text1)
-    print(text1)
-   
-   
+    # text1 = 'ル・デ'
+    # modstr(text1)
+    # print(text1)
+    fname = 'F:\\Music\\02 No Love for Hard Times.mp3'
+    a = readtag(fname)
+    print(type(a))
+    singer = str(a[0])
+    title = str(a[1])
+    songname = singer+' - '+title
+    print(songname)
+#    print(a('TIT2'))
+#    print(str(a['TDRC']).strip())
+    

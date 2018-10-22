@@ -1,9 +1,11 @@
 #!/usr/bin/python
 #coding:utf-8
 # Python3
+# 2018.10.22
 
 import random,time,requests
 from urllib.request import urlopen,Request,HTTPError
+from urllib.error import URLError
 
 def oplink(URL):
     headers = {
@@ -27,6 +29,14 @@ def oplink(URL):
     except HTTPError as e:
         status = e #5xx,4xx
         html = 0
+    except URLError as e:
+        print('Host no response, try again')
+        time.sleep(30)
+        try:
+            html = urlopen(req)
+        except:
+            status = e 
+            html = 0
     return html,status #return array object
 
 def opsel(URL):    

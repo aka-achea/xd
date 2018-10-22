@@ -112,25 +112,52 @@ def move_cover(topdir,coverdir):
             l.info(src)
             l.info(dst)
             shutil.move(src,dst)
+#move a-z, manuel check others
+
+def evaluate_art(topdir,musicure):
+    funcname = 'arch.evaluate_art'
+    l = ml.mylogger(logfile,logfilelevel,funcname)
+    for art in os.listdir(topdir):
+        if os.path.isdir(os.path.join(topdir,art)) == True:
+            l.info('=========================')
+            l.info('Evaluate '+art)
+            n = 0
+            for dirpath, dirnames, files in os.walk(musicure):
+                for name in files:
+                    if str(name).split('-')[0].strip() == art:
+                        l.info(name)
+                        n += 1
+            if n == 0:    
+                l.warning('Zero !!! Track ---> Move to misc')
+                pass
+            elif n == 1:
+                l.warning('One more albume to evaluate')
+            else:
+                l.info('Total '+str(n)+' Track') 
+
+
 
 
 if __name__=='__main__':
     archdir = 'F:\\Music\\_Archived'
+    musicure = 'J:\\MusiCure'
+
     # path = path_art(topdir,"Funky DL")
     # print(path)
 
     # topdir = 'F:\\Music'
-    # musicure = 'J:\\MusiCure'
     # # rename_mp3(topdir)
     # move_mp3(topdir,musicure)
 
-    topdir = 'F:\\Music\\_'
-    coverdir = 'J:\\LifeTrack\\CD'
-    move_cover(topdir,coverdir)
+    # topdir = 'F:\\Music\\_'
+    # coverdir = 'J:\\LifeTrack\\CD'
+    # move_cover(topdir,coverdir)
 
     # topdir = 'F:\\Music\\_'
-    # archive_al(topdir,archdir)
+    # archive_album(topdir,archdir)
 
+    topdir = 'F:\\Music\\_'
+    evaluate_art(topdir,musicure)
 
 
 

@@ -1,6 +1,7 @@
 #!/usr/bin/python
 #coding:utf-8
 # Python3
+# version: 20181127
 
 import mylog as ml
 logfilelevel = 10 # Debug

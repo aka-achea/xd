@@ -1,7 +1,7 @@
 #!/usr/bin/python
 #coding:utf-8
 # Python3
-# 2018.10.22
+# Version: 2018.10.22
 
 import random,time,requests
 from urllib.request import urlopen,Request,HTTPError

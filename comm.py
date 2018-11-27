@@ -14,6 +14,7 @@ logfilelevel = 10 # Debug
 logfile = 'E:\\app.log'
 
 def modstr(text):
+    # base on version 20181127
     funcname = 'comm.modstr'    
     l = ml.mylogger(logfile,logfilelevel,funcname)     
     #file_name = re.sub(r'\s*:\s*', u' - ', file_name)    # for FAT file system

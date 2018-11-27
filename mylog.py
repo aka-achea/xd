@@ -1,7 +1,7 @@
 #!/usr/bin/python
 #coding:utf-8
 # Python3
-# 2018.10.22
+# Version: 2018.10.22
 
 # CRITICAL    50
 # ERROR   40

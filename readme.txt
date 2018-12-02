@@ -13,6 +13,7 @@ qd_dl.py - download QQ music
 
 
 Change log:
+2018.12.2 rewrite xd_ana,xd_dl, since page change v5.0
 2018.10.22 add read mp3 tag and rename mp3 function v4.9
 2018.10.18 build archive function v4.8
 2018.8.23 build basic download function for QQ music v4.7

@@ -100,6 +100,7 @@ def move_mp3(topdir,musicure):
             l.debug(dst)
             shutil.move(src,dst)
 
+
 def move_cover(topdir,coverdir):
     funcname = 'arch.move_cover'
     l = ml.mylogger(logfile,logfilelevel,funcname)
@@ -149,15 +150,13 @@ if __name__=='__main__':
     # # rename_mp3(topdir)
     # move_mp3(topdir,musicure)
 
-    # topdir = 'F:\\Music\\_'
-    # coverdir = 'J:\\LifeTrack\\CD'
-    # move_cover(topdir,coverdir)
-
-    # topdir = 'F:\\Music\\_'
-    # archive_album(topdir,archdir)
-
     topdir = 'F:\\Music\\_'
-    evaluate_art(topdir,musicure)
+    coverdir = 'J:\\LifeTrack\\CD'
+   
+
+    archive_album(topdir,archdir)
+    move_cover(topdir,coverdir)
+    # evaluate_art(topdir,musicure)
 
 
 

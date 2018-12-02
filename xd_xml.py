@@ -60,6 +60,7 @@ def get_location_album(song_id):
     else:           
         l.debug('Raw Location: '+location)
         location = decry(location)
+        # location = location.replace('/m128','/m320')
         song = bsObj.find("song_name")
         song = modificate(str(song)[20:-15])
         singer = bsObj.find("artist_name")
@@ -90,11 +91,11 @@ def decry(code): # decrypt download url
 
 if __name__=='__main__':
      
-    song_id = str(1804018687)
+    song_id = str(1795287087)
     d = get_location_one(song_id)    
-    d = get_location_album(song_id)
+    # d = get_location_album(song_id)
     
     # Test decry()
-    code = '7h%1m28%E15_753hDE556d3a8t22iF522%417E%_12EE4cfa1tF8.6%F6264723k5%%-cdf8cp%.n9527F1997Fe255%955cf%2xe%E1615%7.ay4EE5259a3Fit26%77458mu%%4-E2215Ama%F95697E%pt35%%-d7b9'
-    url = decry(code)
-    print(url)
+    # code = '7h%1m28%E15_753hDE556d3a8t22iF522%417E%_12EE4cfa1tF8.6%F6264723k5%%-cdf8cp%.n9527F1997Fe255%955cf%2xe%E1615%7.ay4EE5259a3Fit26%77458mu%%4-E2215Ama%F95697E%pt35%%-d7b9'
+    # url = decry(code)
+    # print(url)

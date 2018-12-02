@@ -2,7 +2,7 @@
 #coding:utf-8
 # Python3
 
-import os
+import os, fnmatch
 from mutagen.mp3 import MP3
 from mutagen.id3 import ID3NoHeaderError, error # really need error?
 from mutagen.id3 import ID3,TIT2,TALB,TPE1,TPE2,COMM,USLT,TCOM,TCON,TPOS,TDRC,TRCK,APIC
@@ -53,9 +53,21 @@ def create_folder(workfolder,aDict):
         os.makedirs(albumfulldir)
         os.chdir(albumfulldir)
     else:
-        l.error('---- Album folder already exists !')
+        l.warning('---- Album folder already exists !')
         os.chdir(albumfulldir)
     return albumdir
+
+def clean_f(path):
+    for f in os.listdir(path):
+        if fnmatch.fnmatch(f,'*.tmp'):
+            os.remove(f)
+
+def count_f(path):
+    c = 0
+    for f in os.listdir(path):        
+        if fnmatch.fnmatch(f,'*.mp3'): c += 1
+    return c
+                
 
 #addtag(mp3,m_artist,m_cover,m_year,m_trackid)
 def addtag(fname,m_artist,m_cover,m_year='',m_trackid='',m_album='',\

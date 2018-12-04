@@ -4,6 +4,7 @@ modstr.py - filter character
 mylog.py - redirect log
 tag.py - add tag for mp3
 openlink.py - open/save web link
+xd.py - consolidation for xiami job
 xd_ana.py - analyze xiami album , single song page
 xd_xml.py - get xiami song location from id
 xd_dl.py - create folder, download song
@@ -13,6 +14,7 @@ qd_dl.py - download QQ music
 
 
 Change log:
+2018.12.4 rewrite xd with argparse v5.1
 2018.12.2 rewrite xd_ana,xd_dl, since page change v5.0
 2018.10.22 add read mp3 tag and rename mp3 function v4.9
 2018.10.18 build archive function v4.8

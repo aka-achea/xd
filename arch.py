@@ -154,9 +154,9 @@ if __name__=='__main__':
     coverdir = 'J:\\LifeTrack\\CD'
    
 
-    archive_album(topdir,archdir)
-    move_cover(topdir,coverdir)
-    # evaluate_art(topdir,musicure)
+    # archive_album(topdir,archdir)
+    # move_cover(topdir,coverdir)
+    evaluate_art(topdir,musicure)
 
 
 

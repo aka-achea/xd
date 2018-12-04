@@ -76,7 +76,11 @@ def dl_album(web):
         CD = str(i+1)
         tracknum = aDict[CD]
         for t in range(tracknum):
-            if t < 10: t = '0'+str(t+1)
+            t += 1
+            if t < 10: 
+                t = '0'+str(t)
+            else:
+                t = str(t)
             songid = aDict[CD,t]
             l.debug('Download Disc '+str(CD)+' track '+str(t)+' id '+songid)
             SongDic = get_location_album(songid)
@@ -93,7 +97,8 @@ def dl_album(web):
                     try:
                         wget.download(SongDic['location'],out=mp3) 
                         print('\n')   
-                    except urllib.error.ContentTooShortError:
+                    except Exception as e :
+                        l.error(e)
                         l.error("Content incomplete -> retry")
                         wget.download(SongDic['location'],out=mp3) 
                         print('\n')

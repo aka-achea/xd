@@ -3,21 +3,31 @@
 # Python3
 
 
-import os,re,shutil
+import os,re,shutil,argparse,configparser
+
+# customized module
 from comm import readtag 
-
 import mylog as ml
-logfilelevel = 10 # Debug
-logfile = 'E:\\app.log'
 
 
-def path_art(topdir,artist):
-    funcname = 'arch.path_art'
+confile = 'E:\\xd.ini'
+config = configparser.ConfigParser()
+config.read(confile)
+topdir = config['arch']['topdir']
+archdir = config['arch']['archdir']
+evadir = config['arch']['evadir']
+coverdir = config['arch']['coverdir']
+musicure = config['arch']['musicure']
+logfile = config['log']['logfile']
+logfilelevel = int(config['log']['logfilelevel'])
+
+def find_art(topdir,artist):
+    funcname = 'arch.find_art'
     l = ml.mylogger(logfile,logfilelevel,funcname) 
     p_art = ''
     for dirpath, dirnames, files in os.walk(topdir):
         for name in dirnames:
-            # print(name)
+            l.debug(name)
             if name == artist:
                 p_art = os.path.join(dirpath, name)
     return p_art #return last result
@@ -43,25 +53,25 @@ def rename_mp3(topdir):
                 os.rename(src,dst)
 
 
-def archive_album(topdir,archdir):
-    funcname = 'arch.archive_album'
+def archive_cd(evadir,archdir):
+    funcname = 'arch.archive_cd'
     l = ml.mylogger(logfile,logfilelevel,funcname)     
-    for dirname in os.listdir(topdir):  
-        al_src = os.path.join(topdir, dirname)             
+    for dirname in os.listdir(evadir):  
+        al_src = os.path.join(evadir, dirname)             
         if os.path.isdir(al_src) == True:
             l.debug(al_src)
             m = re.split('\s\-\s\d{4}\s\-\s',str(dirname))
             if len(m) == 2: #find album
 
-                pic_src = os.path.join(topdir, dirname,dirname+'.jpg')
+                pic_src = os.path.join(evadir,dirname,dirname+'.jpg')
                 l.debug(pic_src)
-                pic_dst = os.path.join(topdir,dirname+'.jpg')
+                pic_dst = os.path.join(evadir,dirname+'.jpg')
                 l.debug(pic_dst)
                 shutil.copyfile(pic_src,pic_dst)
 
                 l.info('Searching Artist: '+m[0])
-                p_art = path_art(archdir,m[0])
-                # l.info(p_art)
+                p_art = find_art(archdir,m[0])
+                l.debug(p_art)
                 if os.path.isdir(p_art) == True :
                     # l.info(p_art)
                     l.info('Archive '+dirname)
@@ -71,21 +81,15 @@ def archive_album(topdir,archdir):
                     shutil.move(al_src,al_dst)
                     if os.path.isdir(al_dst) == True: 
                         l.info("Archive complete")               
-                elif os.path.isdir(os.path.join(topdir, m[0])) == True:
+                elif os.path.isdir(os.path.join(evadir, m[0])) == True:
                     l.warning('Already prearchive -> move album '+dirname)
-                    al_dst = os.path.join(topdir,m[0])
+                    al_dst = os.path.join(evadir,m[0])
                     shutil.move(al_src,al_dst)
                 else:
                     l.warning('Prearchive '+m[0]+' -> move album '+dirname)
-                    os.mkdir(os.path.join(topdir, m[0]))
-                    al_dst = os.path.join(topdir,m[0])
+                    os.mkdir(os.path.join(evadir, m[0]))
+                    al_dst = os.path.join(evadir, m[0])
                     shutil.move(al_src,al_dst)
-
-            # album = str(dirname).split(" - ")
-            # if len(album) == 3:
-            #     print(album)
-            # p_art = path_art(dirname)
-            # if p_art  
 
 
 def move_mp3(topdir,musicure):
@@ -101,14 +105,13 @@ def move_mp3(topdir,musicure):
             shutil.move(src,dst)
 
 
-def move_cover(topdir,coverdir):
+def move_cover(evadir,coverdir):
     funcname = 'arch.move_cover'
-    l = ml.mylogger(logfile,logfilelevel,funcname)
-        
-    for jpg in os.listdir(topdir):
+    l = ml.mylogger(logfile,logfilelevel,funcname)        
+    for jpg in os.listdir(evadir):
         if jpg[-3:] == 'jpg':
             l.info('Move --> '+jpg)
-            src = os.path.join(topdir,jpg)
+            src = os.path.join(evadir,jpg)
             dst = os.path.join(coverdir,jpg)
             l.info(src)
             l.info(dst)
@@ -125,38 +128,51 @@ def evaluate_art(topdir,musicure):
             n = 0
             for dirpath, dirnames, files in os.walk(musicure):
                 for name in files:
+                    #bug name contain -
                     if str(name).split('-')[0].strip() == art:
                         l.info(name)
                         n += 1
             if n == 0:    
                 l.warning('Zero !!! Track ---> Move to misc')
-                pass
             elif n == 1:
-                l.warning('One more albume to evaluate')
+                l.warning('One more CD to evaluate')
             else:
-                l.info('Total '+str(n)+' Track') 
+                l.info('Total '+str(n)+' Tracks') 
 
+def main():
+    funcname = 'arch.main'
+    l = ml.mylogger(logfile,logfilelevel,funcname) 
+    parser = argparse.ArgumentParser(description = 'Archive music tool')
+    parser.add_argument('-a',action="store_true", help='Archive CD')
+    parser.add_argument('-e',action="store_true", help='Evaluate artist')
+    parser.add_argument('-r',action="store_true", help='Rename MP3')
+    parser.add_argument('-m',action="store_true", help='Move MP3')
+    parser.add_argument('-f',action="store_true", help='Find Artist')
 
+    args = parser.parse_args()
 
+    if args.a :
+        print('Archive CD')
+        archive_cd(topdir,archdir)
+        # move_cover(evadir,coverdir)
 
-if __name__=='__main__':
-    archdir = 'F:\\Music\\_Archived'
-    musicure = 'J:\\MusiCure'
+    if args.e:
+        print('Evaluate artist')
+        evaluate_art(evadir,musicure)
 
-    # path = path_art(topdir,"Funky DL")
-    # print(path)
+    if args.r:
+        print('Rename MP3')
+        rename_mp3(topdir)
 
-    # topdir = 'F:\\Music'
-    # # rename_mp3(topdir)
-    # move_mp3(topdir,musicure)
+    if args.m:
+        print('Move MP3')
+        move_mp3(topdir,musicure)
 
-    topdir = 'F:\\Music\\_'
-    coverdir = 'J:\\LifeTrack\\CD'
-   
+    if args.f:
+        artist = input("Find Artist:  ")
+        path = find_art(topdir,artist)
+        l.info(path)
 
-    # archive_album(topdir,archdir)
-    # move_cover(topdir,coverdir)
-    evaluate_art(topdir,musicure)
-
-
+if __name__ == "__main__":
+    main()
 

@@ -11,9 +11,17 @@ xd_dl.py - create folder, download song
 qd_ana.py - analyze QQ music album, single song page
 qd_dl.py - download QQ music
 
+Bug list:
+Logger 
+UnicodeEncodeError: 'gbk' codec can't encode character '\u30fb'
+
+arch.evaluate_art:
+name contain
+name end with .
 
 
 Change log:
+2018.12.5 rewrite arch.py with argparse,configparser v5.2
 2018.12.4 rewrite xd with argparse v5.1
 2018.12.2 rewrite xd_ana,xd_dl, since page change v5.0
 2018.10.22 add read mp3 tag and rename mp3 function v4.9

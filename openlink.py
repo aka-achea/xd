@@ -1,13 +1,13 @@
 #!/usr/bin/python
 #coding:utf-8
 # Python3
-# Version: 2018.10.22
+# Version: 20181208
 
 import random,time,requests
 from urllib.request import urlopen,Request,HTTPError
 from urllib.error import URLError
 
-def oplink(URL):
+def op_simple(URL): # use built-in
     headers = {
         "Accept":"text/html,application/xhtml+xml,application/xml; " \
             "q=0.9,image/webp,*/*;q=0.8",
@@ -22,7 +22,7 @@ def oplink(URL):
     req = Request(URL,headers=headers)
     try:
         html = urlopen(req)
-        time.sleep(random.uniform(2,3))
+        time.sleep(random.uniform(2,4))
         #l.verbose(html.info())
         #l.debug(html.getcode())
         status = html.getcode()
@@ -39,10 +39,10 @@ def oplink(URL):
             html = 0
     return html,status #return array object
 
-def opsel(URL):    
+def op_sel(URL):     # use selenium
     pass
 
-def oprqs(URL,para=''):
+def op_requests(URL,para=''):  # use requets
     headers = {
         "Accept":"text/html,application/xhtml+xml,application/xml; " \
             "q=0.9,image/webp,*/*;q=0.8",
@@ -56,7 +56,7 @@ def oprqs(URL,para=''):
 
 if __name__=='__main__':
 
-    url = 'http://www.xiami.com/widget/xml-single/sid/1769402049'
-    html = oplink(url)
+    url = 'https://www.xiami.com/album/2102412253'
+    html = op_simple(url)
     print(html[1])
     print(html[0])

@@ -6,19 +6,19 @@
 from urllib.request import unquote
 from modstr import modificate
 from bs4 import BeautifulSoup
-from openlink import oplink
+from openlink import op_simple
 
 import mylog as ml
 logfilelevel = 10 # Debug
 logfile = 'E:\\app.log'
 
-def get_location_one(song_id):
-    funcname = 'xd_xml.get_location_one'
+def get_loc_one(song_id):
+    funcname = 'xd_xml.get_loc_one'
     l = ml.mylogger(logfile,logfilelevel,funcname)
     url = 'http://www.xiami.com/widget/xml-single/sid/%s'
     url = url.replace('%s', song_id)
     # url = 'file:///E://xml.xml'
-    page = oplink(url)
+    page = op_simple(url)
     l.debug(page[1])
     bsObj = BeautifulSoup(page[0],"html.parser") #;print(bsObj)
     location = bsObj.find("location")
@@ -43,13 +43,13 @@ def get_location_one(song_id):
     return SongDic
 
 
-def get_location_album(song_id):
-    funcname = 'xd_xml.get_location_album'
+def get_loc_cd(song_id):
+    funcname = 'xd_xml.get_loc_cd'
     l = ml.mylogger(logfile,logfilelevel,funcname)
     url = 'http://www.xiami.com/widget/xml-single/sid/%s'
     url = url.replace('%s', song_id)
     # url = 'file:///E://xml.xml'
-    page = oplink(url)
+    page = op_simple(url)
     l.debug(page[1])
     bsObj = BeautifulSoup(page[0],"html.parser") #;print(bsObj)
     location = bsObj.find("location")
@@ -92,9 +92,11 @@ def decry(code): # decrypt download url
 if __name__=='__main__':
      
     song_id = str(1795287087)
-    d = get_location_one(song_id)    
-    # d = get_location_album(song_id)
-    
+    # d = get_loc_one(song_id)   
+    # print(d) 
+    d = get_loc_cd(song_id)
+    print(d)
+
     # Test decry()
     # code = '7h%1m28%E15_753hDE556d3a8t22iF522%417E%_12EE4cfa1tF8.6%F6264723k5%%-cdf8cp%.n9527F1997Fe255%955cf%2xe%E1615%7.ay4EE5259a3Fit26%77458mu%%4-E2215Ama%F95697E%pt35%%-d7b9'
     # url = decry(code)

@@ -7,25 +7,28 @@
 # from html.parser import HTMLParser
 
 import wget,os,time
+
+from openlink import op_simple
 from xd_ana import ana_cd
-from xd_xml import get_location_one, get_location_album
+from xd_xml import get_loc_one, get_loc_cd
 from comm import create_folder, clean_f,count_f
 from tag import addtag
 import mylog as ml
 
+
 logfilelevel = 10 # Debug
 logfile = 'E:\\app.log'
 
-workfolder = 'F:\\XM'
 
 
-def dl_one(weburl): 
+def dl_one(weburl,workfolder): 
     funcname = 'xd_dl.dl_one'
     l = ml.mylogger(logfile,logfilelevel,funcname)  
     songid = str(weburl.split('/')[-1])
+    songid = songid.split('?')[0]
     l.debug(songid)
     os.chdir(workfolder)
-    SongDic = get_location_one(songid)
+    SongDic = get_loc_one(songid)
     songname = SongDic['artist']+' - '+SongDic['song']
     l.info(songname)
     mp3 = songname+'.mp3'
@@ -47,9 +50,10 @@ def dl_one(weburl):
     os.remove(m_cover)
     
 
-def dl_album(web):
+def dl_cd(web,workfolder):
     funcname = 'xd_dl.dl_album'
     l = ml.mylogger(logfile,logfilelevel,funcname) 
+    # html = op_simple(web)[0]
     aDict = ana_cd(web)
     albumdir = create_folder(workfolder,aDict)
     albumfulldir = workfolder +"\\"+albumdir
@@ -76,6 +80,7 @@ def dl_album(web):
         CD = str(i+1)
         tracknum = aDict[CD]
         for t in range(tracknum):
+            if t == 40 or t == 80: time.sleep(180)
             t += 1
             if t < 10: 
                 t = '0'+str(t)
@@ -83,7 +88,7 @@ def dl_album(web):
                 t = str(t)
             songid = aDict[CD,t]
             l.debug('Download Disc '+str(CD)+' track '+str(t)+' id '+songid)
-            SongDic = get_location_album(songid)
+            SongDic = get_loc_cd(songid)
             if SongDic == {}:
                 l.error('Disc '+str(CD)+' track '+str(t)+' not published')
             else:
@@ -117,16 +122,19 @@ def dl_album(web):
             l.info('Disc '+CD+' Download complete')
         else:
             l.error('Some track download fail')
+        
 
     clean_f(albumfulldir)
+    l.info('Download Complete:  '+albumdir)
 
 
 
 if __name__=='__main__':
     # dl_one('https://www.xiami.com/song/1776199944')
-
+    workfolder = 'F:\\XM'
     web = 'file:///E://1.html'
-    dl_album(web)
+    # web = 'https://www.xiami.com/album/2102412249'
+    dl_cd(web,workfolder)
     
     
 

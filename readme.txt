@@ -21,6 +21,8 @@ name end with .
 
 
 Change log:
+2018.12.10 fix xm mass track issue v5.4
+2018.12.8 add unittest for xd_xml v5.3
 2018.12.5 rewrite arch.py with argparse,configparser v5.2
 2018.12.4 rewrite xd with argparse v5.1
 2018.12.2 rewrite xd_ana,xd_dl, since page change v5.0

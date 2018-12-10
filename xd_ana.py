@@ -14,47 +14,21 @@ logfile = 'E:\\app.log'
 
 #aDict {'album','artist','year','bcover','scover','Discs','DiskNum','(DiscNum,TrackNum)'}
 
-
 #not convenient to get song name , move to xml
 def ana_song(weburl):
     funcname = 'xd_ana.ana_song'
     l = ml.mylogger(logfile,logfilelevel,funcname)   
-
-    # html = urlopen(page)
-    # bsObj = BeautifulSoup(html,"html.parser") #;print(bsObj)
-    # artist = bsObj.find('div',{'class':'singers'}).a
-    # artist_name = modificate(artist.text)
-    # l.debug(artist_name)
- 
-    # song_name = bsObj.find('div',{'class':'song-name'})
-    # song_name = modificate(song_name.text)
-    # l.debug(song_name)
-
-    # album_name = bsObj.find(text='所属专辑').parent
-    # album_name = modificate(album_name.next_sibling.a.text)
-    # l.debug(album_name)
-
-    # cover = bsObj.find('div',{'class':'leftbar-content'})
-    # cover = cover.div.img.attrs['src']
-    # scover = 'http://'+cover
-    # l.debug(scover)
-
     songid = weburl.split('/')[-1]
+    songid = songid.split('?')[0]
     l.debug(songid)
-
-    # hq = bsObj.find('div',{'class':'player unselectable'})
-    # l.info(hq)
-
-    # SongDict = {'album':album_name,'artist':artist_name,\
-    #         'song':song_name,'scover':scover,'hq':hq,'songid':songid }
-    # l.info(SongDict)
     return songid
 
-def ana_cd(page):
+def ana_cd(page): 
     funcname = 'xd_ana.ana_cd'
     l = ml.mylogger(logfile,logfilelevel,funcname)   
     html = urlopen(page)
-    bsObj = BeautifulSoup(html,"html.parser") #;print(bsObj)
+    bsObj = BeautifulSoup(html,"html.parser") 
+    #print(bsObj)
     album_name = bsObj.find('div',{'class':'album-name'})
     album_name = modificate(album_name.text)
     l.debug(album_name)
@@ -95,15 +69,16 @@ def ana_cd(page):
 
 if __name__=='__main__':
     
-
     #test xd_album
     web = 'file:///E://1.html'
-    # ana_cd(web)
-    # print(D['1'],D)
-    # print(D['Disc'])
+    page = 'file:\\\E:\\UT\\xd_ana.ana_cd.html'
+
+    D = ana_cd(page)
+    print(D)
 
     # test xd_song
-    # web = 'file:///E://song.html'
-    song_id = ana_song(web)
-    # l.debug(song_id)
+    # weburl = 'https://www.xiami.com/song/1798102569?spm=a2oj1.12028094.0.0.ba054ca2H9ui3w'
+    # # web = 'file:///E://song.html'
+    # song_id = ana_song(weburl)
+    # # l.debug(song_id)
     # print(song_id)

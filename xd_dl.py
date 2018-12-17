@@ -132,9 +132,16 @@ def dl_cd(web,workfolder):
 if __name__=='__main__':
     # dl_one('https://www.xiami.com/song/1776199944')
     workfolder = 'F:\\XM'
-    web = 'file:///E://1.html'
+    # web = 'file:///E://1.html'
     # web = 'https://www.xiami.com/album/2102412249'
-    dl_cd(web,workfolder)
+
+    listdir = 'E:\\UT'
+    for w in os.listdir(listdir):
+        if os.path.basename(w)[-4:] == 'html':
+            web = os.path.join(listdir,w)
+            web = 'file:///'+web
+            # print(web)
+            dl_cd(web,workfolder)
     
     
 

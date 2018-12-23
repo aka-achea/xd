@@ -56,7 +56,7 @@ def op_requests(URL,para=''):  # use requets
 
 if __name__=='__main__':
 
-    url = 'https://www.xiami.com/album/2102412253'
+    url = 'http://www.xiami.com/widget/xml-single/sid/1769402049'
     html = op_simple(url)
     print(html[1])
     print(html[0])

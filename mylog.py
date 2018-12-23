@@ -1,7 +1,7 @@
 #!/usr/bin/python
 #coding:utf-8
 # Python3
-# Version: 2018.10.22
+# Version: 20181222
 
 # CRITICAL    50
 # ERROR   40
@@ -29,30 +29,53 @@ class mylogger():
                                             }
         coloredlogs.DEFAULT_LOG_FORMAT = '%(message)s'
         coloredlogs.install(level='info',logger=self.logger)  
-
     def debug(self,msg):
         self.logger.debug(msg)
-
     def info(self,msg):
         self.logger.info(msg)
-
     def warning(self,msg):
         self.logger.warning(msg)
-
     def error(self,msg):
         self.logger.error(msg)
-
     def critical(self,msg):
         self.logger.critical(msg)
-
     def verbose(self,msg):
         self.logger.debug(msg)
 
+class myconlog():
+    def __init__(self):
+        self.logger = logging.getLogger()
+        coloredlogs.DEFAULT_LEVEL_STYLES= {
+                                        #'debug': {'color': 'magenta','bold': True},
+                                        'info': {'color': 'green','bold': True},
+                                        'warning': {'color': 'yellow','bold': True},
+                                        'error': {'color': 'red','bold': True},
+                                        'critical': {'color': 'magenta','bold': True}
+                                            }
+        coloredlogs.DEFAULT_LOG_FORMAT = '%(message)s'
+        coloredlogs.install(level='info')  
+    def debug(self,msg):
+        self.logger.debug(msg)
+    def info(self,msg):
+        self.logger.info(msg)
+    def warning(self,msg):
+        self.logger.warning(msg)
+    def error(self,msg):
+        self.logger.error(msg)
+    def critical(self,msg):
+        self.logger.critical(msg)
+    def verbose(self,msg):
+        self.logger.debug(msg)
+
+
 if __name__=='__main__': #Usage
-    funcname = __name__
-    logfilelevel = 10 # Debug
-    logfile = 'E:\\app.log'
-    l = mylogger(logfile,logfilelevel,funcname)    
+    # funcname = __name__
+    # logfilelevel = 10 # Debug
+    # logfile = 'E:\\app.log'
+    # l = mylogger(logfile,logfilelevel,funcname)   
+
+    l = myconlog()   
+
     l.debug('This is Debug')
     l.info('ール・デ')
     l.error('error log')

@@ -10,7 +10,7 @@
 # l = ml(logfile,logfilelevel,__name__) 
 
 
-import argparse
+import argparse,os,time
 
 # Customized module
 from xd_dl import dl_cd,dl_one
@@ -21,7 +21,7 @@ def xd():
     parser = argparse.ArgumentParser(description = 'Xiami download tool')
 
     parser.add_argument('-s','--song',help='Download single song ')
-    parser.add_argument('-c','--cd',help='Download CD')
+    parser.add_argument('-c','--cd',help='Download CD',action='store_true')
     parser.add_argument('-a','--artist',help='Download all CD of artist')
     parser.add_argument('-f','--favorite',help='Download favorite list')
     parser.add_argument('-t','--top',help='Download top songs')
@@ -32,20 +32,34 @@ def xd():
         link = args.song
         print(link)
 
-    if args.cd:
+    elif args.cd == True:
         print('Begin download CD')
-        link = args.cd
-        print(link)
 
-    if args.artist:
+        workfolder = 'L:\\XM'
+        ldir = 'L:\\XM'
+        for w in os.listdir(ldir):
+            if os.path.basename(w)[-4:] == 'html':
+                print(w)
+                web = os.path.join(ldir,w)
+                web = 'file:///'+web
+                # print(web)
+                dl_cd(web,workfolder)
+                time.sleep(60)
+    
+    
+
+    elif args.artist:
         print('Begin download all CD of artist')
         link = args.artist
         print(link)
 
-    if args.favorite:
+    elif args.favorite:
         print('Begin download all CD of artist')
         link = args.favorite
         print(link)
+
+    else:
+        parser.print_help()
 
 if __name__ == "__main__":
     xd()

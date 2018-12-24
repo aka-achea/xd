@@ -40,14 +40,15 @@ def xd():
         for w in os.listdir(ldir):
             if os.path.basename(w)[-4:] == 'html':
                 print(w)
-                web = os.path.join(ldir,w)
-                web = 'file:///'+web
+                w = os.path.join(ldir,w)
+                web = 'file:///'+w
                 # print(web)
                 dl_cd(web,workfolder)
+                os.remove(w)
+                print('Remove '+w)
                 time.sleep(60)
     
     
-
     elif args.artist:
         print('Begin download all CD of artist')
         link = args.artist
@@ -62,7 +63,10 @@ def xd():
         parser.print_help()
 
 if __name__ == "__main__":
-    xd()
+    try:
+        xd()
+    except KeyboardInterrupt:
+        print('ctrl + c')
 
 
 

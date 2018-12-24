@@ -10,7 +10,7 @@ from comm import readtag
 import mylog as ml
 
 
-confile = 'E:\\xd.ini'
+confile = 'L:\\MUSIC\\xd.ini'
 config = configparser.ConfigParser()
 config.read(confile)
 topdir = config['arch']['topdir']

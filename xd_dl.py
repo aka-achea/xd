@@ -80,7 +80,7 @@ def dl_cd(web,workfolder):
         CD = str(i+1)
         tracknum = aDict[CD]
         for t in range(tracknum):
-            if t == 40 or t == 80: time.sleep(180)
+            if t in [30,60,90] : time.sleep(180)
             t += 1
             if t < 10: 
                 t = '0'+str(t)

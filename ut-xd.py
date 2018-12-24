@@ -3,15 +3,12 @@
 
 import unittest,configparser,os
 
-
-# customized module
-import xd_xml , xd_ana,xd_dl
-
 conf = 'E:\\xd.ini'
 config = configparser.ConfigParser()
 config.read(conf)
 # code = config['ut']['xd_xml_decry']
 
+import xd_xml
 class Test_xd_xml(unittest.TestCase):
     @classmethod
     def setUpClass(self):
@@ -49,6 +46,7 @@ def run_Testxdxml():
     Testxdxml.addTest(Test_xd_xml('test_get_loc_cd'))
     unittest.TextTestRunner().run(Testxdxml)
 
+import xd_ana
 class Test_xd_ana(unittest.TestCase):
     @classmethod
     def setUpClass(self):
@@ -75,13 +73,13 @@ def run_Testxdana():
     Testxdana.addTest(Test_xd_ana('test_ana_cd'))
     unittest.TextTestRunner().run(Testxdana)
 
+import xd_dl
 class Test_xd_dl(unittest.TestCase):
     @classmethod
     def setUpClass(self):
         print('UnitTest xd_dl')
     @classmethod
-    def tearDownClass(self):
-        
+    def tearDownClass(self):        
         print('Test complete')
 
     def test_dl_one(self):
@@ -102,10 +100,48 @@ def run_Testxddl():
     Testxddl.addTest(Test_xd_dl('test_dl_cd'))
     unittest.TextTestRunner().run(Testxddl)
 
+import arch
+class Test_arch(unittest.TestCase):
+    @classmethod
+    def setUpClass(self):
+        print('UnitTest xd_dl')
+    @classmethod
+    def tearDownClass(self):        
+        print('Test complete')
+
+    def test_find_art(self):
+        artist = "Booker T. & the MG's"
+        topdir = 'L:\\Music'
+        p_art = arch.find_art(topdir,artist)
+        self.assertEqual(p_art,"L:\Music\_Archived\Funk\Booker T. & the MG's")
+        # print(p_art)
+
+    def test_rename_mp3(self):
+        pass
+    
+    def test_archive_cd(self):
+        pass
+
+    def test_move_mp3(self):
+        pass
+
+    def test_move_cover(self):
+        pass
+
+    def test_evaluate_art(self):
+        pass
+
+def run_Testarch():
+    Testarch = unittest.TestSuite()
+    Testarch.addTest(Test_arch('test_find_art'))
+
+    unittest.TextTestRunner().run(Testarch)
 
 if __name__ == '__main__':
 	# unittest.main()
 
     # run_Testxdxml()
     # run_Testxdana()
-    run_Testxddl()
+    # run_Testxddl()
+    run_Testarch()
+

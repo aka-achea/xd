@@ -21,6 +21,7 @@ name end with .
 
 
 Change log:
+2018.12.25 add unittest for arch.py v5.6
 2018.12.24 optimize multiple cd download v5.5
 2018.12.10 fix xm mass track issue v5.4
 2018.12.8 add unittest for xd_xml v5.3

@@ -134,32 +134,44 @@ class Test_arch(unittest.TestCase):
         print('Test complete')
 
     def test_find_art(self):
+        print('find_art')
         artist = "Booker T. & the MG's"
         topdir = 'L:\\Music'
         p_art = arch.find_art(topdir,artist)
         self.assertEqual(p_art,"L:\Music\_Archived\Funk\Booker T. & the MG's")
         # print(p_art)
 
-    def test_rename_mp3(self):
-        arch.rename_mp3(self.ttopdir)
-        mp3 = os.path.exists(os.path.join(self.ttopdir,''))
-        self.assertTrue(mp3)
     
-    def test_move_mp3(self):   
+    def test_move_mp3(self):
+        print('move_mp3')   
         arch.move_mp3(self.ttopdir,self.tmusicure)
         mp3 = os.path.exists(os.path.join(self.tmusicure,'t.mp3'))
         self.assertTrue(mp3)
 
-    def test_move_cover(self):
-        arch.move_cover(self.ttopdir,self.tcoverdir)
-        jpg = os.path.exists(os.path.join(self.tcoverdir,'t.jpg'))        
-        self.assertTrue(jpg)
+    def test_rename_mp3(self):
+        print('rename_mp3')
+        arch.rename_mp3(self.tmusicure)
+        mp3 = os.path.exists(os.path.join(self.tmusicure,''))
+        self.assertTrue(mp3)        
 
     def test_archive_cd(self):
         arch.archive_cd(self.tevadir,self.tarchdir)
+        t = os.path.exists('E:\\UT\\xd\\tevadir\\t-t\\t-t - 2011 - e-t')
+        self.assertTrue(t)
+        shutil.move('E:\\UT\\xd\\tevadir\\t-t','E:\\UT\\xd\\tarchdir\\t-t')
+        t2 = 'E:\\UT\\xd\\tevadir\\t-t - 2055 - e-t'
+        os.mkdir(t2)
+        shutil.copy(os.path.join(self.root,'t.jpg'),\
+                    os.path.join(t2,'t-t - 2055 - e-t.jpg'))
+        arch.archive_cd(self.tevadir,self.tarchdir)
+        t2 = os.path.exists('E:\\UT\\xd\\tarchdir\\t-t\\t-t - 2055 - e-t')
+        self.assertTrue(t2)
 
-
-
+    def test_move_cover(self):
+        print('move_cover')
+        arch.move_cover(self.ttopdir,self.tcoverdir)
+        jpg = os.path.exists(os.path.join(self.tcoverdir,'t.jpg'))        
+        self.assertTrue(jpg)
 
     def test_evaluate_art(self):
         pass
@@ -167,9 +179,9 @@ class Test_arch(unittest.TestCase):
 def run_Testarch():
     Testarch = unittest.TestSuite()
     # Testarch.addTest(Test_arch('test_find_art'))
-    Testarch.addTest(Test_arch('test_rename_mp3'))
     Testarch.addTest(Test_arch('test_move_mp3'))
     Testarch.addTest(Test_arch('test_move_cover'))
+    Testarch.addTest(Test_arch('test_rename_mp3'))
     Testarch.addTest(Test_arch('test_archive_cd'))
 
     unittest.TextTestRunner().run(Testarch)

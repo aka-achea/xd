@@ -1,7 +1,7 @@
 #!/usr/bin/python
 #coding:utf-8
 
-import unittest,configparser,os
+import unittest,configparser,os,shutil
 
 conf = 'E:\\xd.ini'
 config = configparser.ConfigParser()
@@ -102,9 +102,33 @@ def run_Testxddl():
 
 import arch
 class Test_arch(unittest.TestCase):
+
+
     @classmethod
     def setUpClass(self):
         print('UnitTest xd_dl')
+        self.root = 'E:\\UT\\xd'
+        self.ttopdir = 'E:\\UT\\xd\\ttop'
+        os.mkdir(self.ttopdir)
+        self.tmusicure = 'E:\\UT\\xd\\tmusicure'
+        os.mkdir(self.tmusicure)
+        self.tevadir = 'E:\\UT\\xd\\tevadir'
+        os.mkdir(self.tevadir)
+        self.tcoverdir = 'E:\\UT\\xd\\tcoverdir'
+        os.mkdir(self.tcoverdir)
+        self.tarchdir = 'E:\\UT\\xd\\tarchdir'
+        os.mkdir(self.tarchdir)
+        self.tdir = 'E:\\UT\\xd\\tevadir\\t-t - 2011 - e-t'
+        os.mkdir(self.tdir)
+        shutil.copy(os.path.join(self.root,'t.mp3'),\
+                    os.path.join(self.ttopdir,'t.mp3'))
+        shutil.copy(os.path.join(self.root,'t.jpg'),\
+                    os.path.join(self.ttopdir,'t.jpg'))
+        shutil.copy(os.path.join(self.root,'t.jpg'),\
+                    os.path.join(self.tdir,'t-t - 2011 - e-t.jpg'))
+
+
+
     @classmethod
     def tearDownClass(self):        
         print('Test complete')
@@ -117,23 +141,36 @@ class Test_arch(unittest.TestCase):
         # print(p_art)
 
     def test_rename_mp3(self):
-        pass
+        arch.rename_mp3(self.ttopdir)
+        mp3 = os.path.exists(os.path.join(self.ttopdir,''))
+        self.assertTrue(mp3)
     
-    def test_archive_cd(self):
-        pass
-
-    def test_move_mp3(self):
-        pass
+    def test_move_mp3(self):   
+        arch.move_mp3(self.ttopdir,self.tmusicure)
+        mp3 = os.path.exists(os.path.join(self.tmusicure,'t.mp3'))
+        self.assertTrue(mp3)
 
     def test_move_cover(self):
-        pass
+        arch.move_cover(self.ttopdir,self.tcoverdir)
+        jpg = os.path.exists(os.path.join(self.tcoverdir,'t.jpg'))        
+        self.assertTrue(jpg)
+
+    def test_archive_cd(self):
+        arch.archive_cd(self.tevadir,self.tarchdir)
+
+
+
 
     def test_evaluate_art(self):
         pass
 
 def run_Testarch():
     Testarch = unittest.TestSuite()
-    Testarch.addTest(Test_arch('test_find_art'))
+    # Testarch.addTest(Test_arch('test_find_art'))
+    Testarch.addTest(Test_arch('test_rename_mp3'))
+    Testarch.addTest(Test_arch('test_move_mp3'))
+    Testarch.addTest(Test_arch('test_move_cover'))
+    Testarch.addTest(Test_arch('test_archive_cd'))
 
     unittest.TextTestRunner().run(Testarch)
 

@@ -9,6 +9,8 @@
 # logfile = 'E:\\app.log'
 # l = ml(logfile,logfilelevel,__name__) 
 
+#bug: RecursionError: maximum recursion depth exceeded
+
 
 import argparse,os,time
 

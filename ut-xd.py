@@ -108,17 +108,19 @@ class Test_arch(unittest.TestCase):
     def setUpClass(self):
         print('UnitTest xd_dl')
         self.root = 'E:\\UT\\xd'
-        self.ttopdir = 'E:\\UT\\xd\\ttop'
+        self.dir = 'E:\\UT\\xd\\t'
+        os.mkdir(self.dir)
+        self.ttopdir = 'E:\\UT\\xd\\t\\ttop'
         os.mkdir(self.ttopdir)
-        self.tmusicure = 'E:\\UT\\xd\\tmusicure'
+        self.tmusicure = 'E:\\UT\\xd\\t\\tmusicure'
         os.mkdir(self.tmusicure)
-        self.tevadir = 'E:\\UT\\xd\\tevadir'
+        self.tevadir = 'E:\\UT\\xd\\t\\tevadir'
         os.mkdir(self.tevadir)
-        self.tcoverdir = 'E:\\UT\\xd\\tcoverdir'
+        self.tcoverdir = 'E:\\UT\\xd\\t\\tcoverdir'
         os.mkdir(self.tcoverdir)
-        self.tarchdir = 'E:\\UT\\xd\\tarchdir'
+        self.tarchdir = 'E:\\UT\\xd\\t\\tarchdir'
         os.mkdir(self.tarchdir)
-        self.tdir = 'E:\\UT\\xd\\tevadir\\t-t - 2011 - e-t'
+        self.tdir = 'E:\\UT\\xd\\t\\tevadir\\t-t - 2011 - e-t'
         os.mkdir(self.tdir)
         shutil.copy(os.path.join(self.root,'t.mp3'),\
                     os.path.join(self.ttopdir,'t.mp3'))
@@ -130,7 +132,8 @@ class Test_arch(unittest.TestCase):
 
 
     @classmethod
-    def tearDownClass(self):        
+    def tearDownClass(self):
+        shutil.rmtree(self.dir)       
         print('Test complete')
 
     def test_find_art(self):
@@ -140,7 +143,6 @@ class Test_arch(unittest.TestCase):
         p_art = arch.find_art(topdir,artist)
         self.assertEqual(p_art,"L:\Music\_Archived\Funk\Booker T. & the MG's")
         # print(p_art)
-
     
     def test_move_mp3(self):
         print('move_mp3')   
@@ -156,15 +158,15 @@ class Test_arch(unittest.TestCase):
 
     def test_archive_cd(self):
         arch.archive_cd(self.tevadir,self.tarchdir)
-        t = os.path.exists('E:\\UT\\xd\\tevadir\\t-t\\t-t - 2011 - e-t')
+        t = os.path.exists(os.path.join(self.tevadir,'t-t\\t-t - 2011 - e-t'))
         self.assertTrue(t)
-        shutil.move('E:\\UT\\xd\\tevadir\\t-t','E:\\UT\\xd\\tarchdir\\t-t')
-        t2 = 'E:\\UT\\xd\\tevadir\\t-t - 2055 - e-t'
+        shutil.move(os.path.join(self.tevadir,'t-t'),os.path.join(self.tarchdir,'t-t'))
+        t2 = 'E:\\UT\\xd\\t\\tevadir\\t-t - 2055 - e-t'
         os.mkdir(t2)
         shutil.copy(os.path.join(self.root,'t.jpg'),\
                     os.path.join(t2,'t-t - 2055 - e-t.jpg'))
         arch.archive_cd(self.tevadir,self.tarchdir)
-        t2 = os.path.exists('E:\\UT\\xd\\tarchdir\\t-t\\t-t - 2055 - e-t')
+        t2 = os.path.exists(os.path.join(self.tarchdir,'t-t\\t-t - 2055 - e-t'))
         self.assertTrue(t2)
 
     def test_move_cover(self):

@@ -6,7 +6,7 @@
 import os,re,shutil,argparse,configparser
 
 # customized module
-from comm import readtag 
+from comm import readtag , f_move
 import mylog as ml
 
 
@@ -18,6 +18,7 @@ archdir = config['arch']['archdir']
 evadir = config['arch']['evadir']
 coverdir = config['arch']['coverdir']
 musicure = config['arch']['musicure']
+inventory =  config['arch']['inventory']
 logfile = config['log']['logfile']
 logfilelevel = int(config['log']['logfilelevel'])
 
@@ -32,6 +33,14 @@ def find_art(topdir,artist):
                 p_art = os.path.join(dirpath, name)
     return p_art #return last result
 
+# def find_art()
+
+def artistlist(archdir):        
+    with open(inventory,'w') as f:
+        for pdir in os.listdir(archdir):
+            pdir = os.path.join(archdir,pdir)
+            for adir in os.listdir(pdir):
+                f.write(os.path.join(pdir,adir)+'\n')
 
 def rename_mp3(topdir):
     funcname = 'arch.rename_mp3'
@@ -52,7 +61,6 @@ def rename_mp3(topdir):
                 l.debug(dst)
                 os.rename(src,dst)
 
-
 def archive_cd(evadir,archdir):
     funcname = 'arch.archive_cd'
     l = ml.mylogger(logfile,logfilelevel,funcname)     
@@ -62,20 +70,17 @@ def archive_cd(evadir,archdir):
             l.debug(al_src)
             m = re.split('\s\-\s\d{4}\s\-\s',str(dirname))
             if len(m) == 2: #find album
-
                 pic_src = os.path.join(evadir,dirname,dirname+'.jpg')
-                l.debug(pic_src)
+                l.debug('Cover from '+pic_src)
                 pic_dst = os.path.join(evadir,dirname+'.jpg')
-                l.debug(pic_dst)
+                l.debug('Cover to '+pic_dst)
                 shutil.copyfile(pic_src,pic_dst)
-
                 l.info('Searching Artist: '+m[0])
                 p_art = find_art(archdir,m[0])
                 l.debug(p_art)
                 if os.path.isdir(p_art) == True :
                     # l.info(p_art)
                     l.info('Archive '+dirname)
-
                     al_dst = p_art
                     l.debug(al_dst)                   
                     shutil.move(al_src,al_dst)
@@ -91,7 +96,6 @@ def archive_cd(evadir,archdir):
                     al_dst = os.path.join(evadir, m[0])
                     shutil.move(al_src,al_dst)
 
-
 def move_mp3(topdir,musicure):
     funcname = 'arch.move_mp3'
     l = ml.mylogger(logfile,logfilelevel,funcname)    
@@ -104,7 +108,6 @@ def move_mp3(topdir,musicure):
             l.debug(dst)
             shutil.move(src,dst)
 
-
 def move_cover(evadir,coverdir):
     funcname = 'arch.move_cover'
     l = ml.mylogger(logfile,logfilelevel,funcname)        
@@ -116,13 +119,26 @@ def move_cover(evadir,coverdir):
             l.info(src)
             l.info(dst)
             shutil.move(src,dst)
-#move a-z, manuel check others
 
-def evaluate_art(topdir,musicure):
+#move a-z, manuel check others
+def arch_cover(coverdir):
+    funcname = 'arch.arch_cover'
+    l = ml.mylogger(logfile,logfilelevel,funcname)
+    for c in os.listdir(coverdir):
+        src = os.path.join(coverdir,c)
+        if os.path.isdir(src) == False:
+            l.debug(src)    
+            dd = os.path.join(coverdir,c[0])     
+            if os.path.isdir(dd) == True:
+                dst = os.path.join(dd,c)
+                l.debug(dst)
+                f_move(src,dst)          
+
+def evaluate_art(evadir,musicure):
     funcname = 'arch.evaluate_art'
     l = ml.mylogger(logfile,logfilelevel,funcname)
-    for art in os.listdir(topdir):
-        if os.path.isdir(os.path.join(topdir,art)) == True:
+    for art in os.listdir(evadir):
+        if os.path.isdir(os.path.join(evadir,art)) == True:
             l.info('=========================')
             l.info('Evaluate '+art)
             n = 0
@@ -148,30 +164,44 @@ def main():
     parser.add_argument('-r',action="store_true", help='Rename MP3')
     parser.add_argument('-m',action="store_true", help='Move MP3')
     parser.add_argument('-f',action="store_true", help='Find Artist')
-
+    parser.add_argument('-c',action="store_true", help='Archive CD Cover')
+    parser.add_argument('-i',action="store_true", help='Build Inventory')
     args = parser.parse_args()
 
     if args.a :
         print('Archive CD')
-        archive_cd(topdir,archdir)
-        # move_cover(evadir,coverdir)
+        archive_cd(evadir,archdir)
+        move_cover(evadir,coverdir)
 
-    if args.e:
+    elif args.e:
         print('Evaluate artist')
         evaluate_art(evadir,musicure)
 
-    if args.r:
+    elif args.r:
         print('Rename MP3')
         rename_mp3(topdir)
 
-    if args.m:
+    elif args.m:
         print('Move MP3')
         move_mp3(topdir,musicure)
 
-    if args.f:
+    elif args.f:
         artist = input("Find Artist:  ")
         path = find_art(topdir,artist)
         l.info(path)
+
+    elif args.i:
+        print('Build Inventory')
+        artistlist(archdir)
+
+
+    elif args.c: 
+        arch_cover(coverdir)
+
+    else:
+        parser.print_help()
+
+
 
 if __name__ == "__main__":
     main()

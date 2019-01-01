@@ -21,6 +21,8 @@ name end with .
 
 
 Change log:
+2019.1.1 add inventory function, optimize unittest v5.8
+2018.12.30 add archive cd cover function v5.7
 2018.12.25 add unittest for arch.py v5.6
 2018.12.24 optimize multiple cd download v5.5
 2018.12.10 fix xm mass track issue v5.4

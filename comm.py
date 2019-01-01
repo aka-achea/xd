@@ -2,7 +2,7 @@
 #coding:utf-8
 # Python3
 
-import os, fnmatch
+import os, fnmatch, shutil
 from mutagen.mp3 import MP3
 from mutagen.id3 import ID3NoHeaderError, error # really need error?
 from mutagen.id3 import ID3,TIT2,TALB,TPE1,TPE2,COMM,USLT,TCOM,TCON,TPOS,TDRC,TRCK,APIC
@@ -68,6 +68,20 @@ def count_f(path):
         if fnmatch.fnmatch(f,'*.mp3'): c += 1
     return c
                 
+def f_move(src,dst): # fs version: 20181230
+    if os.path.exists(dst):
+        print(dst)
+        print('DST: '+str(os.path.getsize(dst)))
+        print('SRC: '+str(os.path.getsize(src)))
+        if os.path.getsize(dst) < os.path.getsize(src):
+            print('Replace small one')
+            os.remove(dst)
+            shutil.move(src,dst)
+        else:
+            print("Already have big one")
+            os.remove(src)
+    else:
+        shutil.move(src,dst)
 
 #addtag(mp3,m_artist,m_cover,m_year,m_trackid)
 def addtag(fname,m_artist,m_cover,m_year='',m_trackid='',m_album='',\

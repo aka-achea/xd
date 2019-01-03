@@ -22,25 +22,33 @@ inventory =  config['arch']['inventory']
 logfile = config['log']['logfile']
 logfilelevel = int(config['log']['logfilelevel'])
 
-def find_art(topdir,artist):
-    funcname = 'arch.find_art'
-    l = ml.mylogger(logfile,logfilelevel,funcname) 
-    p_art = ''
-    for dirpath, dirnames, files in os.walk(topdir):
-        for name in dirnames:
-            l.debug(name)
-            if name == artist:
-                p_art = os.path.join(dirpath, name)
-    return p_art #return last result
+# def find_art(topdir,artist):
+#     funcname = 'arch.find_art'
+#     l = ml.mylogger(logfile,logfilelevel,funcname) 
+#     p_art = ''
+#     for dirpath, dirnames, files in os.walk(topdir):
+#         for name in dirnames:
+#             l.debug(name)
+#             if name == artist:
+#                 p_art = os.path.join(dirpath, name)
+#     return p_art #return last result
 
-# def find_art()
+def find_art(artist,inventory):
+    with open(inventory,'r') as f:
+        a = f.readlines()
+        for i in a:
+            m = re.search(artist,i.strip())
+            if m:
+                p_art = i.strip()
+    return p_art
 
 def artistlist(archdir):        
     with open(inventory,'w') as f:
         for pdir in os.listdir(archdir):
             pdir = os.path.join(archdir,pdir)
             for adir in os.listdir(pdir):
-                f.write(os.path.join(pdir,adir)+'\n')
+                if adir !=  '_VA':               
+                    f.write(os.path.join(pdir,adir)+'\n')
 
 def rename_mp3(topdir):
     funcname = 'arch.rename_mp3'

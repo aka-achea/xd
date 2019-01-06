@@ -8,7 +8,7 @@ import os,re,shutil,argparse,configparser
 # customized module
 from comm import readtag , f_move
 import mylog as ml
-
+import myfs
 
 confile = 'L:\\MUSIC\\xd.ini'
 config = configparser.ConfigParser()
@@ -34,15 +34,16 @@ logfilelevel = int(config['log']['logfilelevel'])
 #     return p_art #return last result
 
 def find_art(artist,inventory):
-    with open(inventory,'r') as f:
+    p_art = ''
+    with open(inventory,'r') as f:        
         a = f.readlines()
         for i in a:
-            m = re.search(artist,i.strip())
-            if m:
+            if artist == i.strip().split('\\')[-1]:
                 p_art = i.strip()
+                break
     return p_art
 
-def artistlist(archdir):        
+def build_inv(archdir):        
     with open(inventory,'w') as f:
         for pdir in os.listdir(archdir):
             pdir = os.path.join(archdir,pdir)
@@ -82,27 +83,26 @@ def archive_cd(evadir,archdir):
                 l.debug('Cover from '+pic_src)
                 pic_dst = os.path.join(evadir,dirname+'.jpg')
                 l.debug('Cover to '+pic_dst)
-                shutil.copyfile(pic_src,pic_dst)
+                if os.path.exists(pic_dst) == False: 
+                    shutil.copyfile(pic_src,pic_dst)    
                 l.info('Searching Artist: '+m[0])
-                p_art = find_art(archdir,m[0])
+                p_art = find_art(m[0],inventory)
                 l.debug(p_art)
                 if os.path.isdir(p_art) == True :
                     # l.info(p_art)
                     l.info('Archive '+dirname)
                     al_dst = p_art
-                    l.debug(al_dst)                   
-                    shutil.move(al_src,al_dst)
-                    if os.path.isdir(al_dst) == True: 
-                        l.info("Archive complete")               
+                    l.debug(al_dst)                                
                 elif os.path.isdir(os.path.join(evadir, m[0])) == True:
                     l.warning('Already prearchive -> move album '+dirname)
                     al_dst = os.path.join(evadir,m[0])
-                    shutil.move(al_src,al_dst)
                 else:
                     l.warning('Prearchive '+m[0]+' -> move album '+dirname)
                     os.mkdir(os.path.join(evadir, m[0]))
                     al_dst = os.path.join(evadir, m[0])
-                    shutil.move(al_src,al_dst)
+                myfs.d_move(al_src,al_dst)
+                if os.path.isdir(os.path.join(al_dst,m[0]) == True: 
+                    l.info("Archive complete") 
 
 def move_mp3(topdir,musicure):
     funcname = 'arch.move_mp3'
@@ -200,7 +200,7 @@ def main():
 
     elif args.i:
         print('Build Inventory')
-        artistlist(archdir)
+        build_inv(archdir)
 
 
     elif args.c: 
@@ -213,4 +213,5 @@ def main():
 
 if __name__ == "__main__":
     main()
-
+    # p =    find_art('Elyonbeats',r'L:\Music\MI.txt')
+    # print(p)

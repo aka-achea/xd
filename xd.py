@@ -37,17 +37,17 @@ def xd():
     elif args.cd == True:
         print('Begin download CD')
 
-        workfolder = 'L:\\XM'
-        ldir = 'L:\\XM'
+        # workfolder = 'L:\\XM'
+        ldir = r'L:\MUSIC\_DL'
         for w in os.listdir(ldir):
             if os.path.basename(w)[-4:] == 'html':
                 print(w)
                 w = os.path.join(ldir,w)
                 web = 'file:///'+w
                 # print(web)
-                dl_cd(web,workfolder)
+                dl_cd(web,ldir)
                 os.remove(w)
-                print('Remove '+w)
+                print('Remove '+w+' Wait...')
                 time.sleep(60)
     
     

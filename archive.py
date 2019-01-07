@@ -84,7 +84,9 @@ def archive_cd(evadir,archdir):
                 pic_dst = os.path.join(evadir,dirname+'.jpg')
                 l.debug('Cover to '+pic_dst)
                 if os.path.exists(pic_dst) == False: 
-                    shutil.copyfile(pic_src,pic_dst)    
+                    shutil.copyfile(pic_src,pic_dst)  
+                if m[0][-1] == '.':  # windows folder name cannot end with .
+                    m[0] = m[0][:-2] 
                 l.info('Searching Artist: '+m[0])
                 p_art = find_art(m[0],inventory)
                 l.debug(p_art)
@@ -101,7 +103,7 @@ def archive_cd(evadir,archdir):
                     os.mkdir(os.path.join(evadir, m[0]))
                     al_dst = os.path.join(evadir, m[0])
                 myfs.d_move(al_src,al_dst)
-                if os.path.isdir(os.path.join(al_dst,m[0]) == True: 
+                if os.path.isdir(os.path.join(al_dst,m[0])) == True: 
                     l.info("Archive complete") 
 
 def move_mp3(topdir,musicure):

@@ -15,9 +15,7 @@ Bug list:
 Logger 
 UnicodeEncodeError: 'gbk' codec can't encode character '\u30fb'
 
-arch.evaluate_art:
-name contain
-name end with .
+
 
 
 Change log:

@@ -34,6 +34,16 @@ def addtag(fname,m_song,m_album,m_artist,m_singer,\
     tags["APIC"] = APIC(encoding=3, mime=u'image/png',type=3,desc=u'Cover',data=cover)
     tags.save(fname,v2_version=3)
 
+def readtag(fname):
+    l = ml.mylogger(logfile,logfilelevel,'comm.readtag')
+    tags = ID3(fname)
+    title = tags["TIT2"]
+    singer = tags['TPE1']
+    l.debug(singer)
+    l.debug(title)
+    return singer,title
+
+
 if __name__=='__main__':
     fname = '1.mp3'
     m_song = 'song'

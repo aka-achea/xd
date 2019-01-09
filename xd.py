@@ -12,7 +12,7 @@
 #bug: RecursionError: maximum recursion depth exceeded
 
 
-import argparse,os,time
+import argparse,os,time,sys
 
 # Customized module
 from xd_dl import dl_cd,dl_one
@@ -47,8 +47,12 @@ def xd():
                 # print(web)
                 dl_cd(web,ldir)
                 os.remove(w)
-                print('Remove '+w+' Wait...')
-                time.sleep(60)
+                print('Remove '+w)
+                for i in range(60):
+                    space = 2 if i < 10 else 1
+                    sys.stdout.write('Wait'+' '*space+str(60-i)+'\r')
+                    time.sleep(1)
+
     
     
     elif args.artist:

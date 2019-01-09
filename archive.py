@@ -35,6 +35,8 @@ logfilelevel = int(config['log']['logfilelevel'])
 
 def find_art(artist,inventory):
     p_art = ''
+    if artist[-1] == '.':  # windows folder name cannot end with .
+        artist = artist[:-2] 
     with open(inventory,'r') as f:        
         a = f.readlines()
         for i in a:
@@ -84,9 +86,7 @@ def archive_cd(evadir,archdir):
                 pic_dst = os.path.join(evadir,dirname+'.jpg')
                 l.debug('Cover to '+pic_dst)
                 if os.path.exists(pic_dst) == False: 
-                    shutil.copyfile(pic_src,pic_dst)  
-                if m[0][-1] == '.':  # windows folder name cannot end with .
-                    m[0] = m[0][:-2] 
+                    shutil.copyfile(pic_src,pic_dst) 
                 l.info('Searching Artist: '+m[0])
                 p_art = find_art(m[0],inventory)
                 l.debug(p_art)
@@ -149,7 +149,7 @@ def evaluate_art(evadir,musicure):
     l = ml.mylogger(logfile,logfilelevel,funcname)
     for art in os.listdir(evadir):
         if os.path.isdir(os.path.join(evadir,art)) == True:
-            l.info('=========================')
+            l.info('='*20)
             l.info('Evaluate '+art)
             n = 0
             for dirpath, dirnames, files in os.walk(musicure):
@@ -160,10 +160,13 @@ def evaluate_art(evadir,musicure):
                         n += 1
             if n == 0:    
                 l.warning('Zero !!! Track ---> Move to misc')
-            elif n == 1:
-                l.warning('One more CD to evaluate')
             else:
-                l.info('Total '+str(n)+' Tracks') 
+                an = len(os.listdir(os.path.join(evadir,art)))
+                rate = str(n/an)[:4]                
+                if float(rate) < 0.5:
+                    l.warning('Rate '+rate+' from '+str(an)+' Album --> One more CD to evaluate ')
+                else:           
+                    l.info('Rate '+rate+' from '+str(an)+' Album --> Total '+str(n)+' Tracks') 
 
 def main():
     funcname = 'arch.main'
@@ -203,7 +206,6 @@ def main():
     elif args.i:
         print('Build Inventory')
         build_inv(archdir)
-
 
     elif args.c: 
         arch_cover(coverdir)

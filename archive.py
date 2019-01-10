@@ -7,8 +7,9 @@ import os,re,shutil,argparse,configparser
 
 # customized module
 from comm import readtag , f_move
-import mylog as ml
+# import mylog as ml
 import myfs
+from mylognew import get_funcname, mylogger
 
 confile = 'L:\\MUSIC\\xd.ini'
 config = configparser.ConfigParser()
@@ -24,7 +25,7 @@ logfilelevel = int(config['log']['logfilelevel'])
 
 # def find_art(topdir,artist):
 #     funcname = 'arch.find_art'
-#     l = ml.mylogger(logfile,logfilelevel,funcname) 
+#     l = mylogger(logfile,logfilelevel,funcname) 
 #     p_art = ''
 #     for dirpath, dirnames, files in os.walk(topdir):
 #         for name in dirnames:
@@ -55,7 +56,7 @@ def build_inv(archdir):
 
 def rename_mp3(topdir):
     funcname = 'arch.rename_mp3'
-    l = ml.mylogger(logfile,logfilelevel,funcname) 
+    l = mylogger(logfile,logfilelevel,funcname) 
     for mp3 in os.listdir(topdir):        
         p_mp3 = os.path.join(topdir,mp3)
         if p_mp3[-3:] == 'mp3':
@@ -74,7 +75,7 @@ def rename_mp3(topdir):
 
 def archive_cd(evadir,archdir):
     funcname = 'arch.archive_cd'
-    l = ml.mylogger(logfile,logfilelevel,funcname)     
+    l = mylogger(logfile,logfilelevel,funcname)     
     for dirname in os.listdir(evadir):  
         al_src = os.path.join(evadir, dirname)             
         if os.path.isdir(al_src) == True:
@@ -108,7 +109,7 @@ def archive_cd(evadir,archdir):
 
 def move_mp3(topdir,musicure):
     funcname = 'arch.move_mp3'
-    l = ml.mylogger(logfile,logfilelevel,funcname)    
+    l = mylogger(logfile,logfilelevel,funcname)    
     for mp3 in os.listdir(topdir):
         if mp3[-3:] == 'mp3':
             l.info('Move --> '+mp3)
@@ -120,7 +121,7 @@ def move_mp3(topdir,musicure):
 
 def move_cover(evadir,coverdir):
     funcname = 'arch.move_cover'
-    l = ml.mylogger(logfile,logfilelevel,funcname)        
+    l = mylogger(logfile,logfilelevel,funcname)        
     for jpg in os.listdir(evadir):
         if jpg[-3:] == 'jpg':
             l.info('Move --> '+jpg)
@@ -133,7 +134,7 @@ def move_cover(evadir,coverdir):
 #move a-z, manuel check others
 def arch_cover(coverdir):
     funcname = 'arch.arch_cover'
-    l = ml.mylogger(logfile,logfilelevel,funcname)
+    l = mylogger(logfile,logfilelevel,funcname)
     for c in os.listdir(coverdir):
         src = os.path.join(coverdir,c)
         if os.path.isdir(src) == False:
@@ -146,7 +147,7 @@ def arch_cover(coverdir):
 
 def evaluate_art(evadir,musicure):
     funcname = 'arch.evaluate_art'
-    l = ml.mylogger(logfile,logfilelevel,funcname)
+    l = mylogger(logfile,logfilelevel,funcname)
     for art in os.listdir(evadir):
         if os.path.isdir(os.path.join(evadir,art)) == True:
             l.info('='*20)
@@ -170,7 +171,7 @@ def evaluate_art(evadir,musicure):
 
 def main():
     funcname = 'arch.main'
-    l = ml.mylogger(logfile,logfilelevel,funcname) 
+    l = mylogger(logfile,logfilelevel,funcname) 
     parser = argparse.ArgumentParser(description = 'Archive music tool')
     parser.add_argument('-a',action="store_true", help='Archive CD')
     parser.add_argument('-e',action="store_true", help='Evaluate artist')

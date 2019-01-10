@@ -3,14 +3,14 @@
 # Python3
 
 import os,wget,shutil
-from openlink import oprqs
-from qd_ana import qd_album
-from comm import create_folder,addtag
 
-from mylognew import get_funcname,mylogger
-# import mylog as ml
-logfilelevel = 10 # Debug
-logfile = 'E:\\app.log'
+# customized module
+from openlink import op_requests
+from qd_ana import qd_album
+from sharemod import create_folder,logfile,logfilelevel
+from mtag import addtag
+from mylog import get_funcname,mylogger
+
 
 # quantity = {'M500':{'mp3':'99'},
 #             'M800':{'mp3':'99'},
@@ -47,7 +47,7 @@ def get_vkey(songmid):
             'guid':'6179861260' #504753841
             }
     #guid 6179861260
-    req = oprqs(url,para)
+    req = op_requests(url,para)
     j = req.json()
     vkey = j['data']['items'][0]['vkey']
     l.debug(vkey)
@@ -67,7 +67,7 @@ def dl_song(vkey,songmid,mp3,m='4'):
             'fromtag':tag
             }
     l.debug(para)
-    content = oprqs(url,para).content
+    content = op_requests(url,para).content
     with open(mp3,'wb') as f:
         f.write(content)
         f.close()

@@ -6,20 +6,16 @@
 
 # from html.parser import HTMLParser
 
-import wget,os,time
+import os,time
 
-from openlink import op_simple
+# customized module
+from mylog import get_funcname,mylogger
+import myget
+from mtag import addtag
+from openlink import op_simple,mytimer
 from xd_ana import ana_cd
 from xd_xml import get_loc_one, get_loc_cd
-from comm import create_folder, clean_f,count_f
-from tag import addtag
-# import mylog as ml
-from mylognew import get_funcname,mylogger
-import mygget
-
-logfilelevel = 10 # Debug
-logfile = 'E:\\app.log'
-
+from sharemod import logfilelevel,logfile, create_folder, clean_f,count_f
 
 
 def dl_one(weburl,workfolder): 
@@ -36,11 +32,11 @@ def dl_one(weburl,workfolder):
     if os.path.isfile(mp3):
         l.warning("Track download already")
     else:
-        wget.download(SongDic['location'],out=mp3)
+        myget.dl(SongDic['location'],out=mp3)
     if os.path.isfile(m_cover): 
         pass
     else:
-        wget.download(SongDic['cover'],out=m_cover)
+        myget.dl(SongDic['cover'],out=m_cover)
     fname = mp3
     m_song = SongDic['song']
     m_album = SongDic['album']
@@ -65,21 +61,21 @@ def dl_cd(web,workfolder):
         l.warning('---- Small cover download already !') 
     else:
         l.info('Download small cover')
-        wget.download(aDict['scover'],out=m_cover)
-        print('\n') 
+        myget.dl(aDict['scover'],out=m_cover)
+        # print('\n') 
     cover = albumdir+'.jpg'
     if os.path.isfile(cover):
         l.warning('---- Big Cover download already !') 
     else:
         l.info('Download big cover')
-        wget.download(aDict['bcover'],out=cover)
-        print('\n') 
+        myget.dl(aDict['bcover'],out=cover)
+        # print('\n') 
 
     for i in range(aDict['Discs']):
         CD = str(i+1)
         tracknum = aDict[CD]
         for t in range(tracknum):
-            if t in [30,60,90] : time.sleep(180)
+            if t in [30,60,90] : mytimer(180)
             t += 1
             if t < 10: 
                 t = '0'+str(t)
@@ -99,13 +95,13 @@ def dl_cd(web,workfolder):
                     l.warning('---- Track download already !') 
                 else:
                     try:
-                        wget.download(SongDic['location'],out=mp3) 
-                        print('\n')   
+                        myget.dl(SongDic['location'],out=mp3) 
+                        # print('\n')   
                     except Exception as e :
                         l.error(e)
                         l.error("Content incomplete -> retry")
-                        wget.download(SongDic['location'],out=mp3) 
-                        print('\n')
+                        myget.dl(SongDic['location'],out=mp3) 
+                        # print('\n')
                 fname = albumfulldir+'\\'+mp3
                 m_song = SongDic['song']
                 m_singer = SongDic['singer']
@@ -119,6 +115,7 @@ def dl_cd(web,workfolder):
         c = count_f(albumfulldir)
         if c == int(tracknum) :
             l.info('Disc '+CD+' Download complete')
+            os.remove(m_cover)
         else:
             l.error('Some track download fail')
         

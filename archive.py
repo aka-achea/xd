@@ -6,22 +6,11 @@
 import os,re,shutil,argparse,configparser
 
 # customized module
-from comm import readtag , f_move
-# import mylog as ml
+from sharemod import f_move,logfile,logfilelevel,inventory,topdir,archdir,evadir,musicure,coverdir
+from mtag import readtag
 import myfs
-from mylognew import get_funcname, mylogger
+from mylog import get_funcname, mylogger
 
-confile = 'L:\\MUSIC\\xd.ini'
-config = configparser.ConfigParser()
-config.read(confile)
-topdir = config['arch']['topdir']
-archdir = config['arch']['archdir']
-evadir = config['arch']['evadir']
-coverdir = config['arch']['coverdir']
-musicure = config['arch']['musicure']
-inventory =  config['arch']['inventory']
-logfile = config['log']['logfile']
-logfilelevel = int(config['log']['logfilelevel'])
 
 def find_art(artist,inventory):
     p_art = ''

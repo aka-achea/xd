@@ -1,7 +1,6 @@
 ﻿module list:
 decry.py - decrypt code to download link
 modstr.py - filter character
-mylog.py - redirect log
 tag.py - add tag for mp3
 openlink.py - open/save web link
 xd.py - consolidation for xiami job
@@ -19,6 +18,7 @@ UnicodeEncodeError: 'gbk' codec can't encode character '\u30fb'
 
 
 Change log:
+2019.1.10 switch to myget, newlog v6.1
 2019.1.7 fix name bug v6.0
 2019.1.6 bug fix v5.9
 2019.1.1 add inventory function, optimize unittest v5.8

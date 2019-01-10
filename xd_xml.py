@@ -3,15 +3,15 @@
 # Python3
 
 # from decry import decry
-from urllib.request import unquote
-from modstr import modificate
-from bs4 import BeautifulSoup
-from openlink import op_simple
 
-from mylognew import get_funcname,mylogger
-# import mylog as ml
-logfilelevel = 10 # Debug
-logfile = 'E:\\app.log'
+from bs4 import BeautifulSoup
+from urllib.request import unquote
+
+# customized module
+from sharemod import logfile,logfilelevel,modstr
+from openlink import op_simple
+from mylog import get_funcname,mylogger
+
 
 def get_loc_one(song_id):
     l = mylogger(logfile,logfilelevel,get_funcname()) 
@@ -30,11 +30,11 @@ def get_loc_one(song_id):
         l.debug('Raw Location: '+location)
         location = decry(location)
         song = bsObj.find("song_name")
-        song = modificate(str(song)[20:-15])
+        song = modstr(str(song)[20:-15])
         singer = bsObj.find("artist_name")
-        singer = modificate(str(singer)[22:-17])     
+        singer = modstr(str(singer)[22:-17])     
         album = bsObj.find("album_name")
-        album = modificate(str(album)[21:-16])
+        album = modstr(str(album)[21:-16])
         cover = bsObj.find('album_cover')
         cover = 'http:'+str(cover)[22:-17]
         SongDic = {'location':location,'song':song,'cover':cover,\
@@ -61,9 +61,9 @@ def get_loc_cd(song_id):
         location = decry(location)
         # location = location.replace('/m128','/m320')
         song = bsObj.find("song_name")
-        song = modificate(str(song)[20:-15])
+        song = modstr(str(song)[20:-15])
         singer = bsObj.find("artist_name")
-        singer = modificate(str(singer)[22:-17])     
+        singer = modstr(str(singer)[22:-17])     
         SongDic = {'location':location,'song':song,'singer':singer}
         l.debug(SongDic)
     return SongDic

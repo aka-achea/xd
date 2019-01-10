@@ -5,11 +5,12 @@
 from bs4 import BeautifulSoup
 from urllib.request import urlopen,Request,HTTPError,unquote
 from html.parser import HTMLParser
-from modstr import modificate
 import re
 
-from mylognew import get_funcname,mylogger
-# import mylog as ml
+# customized module
+from mylog import get_funcname,mylogger
+from sharemod import modstr,logfile,logfilelevel
+
 logfilelevel = 10 # Debug
 logfile = 'E:\\app.log'
 
@@ -19,11 +20,11 @@ def qd_album(page):
 
     bsObj = BeautifulSoup(html,"html.parser") #;print(bsObj)
     album_name = bsObj.find('h1',{'class':'data__name_txt'})
-    album_name = modificate(album_name.text)
+    album_name = modstr(album_name.text)
     l.debug(album_name)
 
     artist_name = bsObj.find('a',{'class':'js_singer data__singer_txt'})
-    artist_name = modificate(artist_name.text)
+    artist_name = modstr(artist_name.text)
     l.debug(artist_name)
 
     year = bsObj.find(text = re.compile('^发行时间'))[5:9]

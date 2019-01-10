@@ -6,12 +6,10 @@
 from bs4 import BeautifulSoup
 from urllib.request import urlopen,Request,HTTPError,unquote
 from html.parser import HTMLParser
-from modstr import modificate
 
-from mylognew import get_funcname,mylogger
-# import mylog as ml
-logfilelevel = 10 # Debug
-logfile = 'E:\\app.log'
+# customized module
+from mylog import get_funcname,mylogger
+from sharemod import modstr,logfile,logfilelevel
 
 #aDict {'album','artist','year','bcover','scover','Discs','DiskNum','(DiscNum,TrackNum)'}
 
@@ -24,15 +22,16 @@ def ana_song(weburl):
     return songid
 
 def ana_cd(page): 
+    # print(logfile)
     l = mylogger(logfile,logfilelevel,get_funcname()) 
     html = urlopen(page)
     bsObj = BeautifulSoup(html,"html.parser") 
     #print(bsObj)
     album_name = bsObj.find('div',{'class':'album-name'})
-    album_name = modificate(album_name.text)
+    album_name = modstr(album_name.text)
     l.debug(album_name)
     artist = bsObj.find('div',{'class':'singers'})
-    artist_name = modificate(artist.text)
+    artist_name = modstr(artist.text)
     l.debug(artist_name)
     year = artist.next_sibling.text[:4]
     l.debug(year)
@@ -50,7 +49,7 @@ def ana_cd(page):
     disc_n = len(discs)
     aDict['Discs'] = disc_n
     for d in discs:
-        DiscNum = modificate(d.h3.text[4:])
+        DiscNum = modstr(d.h3.text[4:])
         l.debug('DiscNum '+DiscNum)
         Tracks = d.find_all('span',{'class':'em index'})
         aDict[DiscNum] = len(Tracks)
@@ -67,7 +66,8 @@ def ana_cd(page):
 
 
 if __name__=='__main__':
-    
+    logfilelevel = 10 # Debug
+    logfile = 'E:\\app.log'
     #test xd_album
     web = 'file:///E://1.html'
     page = 'file:\\\E:\\UT\\xd_ana.ana_cd.html'

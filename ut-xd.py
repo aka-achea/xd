@@ -3,7 +3,7 @@
 
 import unittest,configparser,os,shutil
 
-conf = 'E:\\xd.ini'
+conf = 'L:\\MUSIC\\xd.ini'
 config = configparser.ConfigParser()
 config.read(conf)
 # code = config['ut']['xd_xml_decry']
@@ -100,7 +100,7 @@ def run_Testxddl():
     Testxddl.addTest(Test_xd_dl('test_dl_cd'))
     unittest.TextTestRunner().run(Testxddl)
 
-import arch
+import archive
 class Test_arch(unittest.TestCase):
 
 
@@ -140,24 +140,24 @@ class Test_arch(unittest.TestCase):
         print('find_art')
         artist = "Booker T. & the MG's"
         topdir = 'L:\\Music'
-        p_art = arch.find_art(topdir,artist)
+        p_art = archive.find_art(topdir,artist)
         self.assertEqual(p_art,"L:\Music\_Archived\Funk\Booker T. & the MG's")
         # print(p_art)
     
     def test_move_mp3(self):
         print('move_mp3')   
-        arch.move_mp3(self.ttopdir,self.tmusicure)
+        archive.move_mp3(self.ttopdir,self.tmusicure)
         mp3 = os.path.exists(os.path.join(self.tmusicure,'t.mp3'))
         self.assertTrue(mp3)
 
     def test_rename_mp3(self):
         print('rename_mp3')
-        arch.rename_mp3(self.tmusicure)
+        archive.rename_mp3(self.tmusicure)
         mp3 = os.path.exists(os.path.join(self.tmusicure,''))
         self.assertTrue(mp3)        
 
     def test_archive_cd(self):
-        arch.archive_cd(self.tevadir,self.tarchdir)
+        archive.archive_cd(self.tevadir,self.tarchdir)
         t = os.path.exists(os.path.join(self.tevadir,'t-t\\t-t - 2011 - e-t'))
         self.assertTrue(t)
         shutil.move(os.path.join(self.tevadir,'t-t'),os.path.join(self.tarchdir,'t-t'))
@@ -165,13 +165,13 @@ class Test_arch(unittest.TestCase):
         os.mkdir(t2)
         shutil.copy(os.path.join(self.root,'t.jpg'),\
                     os.path.join(t2,'t-t - 2055 - e-t.jpg'))
-        arch.archive_cd(self.tevadir,self.tarchdir)
+        archive.archive_cd(self.tevadir,self.tarchdir)
         t2 = os.path.exists(os.path.join(self.tarchdir,'t-t\\t-t - 2055 - e-t'))
         self.assertTrue(t2)
 
     def test_move_cover(self):
         print('move_cover')
-        arch.move_cover(self.ttopdir,self.tcoverdir)
+        archive.move_cover(self.ttopdir,self.tcoverdir)
         jpg = os.path.exists(os.path.join(self.tcoverdir,'t.jpg'))        
         self.assertTrue(jpg)
 

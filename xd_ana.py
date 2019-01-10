@@ -8,7 +8,8 @@ from urllib.request import urlopen,Request,HTTPError,unquote
 from html.parser import HTMLParser
 from modstr import modificate
 
-import mylog as ml
+from mylognew import get_funcname,mylogger
+# import mylog as ml
 logfilelevel = 10 # Debug
 logfile = 'E:\\app.log'
 
@@ -16,16 +17,14 @@ logfile = 'E:\\app.log'
 
 #not convenient to get song name , move to xml
 def ana_song(weburl):
-    funcname = 'xd_ana.ana_song'
-    l = ml.mylogger(logfile,logfilelevel,funcname)   
+    l = mylogger(logfile,logfilelevel,get_funcname()) 
     songid = weburl.split('/')[-1]
     songid = songid.split('?')[0]
     l.debug(songid)
     return songid
 
 def ana_cd(page): 
-    funcname = 'xd_ana.ana_cd'
-    l = ml.mylogger(logfile,logfilelevel,funcname)   
+    l = mylogger(logfile,logfilelevel,get_funcname()) 
     html = urlopen(page)
     bsObj = BeautifulSoup(html,"html.parser") 
     #print(bsObj)

@@ -8,13 +8,13 @@ from modstr import modificate
 from bs4 import BeautifulSoup
 from openlink import op_simple
 
-import mylog as ml
+from mylognew import get_funcname,mylogger
+# import mylog as ml
 logfilelevel = 10 # Debug
 logfile = 'E:\\app.log'
 
 def get_loc_one(song_id):
-    funcname = 'xd_xml.get_loc_one'
-    l = ml.mylogger(logfile,logfilelevel,funcname)
+    l = mylogger(logfile,logfilelevel,get_funcname()) 
     url = 'http://www.xiami.com/widget/xml-single/sid/%s'
     url = url.replace('%s', song_id)
     # url = 'file:///E://xml.xml'
@@ -44,10 +44,9 @@ def get_loc_one(song_id):
 
 
 def get_loc_cd(song_id):
-    funcname = 'xd_xml.get_loc_cd'
-    l = ml.mylogger(logfile,logfilelevel,funcname)
-    url = 'http://www.xiami.com/widget/xml-single/sid/%s'
-    url = url.replace('%s', song_id)
+    l = mylogger(logfile,logfilelevel,get_funcname()) 
+    url = 'http://www.xiami.com/widget/xml-single/sid/%s' % song_id
+    # url = url.replace('%s', song_id)
     # url = 'file:///E://xml.xml'
     page = op_simple(url)
     l.debug(page[1])

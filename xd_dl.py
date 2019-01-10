@@ -13,8 +13,9 @@ from xd_ana import ana_cd
 from xd_xml import get_loc_one, get_loc_cd
 from comm import create_folder, clean_f,count_f
 from tag import addtag
-import mylog as ml
-
+# import mylog as ml
+from mylognew import get_funcname,mylogger
+import mygget
 
 logfilelevel = 10 # Debug
 logfile = 'E:\\app.log'
@@ -22,8 +23,7 @@ logfile = 'E:\\app.log'
 
 
 def dl_one(weburl,workfolder): 
-    funcname = 'xd_dl.dl_one'
-    l = ml.mylogger(logfile,logfilelevel,funcname)  
+    l = mylogger(logfile,logfilelevel,get_funcname()) 
     songid = str(weburl.split('/')[-1])
     songid = songid.split('?')[0]
     l.debug(songid)
@@ -51,8 +51,7 @@ def dl_one(weburl,workfolder):
     
 
 def dl_cd(web,workfolder):
-    funcname = 'xd_dl.dl_album'
-    l = ml.mylogger(logfile,logfilelevel,funcname) 
+    l = mylogger(logfile,logfilelevel,get_funcname()) 
     # html = op_simple(web)[0]
     aDict = ana_cd(web)
     albumdir = create_folder(workfolder,aDict)

@@ -23,17 +23,6 @@ inventory =  config['arch']['inventory']
 logfile = config['log']['logfile']
 logfilelevel = int(config['log']['logfilelevel'])
 
-# def find_art(topdir,artist):
-#     funcname = 'arch.find_art'
-#     l = mylogger(logfile,logfilelevel,funcname) 
-#     p_art = ''
-#     for dirpath, dirnames, files in os.walk(topdir):
-#         for name in dirnames:
-#             l.debug(name)
-#             if name == artist:
-#                 p_art = os.path.join(dirpath, name)
-#     return p_art #return last result
-
 def find_art(artist,inventory):
     p_art = ''
     if artist[-1] == '.':  # windows folder name cannot end with .
@@ -46,7 +35,7 @@ def find_art(artist,inventory):
                 break
     return p_art
 
-def build_inv(archdir):        
+def build_inventory(archdir):        
     with open(inventory,'w') as f:
         for pdir in os.listdir(archdir):
             pdir = os.path.join(archdir,pdir)
@@ -55,8 +44,7 @@ def build_inv(archdir):
                     f.write(os.path.join(pdir,adir)+'\n')
 
 def rename_mp3(topdir):
-    funcname = 'arch.rename_mp3'
-    l = mylogger(logfile,logfilelevel,funcname) 
+    l = mylogger(logfile,logfilelevel,get_funcname()) 
     for mp3 in os.listdir(topdir):        
         p_mp3 = os.path.join(topdir,mp3)
         if p_mp3[-3:] == 'mp3':
@@ -74,8 +62,7 @@ def rename_mp3(topdir):
                 os.rename(src,dst)
 
 def archive_cd(evadir,archdir):
-    funcname = 'arch.archive_cd'
-    l = mylogger(logfile,logfilelevel,funcname)     
+    l = mylogger(logfile,logfilelevel,get_funcname())     
     for dirname in os.listdir(evadir):  
         al_src = os.path.join(evadir, dirname)             
         if os.path.isdir(al_src) == True:
@@ -108,8 +95,7 @@ def archive_cd(evadir,archdir):
                     l.info("Archive complete") 
 
 def move_mp3(topdir,musicure):
-    funcname = 'arch.move_mp3'
-    l = mylogger(logfile,logfilelevel,funcname)    
+    l = mylogger(logfile,logfilelevel,get_funcname())    
     for mp3 in os.listdir(topdir):
         if mp3[-3:] == 'mp3':
             l.info('Move --> '+mp3)
@@ -120,8 +106,7 @@ def move_mp3(topdir,musicure):
             shutil.move(src,dst)
 
 def move_cover(evadir,coverdir):
-    funcname = 'arch.move_cover'
-    l = mylogger(logfile,logfilelevel,funcname)        
+    l = mylogger(logfile,logfilelevel,get_funcname())        
     for jpg in os.listdir(evadir):
         if jpg[-3:] == 'jpg':
             l.info('Move --> '+jpg)
@@ -133,8 +118,7 @@ def move_cover(evadir,coverdir):
 
 #move a-z, manuel check others
 def arch_cover(coverdir):
-    funcname = 'arch.arch_cover'
-    l = mylogger(logfile,logfilelevel,funcname)
+    l = mylogger(logfile,logfilelevel,get_funcname())
     for c in os.listdir(coverdir):
         src = os.path.join(coverdir,c)
         if os.path.isdir(src) == False:
@@ -146,8 +130,7 @@ def arch_cover(coverdir):
                 f_move(src,dst)          
 
 def evaluate_art(evadir,musicure):
-    funcname = 'arch.evaluate_art'
-    l = mylogger(logfile,logfilelevel,funcname)
+    l = mylogger(logfile,logfilelevel,get_funcname())
     for art in os.listdir(evadir):
         if os.path.isdir(os.path.join(evadir,art)) == True:
             l.info('='*20)
@@ -170,8 +153,7 @@ def evaluate_art(evadir,musicure):
                     l.info('Rate '+rate+' from '+str(an)+' Album --> Total '+str(n)+' Tracks') 
 
 def main():
-    funcname = 'arch.main'
-    l = mylogger(logfile,logfilelevel,funcname) 
+    l = mylogger(logfile,logfilelevel,get_funcname()) 
     parser = argparse.ArgumentParser(description = 'Archive music tool')
     parser.add_argument('-a',action="store_true", help='Archive CD')
     parser.add_argument('-e',action="store_true", help='Evaluate artist')
@@ -206,7 +188,7 @@ def main():
 
     elif args.i:
         print('Build Inventory')
-        build_inv(archdir)
+        build_inventory(archdir)
 
     elif args.c: 
         arch_cover(coverdir)
@@ -217,6 +199,7 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
-    # p =    find_art('Elyonbeats',r'L:\Music\MI.txt')
-    # print(p)
+    try:
+        main()
+    except KeyboardInterrupt:
+        print('ctrl + c')

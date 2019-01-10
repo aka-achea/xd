@@ -8,13 +8,13 @@ from html.parser import HTMLParser
 from modstr import modificate
 import re
 
-import mylog as ml
+from mylognew import get_funcname,mylogger
+# import mylog as ml
 logfilelevel = 10 # Debug
 logfile = 'E:\\app.log'
 
 def qd_album(page):
-    funcname = 'qd_ana.qd_album'
-    l = ml.mylogger(logfile,logfilelevel,funcname)   
+    l = mylogger(logfile,logfilelevel,get_funcname()) 
     html = urlopen(page)
 
     bsObj = BeautifulSoup(html,"html.parser") #;print(bsObj)

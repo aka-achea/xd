@@ -7,7 +7,8 @@ from openlink import oprqs
 from qd_ana import qd_album
 from comm import create_folder,addtag
 
-import mylog as ml
+from mylognew import get_funcname,mylogger
+# import mylog as ml
 logfilelevel = 10 # Debug
 logfile = 'E:\\app.log'
 
@@ -29,8 +30,7 @@ workfolder = 'F:\\XM'
 # path = 'e:\\'
 
 def get_vkey(songmid):
-    funcname = 'qd_dl.get_vkey'
-    l = ml.mylogger(logfile,logfilelevel,funcname) 
+    l = mylogger(logfile,logfilelevel,get_funcname()) 
     url = 'http://c.y.qq.com/base/fcgi-bin/fcg_music_express_mobile3.fcg'
     para = {'loginUin':'0',
             'hostUin':'0',
@@ -54,8 +54,7 @@ def get_vkey(songmid):
     return vkey
 
 def dl_song(vkey,songmid,mp3,m='4'):
-    funcname = 'qd_dl.dl'
-    l = ml.mylogger(logfile,logfilelevel,funcname) 
+    l = mylogger(logfile,logfilelevel,get_funcname()) 
 
     q = quantity[m][0]
     t = quantity[m][1]
@@ -75,8 +74,7 @@ def dl_song(vkey,songmid,mp3,m='4'):
 
 
 def dl_album(web,m='4'):
-    funcname = 'qd_dl.dl_album'
-    l = ml.mylogger(logfile,logfilelevel,funcname)  
+    l = mylogger(logfile,logfilelevel,get_funcname()) 
     aDict = qd_album(page)
     albumdir = create_folder(workfolder,aDict)
     albumfulldir = workfolder +"\\"+albumdir

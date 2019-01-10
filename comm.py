@@ -8,15 +8,14 @@ from mutagen.id3 import ID3NoHeaderError, error # really need error?
 from mutagen.id3 import ID3,TIT2,TALB,TPE1,TPE2,COMM,USLT,TCOM,TCON,TPOS,TDRC,TRCK,APIC
 
 
-
-import mylog as ml
+from mylognew import get_funcname,mylogger
+# import mylog as ml
 logfilelevel = 10 # Debug
 logfile = 'E:\\app.log'
 
 def modstr(text):
     # base on version 20181127
-    funcname = 'comm.modstr'    
-    l = ml.mylogger(logfile,logfilelevel,funcname)     
+    l = mylogger(logfile,logfilelevel,get_funcname()) 
     #file_name = re.sub(r'\s*:\s*', u' - ', file_name)    # for FAT file system
     text = str(text)    
     before = text
@@ -40,8 +39,7 @@ def modstr(text):
     return text
 
 def create_folder(workfolder,aDict):
-    funcname = 'comm.create_folder'
-    l = ml.mylogger(logfile,logfilelevel,funcname)
+    l = mylogger(logfile,logfilelevel,get_funcname()) 
     album = aDict['album']
     artist = aDict['artist']
     year = aDict['year']
@@ -86,7 +84,7 @@ def f_move(src,dst): # fs version: 20181230
 #addtag(mp3,m_artist,m_cover,m_year,m_trackid)
 def addtag(fname,m_artist,m_cover,m_year='',m_trackid='',m_album='',\
            m_song='',m_singer='', m_cd=''):
-    l = ml.mylogger(logfile,logfilelevel,'comm.addtag') 
+    l = mylogger(logfile,logfilelevel,get_funcname()) 
     try:
         tags = ID3(fname)
     except ID3NoHeaderError:
@@ -123,7 +121,7 @@ def addtag(fname,m_artist,m_cover,m_year='',m_trackid='',m_album='',\
     tags.save(fname,v2_version=3)
 
 def readtag(fname):
-    l = ml.mylogger(logfile,logfilelevel,'comm.readtag')
+    l = mylogger(logfile,logfilelevel,get_funcname()) 
     tags = ID3(fname)
     title = tags["TIT2"]
     singer = tags['TPE1']

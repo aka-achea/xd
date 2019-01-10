@@ -6,14 +6,15 @@ from mutagen.mp3 import MP3
 from mutagen.id3 import ID3NoHeaderError, error # really need error?
 from mutagen.id3 import ID3,TIT2,TALB,TPE1,TPE2,COMM,USLT,TCOM,TCON,TPOS,TDRC,TRCK,APIC
 
-import mylog as ml
+from mylognew import get_funcname,mylogger
+# import mylog as ml
 logfilelevel = 10 # Debug
 logfile = 'E:\\app.log'
  
 
 def addtag(fname,m_song,m_album,m_artist,m_singer,\
            m_cover,m_year='',m_trackid='',m_cd=''):
-    l = ml.mylogger(logfile,logfilelevel,addtag.__name__) 
+    l = mylogger(logfile,logfilelevel,get_funcname()) 
     try:
         tags = ID3(fname)
     except ID3NoHeaderError:
@@ -35,7 +36,7 @@ def addtag(fname,m_song,m_album,m_artist,m_singer,\
     tags.save(fname,v2_version=3)
 
 def readtag(fname):
-    l = ml.mylogger(logfile,logfilelevel,'comm.readtag')
+    l = mylogger(logfile,logfilelevel,get_funcname()) 
     tags = ID3(fname)
     title = tags["TIT2"]
     singer = tags['TPE1']

@@ -123,7 +123,7 @@ def evaluate_art(evadir,musicure):
     for art in os.listdir(evadir):
         if os.path.isdir(os.path.join(evadir,art)) == True:
             l.info('='*20)
-            l.info('Evaluate '+art)
+            l.warning(art)
             n = 0
             for dirpath, dirnames, files in os.walk(musicure):
                 for name in files:
@@ -155,6 +155,7 @@ def main():
 
     if args.a :
         print('Archive CD')
+        build_inventory(archdir)
         archive_cd(evadir,archdir)
         move_cover(evadir,coverdir)
 
@@ -172,7 +173,7 @@ def main():
 
     elif args.f:
         artist = input("Find Artist:  ")
-        path = find_art(topdir,artist)
+        path = find_art(artist,inventory)
         l.info(path)
 
     elif args.i:

@@ -16,7 +16,7 @@ import argparse,os,time,sys, configparser
 from xd_dl import dl_cd,dl_one
 from mylog import get_funcname,mylogger
 from sharemod import logfile,logfilelevel,dldir
-from openlink import mytimer
+from mytool import mywait
 
 def xd():
     l = mylogger(logfile,logfilelevel,get_funcname()) 
@@ -44,7 +44,7 @@ def xd():
                 dl_cd(web,dldir)
                 os.remove(w)
                 l.info('Remove '+w)
-                mytimer(60)
+                mywait(60)
 
        
     elif args.artist:

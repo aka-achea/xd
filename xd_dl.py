@@ -12,11 +12,11 @@ import os,time
 from mylog import get_funcname,mylogger
 import myget
 from mtag import addtag
-from openlink import op_simple,mytimer
+from openlink import op_simple
 from xd_ana import ana_cd
 from xd_xml import get_loc_one, get_loc_cd
 from sharemod import logfilelevel,logfile, create_folder, clean_f,count_f
-
+from mytool import mywait
 
 def dl_one(weburl,workfolder): 
     l = mylogger(logfile,logfilelevel,get_funcname()) 
@@ -75,7 +75,7 @@ def dl_cd(web,workfolder):
         CD = str(i+1)
         tracknum = aDict[CD]
         for t in range(tracknum):
-            if t in [30,60,90] : mytimer(180)
+            if t in [30,60,90] : mywait(180)
             t += 1
             if t < 10: 
                 t = '0'+str(t)

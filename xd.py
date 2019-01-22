@@ -21,11 +21,12 @@ from mytool import mywait
 def xd():
     l = mylogger(logfile,logfilelevel,get_funcname()) 
     parser = argparse.ArgumentParser(description = 'Xiami download tool')
-    parser.add_argument('-s','--song',help='Download single song ')
-    parser.add_argument('-c','--cds',help='Download CD',action='store_true')
-    parser.add_argument('-a','--artist',help='Download all CD of artist')
-    parser.add_argument('-f','--favorite',help='Download favorite list')
-    parser.add_argument('-t','--top',help='Download top songs')
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument('-s','--song',help='Download single song ')
+    group.add_argument('-c','--cds',help='Download CD',action='store_true')
+    group.add_argument('-a','--artist',help='Download all CD of artist')
+    group.add_argument('-f','--favorite',help='Download favorite list')
+    group.add_argument('-t','--top',help='Download top songs')
     args = parser.parse_args()
 
     if args.song:

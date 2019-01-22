@@ -18,6 +18,7 @@ UnicodeEncodeError: 'gbk' codec can't encode character '\u30fb'
 
 
 Change log:
+2019.1.22 optimize argparse v6.2
 2019.1.10 switch to myget, newlog v6.1
 2019.1.7 fix name bug v6.0
 2019.1.6 bug fix v5.9

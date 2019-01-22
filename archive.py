@@ -144,13 +144,14 @@ def evaluate_art(evadir,musicure):
 def main():
     l = mylogger(logfile,logfilelevel,get_funcname()) 
     parser = argparse.ArgumentParser(description = 'Archive music tool')
-    parser.add_argument('-a',action="store_true", help='Archive CD')
-    parser.add_argument('-e',action="store_true", help='Evaluate artist')
-    parser.add_argument('-r',action="store_true", help='Rename MP3')
-    parser.add_argument('-m',action="store_true", help='Move MP3')
-    parser.add_argument('-f',action="store_true", help='Find Artist')
-    parser.add_argument('-c',action="store_true", help='Archive CD Cover')
-    parser.add_argument('-i',action="store_true", help='Build Inventory')
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument('-a',action="store_true", help='Archive CD')
+    group.add_argument('-e',action="store_true", help='Evaluate artist')
+    group.add_argument('-r',action="store_true", help='Rename MP3')
+    group.add_argument('-m',action="store_true", help='Move MP3')
+    group.add_argument('-f',action="store_true", help='Find Artist')
+    group.add_argument('-c',action="store_true", help='Archive CD Cover')
+    group.add_argument('-i',action="store_true", help='Build Inventory')
     args = parser.parse_args()
 
     if args.a :

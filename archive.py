@@ -6,7 +6,7 @@
 import os,re,shutil,argparse,configparser
 
 # customized module
-from sharemod import f_move,logfile,logfilelevel,inventory,topdir,archdir,evadir,musicure,coverdir
+from sharemod import logfile,logfilelevel,inventory,topdir,archdir,evadir,musicure,coverdir
 from mtag import readtag
 import myfs
 from mylog import get_funcname, mylogger
@@ -79,7 +79,8 @@ def archive_cd(evadir,archdir):
                     l.warning('Prearchive '+m[0]+' -> move album '+dirname)
                     os.mkdir(os.path.join(evadir, m[0]))
                     al_dst = os.path.join(evadir, m[0])
-                myfs.d_move(al_src,al_dst)
+                result = myfs.d_move(al_src,al_dst)
+                l.info(result)
                 if os.path.isdir(os.path.join(al_dst,m[0])) == True: 
                     l.info("Archive complete") 
 
@@ -116,7 +117,8 @@ def arch_cover(coverdir):
             if os.path.isdir(dd) == True:
                 dst = os.path.join(dd,c)
                 l.debug(dst)
-                f_move(src,dst)          
+                result = myfs.f_move(src,dst)
+                l.info(result)          
 
 def evaluate_art(evadir,musicure):
     l = mylogger(logfile,logfilelevel,get_funcname())

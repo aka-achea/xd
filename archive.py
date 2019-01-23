@@ -32,7 +32,7 @@ def build_inventory(archdir):
                 if adir !=  '_VA':               
                     f.write(os.path.join(pdir,adir)+'\n')
 
-def rename_mp3(topdir):
+def rename_mp3(topdir): # based on ID3
     l = mylogger(logfile,logfilelevel,get_funcname()) 
     for mp3 in os.listdir(topdir):        
         p_mp3 = os.path.join(topdir,mp3)

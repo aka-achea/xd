@@ -2,16 +2,18 @@
 #coding:utf-8
 # tested in win
 
-import os,wget,shutil
+import os,shutil,random,time
 
 # customized module
 from openlink import op_requests
-from qd_ana import qd_album
-from sharemod import create_folder,logfile,logfilelevel
-from mtag import addtag
+# from qd_ana import qd_album
+# from sharemod import create_folder,logfile,logfilelevel
+# from mtag import addtag
 from mylog import get_funcname,mylogger
 import myget
 
+logfilelevel = 10 # Debug
+logfile = 'E:\\app.log'
 
 # quantity = {'M500':{'mp3':'99'},
 #             'M800':{'mp3':'99'},
@@ -30,8 +32,12 @@ quantity = {'1':['M500','.mp3','99'],
 workfolder = r'E:'
 # path = 'e:\\'
 
-def get_vkey(songmid):
+# https://www.jianshu.com/p/b26c0c9c6149
+
+
+def get_vkeyguid(songmid):
     l = mylogger(logfile,logfilelevel,get_funcname()) 
+    guid = int(random.random() * 2147483647) * int(time.time() * 1000) % 10000000000
     url = 'http://c.y.qq.com/base/fcgi-bin/fcg_music_express_mobile3.fcg'
     para = {'loginUin':'0',
             'hostUin':'0',
@@ -41,34 +47,37 @@ def get_vkey(songmid):
             'notice':'0',
             'platform':'yqq',
             'needNewCode':'0',
-            'cid':'205361747', #important 205361747
+            'cid':'205361747', #important 
             'uin':'0',
             'songmid':str(songmid),
             'filename':'C400'+str(songmid)+'.m4a',
-            'guid':'6179861260' #504753841
+            'guid':guid
             }
-    #guid 6179861260
     req = op_requests(url,para)
     j = req.json()
     vkey = j['data']['items'][0]['vkey']
     l.debug(vkey)
-    return vkey
+    return vkey,guid
 
-def dl_song(vkey,songmid,mp3,m='4'):
+def get_dlurl(songmid,m='4'):
     l = mylogger(logfile,logfilelevel,get_funcname()) 
     q = quantity[m][0]
     t = quantity[m][1]
     tag = quantity[m][2]
-    url = 'http://dl.stream.qqmusic.qq.com/'+ q + songmid + t
+    vkey,guid = get_vkeyguid(songmid)
+    url = 'http://dl.stream.qqmusic.qq.com/%s?vkey=%s&guid=%s&uin=0&fromtag=66' % (q+songmid+t, vkey, guid)
     l.debug(url)
-    para = {'guid':'6179861260',
-            'vkey':vkey,
-            'fromtag':tag
-            }
-    l.debug(para)
-    content = op_requests(url,para).content
-    with open(mp3,'wb') as f:
-        f.write(content)
+    return url
+
+
+    # para = {'guid':'6179861260',
+    #         'vkey':vkey,
+    #         'fromtag':tag
+    #         }
+    # l.debug(para)
+    # content = op_requests(url,para).content
+    # with open(mp3,'wb') as f:
+    #     f.write(content)
         #f.close()
 
 
@@ -129,9 +138,9 @@ def dl_album(web,m='2'):
 
 
 if __name__=='__main__':
-    # songmid = '003B7qBz1OKVw4'
-    # vkey = get_vkey(songmid)
-    # # vkey = 'segesf'
+    songmid = '003B7qBz1OKVw4'
+    url = get_dlurl(songmid)
+    myget.dl('a.m4a',url)
 
     # dl(vkey,songmid,quantity['3'][0],quantity['3'][1],quantity['3'][2])
     # # print(quantity['1'][0])

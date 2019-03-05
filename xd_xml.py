@@ -1,6 +1,6 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 #coding:utf-8
-# Python3
+# tested in win
 
 # from decry import decry
 
@@ -42,7 +42,6 @@ def get_loc_one(song_id):
         l.debug(SongDic)
     return SongDic
 
-
 def get_loc_cd(song_id):
     l = mylogger(logfile,logfilelevel,get_funcname()) 
     url = 'http://www.xiami.com/widget/xml-single/sid/%s' % song_id
@@ -67,7 +66,6 @@ def get_loc_cd(song_id):
         SongDic = {'location':location,'song':song,'singer':singer}
         l.debug(SongDic)
     return SongDic
-
 
 def decry(code): # decrypt download url
     url = code[1:]

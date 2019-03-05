@@ -1,6 +1,6 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 #coding:utf-8
-# Python3
+# tested in win
 
 from mutagen.mp3 import MP3
 from mutagen.id3 import ID3NoHeaderError, error # really need error?

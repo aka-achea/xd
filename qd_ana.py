@@ -9,15 +9,14 @@ import re
 
 # customized module
 from mylog import get_funcname,mylogger
-from sharemod import modstr,logfile,logfilelevel
+from sharemod import modstr#,logfile,logfilelevel
 
 logfilelevel = 10 # Debug
 logfile = 'E:\\app.log'
 
-def qd_album(page):
+def qd_album(page): # download web first
     l = mylogger(logfile,logfilelevel,get_funcname()) 
     html = urlopen(page)
-
     bsObj = BeautifulSoup(html,"html.parser") #;print(bsObj)
     album_name = bsObj.find('h1',{'class':'data__name_txt'})
     album_name = modstr(album_name.text)
@@ -39,7 +38,6 @@ def qd_album(page):
     n = 0
     for i in song:
         n = n+1
-        # l.si(i)
         tracknumber = i.text
         l.debug(tracknumber)
         si = i.next_sibling.next_sibling

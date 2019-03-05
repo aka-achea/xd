@@ -1,6 +1,6 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 #coding:utf-8
-# Python3
+# tested in win
 
 import os, fnmatch, shutil,configparser
 
@@ -54,7 +54,7 @@ def create_folder(workfolder,aDict):
     albumdir = artist+' - '+year+' - '+album
     l.info('Create folder: '+albumdir)
     os.chdir(workfolder)
-    albumfulldir = workfolder +"\\"+albumdir
+    albumfulldir = os.path.join(workfolder,albumdir)
     if not os.path.exists(albumfulldir):
         os.makedirs(albumfulldir)
         os.chdir(albumfulldir)
@@ -75,16 +75,17 @@ def count_f(path):
     return c
                 
 def f_move(src,dst): # fs version: 20181230
+    l = mylogger(logfile,logfilelevel,get_funcname()) 
     if os.path.exists(dst):
         print(dst)
         print('DST: '+str(os.path.getsize(dst)))
         print('SRC: '+str(os.path.getsize(src)))
         if os.path.getsize(dst) < os.path.getsize(src):
-            print('Replace small one')
+            l.warning('Replace small one')
             os.remove(dst)
             shutil.move(src,dst)
         else:
-            print("Already have big one")
+            l.warning("Already have big one")
             os.remove(src)
     else:
         shutil.move(src,dst)

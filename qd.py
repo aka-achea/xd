@@ -2,27 +2,22 @@
 #coding:utf-8
 # tested in win
 
-# import sys,os
-# from mylog import mylogger as ml
-
-# l = ml(logfile,logfilelevel,__name__) 
-
 
 
 import argparse,os,time,sys, configparser
 
 # Customized module
-from xd_dl import dl_cd,dl_one
+from qd_dl import dl_album,dl_song
 from mylog import get_funcname,mylogger
 from sharemod import logfile,logfilelevel,dldir
 from mytool import mywait
 
-def xd():
+def qd():
     l = mylogger(logfile,logfilelevel,get_funcname()) 
-    parser = argparse.ArgumentParser(description = 'Xiami download tool')
+    parser = argparse.ArgumentParser(description = 'QQ Music download tool')
     group = parser.add_mutually_exclusive_group()
     group.add_argument('-s','--song',help='Download single song ')
-    group.add_argument('-c','--cds',help='Download CD',action='store_true')
+    group.add_argument('-c','--cds',help='Download CD')
     group.add_argument('-a','--artist',help='Download all CD of artist')
     group.add_argument('-f','--favorite',help='Download favorite list')
     group.add_argument('-t','--top',help='Download top songs')
@@ -32,19 +27,13 @@ def xd():
         l.info('Begin download single song')
         link = args.song
         l.debug(link)
+        dl_song(link)
 
-    elif args.cds == True:
+    elif args.cds:
         l.info('Begin download CDs')
-        for w in os.listdir(dldir):
-            if os.path.basename(w)[-4:] == 'html':
-                l.info(w)
-                w = os.path.join(dldir,w)
-                web = 'file:///'+w
-                # l.info(web)
-                dl_cd(web,dldir)
-                os.remove(w)
-                l.info('Remove '+w)
-                mywait(60)
+        link = args.cds
+        l.debug(link)
+        dl_album(link)
        
     elif args.artist:
         l.info('Begin download all CD of artist')
@@ -61,23 +50,6 @@ def xd():
 
 if __name__ == "__main__":
     try:
-        xd()
+        qd()
     except KeyboardInterrupt:
         print('ctrl + c')
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

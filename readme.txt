@@ -1,23 +1,31 @@
 ﻿module list:
-decry.py - decrypt code to download link
-modstr.py - filter character
-tag.py - add tag for mp3
-openlink.py - open/save web link
+sharemod.py - shared function and varies
+archive.py - archive mp3 
+mtag.py - handle tag for mp3
 xd.py - consolidation for xiami job
 xd_ana.py - analyze xiami album , single song page
 xd_xml.py - get xiami song location from id
 xd_dl.py - create folder, download song
+qd.py - consolidation for QQ music job
 qd_ana.py - analyze QQ music album, single song page
 qd_dl.py - download QQ music
+ed.py - consolidation for QQ music job
+ed_dl.py - download EasyNet music
+ed_ana.py - anaylze EasyNet music
 
 Bug list:
-Logger 
-UnicodeEncodeError: 'gbk' codec can't encode character '\u30fb'
+#bug: RecursionError: maximum recursion depth exceeded
 
 
+QQ Music API:
+https://www.jianshu.com/p/b26c0c9c6149
+https://www.cnblogs.com/daxiangxm/p/qq_music_api.html
+
+Xiami Music API:
 
 
 Change log:
+2019.3.6 fix some bugs, add QQ song function v6.4
 2019.3.5 fix bug for QQ music download v6.3
 2019.1.22 optimize argparse v6.2
 2019.1.10 switch to myget, newlog v6.1

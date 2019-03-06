@@ -51,7 +51,7 @@ def dl_cd(web,workfolder):
     # html = op_simple(web)[0]
     aDict = ana_cd(web)
     albumdir = create_folder(workfolder,aDict)
-    albumfulldir = workfolder +"\\"+albumdir
+    albumfulldir = os.path.join(workfolder,albumdir)
     l.debug(albumfulldir)
     os.chdir(albumfulldir)
     # download cover
@@ -102,7 +102,8 @@ def dl_cd(web,workfolder):
                         l.error("Content incomplete -> retry")
                         myget.dl(SongDic['location'],out=mp3) 
                         # print('\n')
-                fname = albumfulldir+'\\'+mp3
+                fname = os.path.join(albumfulldir,mp3)
+                # fname = albumfulldir+'\\'+mp3
                 m_song = SongDic['song']
                 m_singer = SongDic['singer']
                 m_album = aDict['album']
@@ -115,10 +116,12 @@ def dl_cd(web,workfolder):
         c = count_f(albumfulldir)
         if c == int(tracknum) :
             l.info('Disc '+CD+' Download complete')
-            os.remove(m_cover)
+            try:
+                os.remove(m_cover)
+            except FileNotFoundError:
+                pass
         else:
-            l.error('Some track download fail')
-        
+            l.error('Some track download fail')        
 
     clean_f(albumfulldir)
     l.info('Download Complete:  '+albumdir)

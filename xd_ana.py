@@ -21,7 +21,7 @@ def ana_song(weburl):
     l.debug(songid)
     return songid
 
-def ana_cd(page):  # download web first
+def ana_cd(page):  # download web first, return album dictionary
     # print(logfile)
     l = mylogger(logfile,logfilelevel,get_funcname()) 
     html = urlopen(page)

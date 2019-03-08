@@ -17,11 +17,15 @@ Bug list:
 #bug: RecursionError: maximum recursion depth exceeded
 
 
-QQ Music API:
+QQ Music:
 https://www.jianshu.com/p/b26c0c9c6149
 https://www.cnblogs.com/daxiangxm/p/qq_music_api.html
 
-Xiami Music API:
+Xiami Music:
+
+NetEasy Music:
+https://mp.weixin.qq.com/s/c9CNf-iHPHf0tOtel0euPA
+
 
 
 Change log:

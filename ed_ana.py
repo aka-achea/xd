@@ -15,7 +15,6 @@ from sharemod import modstr,logfile,logfilelevel
 from openlink import op_simple , op_requests
 
 def ana_song(weblink):
-
     l = mylogger(logfile,logfilelevel,get_funcname()) 
     html = op_simple(weblink)[0]
     # html = op_requests(url,verify=False) 
@@ -33,6 +32,17 @@ def ana_song(weblink):
     l.info(artistname)
     l.info(albumname)
 
+    cover = bsObj.find('div',{'class':'u-cover u-cover-6 f-fl'})
+    cover = cover.img.attrs['href']
+    l.info(cover)
+    
+    songmid = weblink.split('=')[-1]
+
+    sDict = {'artist':artistname,'song_name':songname,'songmid':songmid,'cover':cover }
+    l.debug(sDict)
+    return sDict
+
+
 def ana_cd(weblink):
     l = mylogger(logfile,logfilelevel,get_funcname()) 
     html = op_simple(weblink)[0]
@@ -40,5 +50,5 @@ def ana_cd(weblink):
 
 
 if __name__ == "__main__":
-    url = 'https://music.163.com/song?id=1346093140'    
+    url = 'https://music.163.com/#/song?id=1330348068'    
     ana_song(url)

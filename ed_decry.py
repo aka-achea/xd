@@ -19,7 +19,7 @@ encSecKey = "257348aecb5e556c066de214e531faadd1c55d814f9be95fd06d6bff9f4c7a41f83
 
 
 def get_params():
-    iv = int("0102030405060708")
+    iv = "0102030405060708"
     first_key = forth_param
     second_key = 16 * 'F'
     h_encText = AES_encrypt(first_param, first_key, iv)
@@ -32,8 +32,8 @@ def AES_encrypt(text, key, iv):
         text = text + pad * chr(pad)
     else:
         text = text.decode('utf-8') + pad * chr(pad)
-    encryptor = AES.new(key, AES.MODE_CBC, iv)
-    encrypt_text = encryptor.encrypt(text)
+    encryptor = AES.new(key.encode("utf8"), AES.MODE_CBC, iv.encode("utf8"))
+    encrypt_text = encryptor.encrypt(text.encode("utf8"))
     encrypt_text = base64.b64encode(encrypt_text)
     return encrypt_text
 
@@ -43,19 +43,31 @@ def get_json(url, params, encSecKey):
         "encSecKey": encSecKey
     }
     response = requests.post(url, headers=headers, data=data).json()
+    print(response)
     return response['data']
 
+def get_dlurl(id):
+    first_param = "{\"ids\":\"[%d]\",\"br\":128000,\"csrf_token\":\"\"}" % int(id)
+    url = 'https://music.163.com/weapi/song/enhance/player/url?csrf_token='
+    params = get_params()    
+    rsp = get_json(url, params, encSecKey)
+    music_url = rsp[0].get('url')
+    return music_url
 
 if __name__ == "__main__":
-    id = '1346105096'
-    # first_param = "{\"ids\":\"[%d]\",\"br\":128000,\"csrf_token\":\"\"}" % int(id)
-    # url = 'https://music.163.com/weapi/song/enhance/player/url?csrf_token='
-    # params = get_params()
+    id = '1330348068'
+    first_param = "{\"ids\":\"[%d]\",\"br\":128000,\"csrf_token\":\"\"}" % int(id)
+    url = 'https://music.163.com/weapi/song/enhance/player/url?csrf_token='
+    params = get_params()
+    rsp = get_json(url, params, encSecKey)
+    music_url = rsp[0].get('url')
 
-    # rsp = get_json(url, params, encSecKey)
-    # music_url = rsp[0].get('url')
-    # print(music_url)
-    iv = "0102030405060708"
-    key = "0CoJUm6Qyw8W8jud"
-    encryptor = AES.new(key.encode("utf8"), AES.MODE_CBC,iv.encode("utf8"))
-    print(encryptor)
+    # music_url = get_dlurl(id)
+    print(music_url)
+    import myget
+    myget.dl(music_url)
+
+    # iv = "0102030405060708"
+    # key = "0CoJUm6Qyw8W8jud"
+    # encryptor = AES.new(key.encode("utf8"), AES.MODE_CBC,iv.encode("utf8"))
+    # print(encryptor)

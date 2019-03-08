@@ -7,7 +7,11 @@ import os, fnmatch, shutil,configparser
 # customized module
 from mylog import get_funcname,mylogger
 
-confile = r'E:\MUSIC\xd.ini'
+if os.path.exists(r'L:\MUSIC\xd.ini'):  
+    confile = r'L:\MUSIC\xd.ini'
+else:
+    confile = r'E:\MUSIC\xd.ini'
+        
 config = configparser.ConfigParser()
 config.read(confile)
 topdir = config['arch']['topdir']

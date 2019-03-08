@@ -1,6 +1,6 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 #coding:utf-8
-# Python3
+# tested in win
 
 from bs4 import BeautifulSoup
 from urllib.request import urlopen,Request,HTTPError,unquote
@@ -15,19 +15,23 @@ from sharemod import modstr,logfile,logfilelevel
 from openlink import op_simple , op_requests
 
 def ana_song(weblink):
+
     l = mylogger(logfile,logfilelevel,get_funcname()) 
-    # html = op_simple(weblink)[0]
-    html = op_requests(url,verify=False) 
+    html = op_simple(weblink)[0]
+    # html = op_requests(url,verify=False) 
     bsObj = BeautifulSoup(html,"html.parser")
     # l.debug(bsObj)
+    # title = bsObj.find('title')
+    # print(title)
 
     song_name = bsObj.find('em',{'class':'f-ff2'})
-    song_name = modstr(song_name.text)
-    l.info(song_name)
-
-    artist_name = bsObj.find('a',{'class':'s-fc7'})
-    artist_name = modstr(artist_name.text.strip())
-    l.info(artist_name)
+    songname = modstr(song_name.text.strip())
+    l.info(songname)
+    aa = bsObj.findAll('p',{'class':'des s-fc4'})
+    artistname = modstr(aa[0].span.a.text)
+    albumname = modstr(aa[1].a.text)
+    l.info(artistname)
+    l.info(albumname)
 
 def ana_cd(weblink):
     l = mylogger(logfile,logfilelevel,get_funcname()) 
@@ -36,5 +40,5 @@ def ana_cd(weblink):
 
 
 if __name__ == "__main__":
-    url = 'https://music.163.com/#/song?id=1346093140'    
+    url = 'https://music.163.com/song?id=1346093140'    
     ana_song(url)

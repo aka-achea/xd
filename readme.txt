@@ -29,6 +29,7 @@ https://mp.weixin.qq.com/s/c9CNf-iHPHf0tOtel0euPA
 
 
 Change log:
+2019.3.9 add album inventory function v6.5
 2019.3.6 fix some bugs, add QQ song function v6.4
 2019.3.5 fix bug for QQ music download v6.3
 2019.1.22 optimize argparse v6.2

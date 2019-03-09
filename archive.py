@@ -1,16 +1,88 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 #coding:utf-8
-# Python3
 
 
-import os,re,shutil,argparse,configparser
+import os,re,shutil,argparse,configparser , sqlite3,sys
+from prettytable import from_db_cursor
 
 # customized module
-from sharemod import logfile,logfilelevel,inventory,topdir,archdir,evadir,musicure,coverdir
+from sharemod import logfile,logfilelevel,inventory,topdir,archdir,evadir,musicure,coverdir,db,albumlist
 from mtag import readtag
 import myfs
 from mylog import get_funcname, mylogger
 
+
+class database():  
+    def create(self):
+        conn = sqlite3.connect(db)
+        cursor = conn.cursor()
+        cursor.execute('create table music (\
+                        fullname varchar(200) primary key,\
+                        artist varchar(100),\
+                        year varchar(5),\
+                        album varchar(100) )'
+                        )
+        cursor.close()
+        conn.close()
+
+    def insert(self,alist):
+        l = mylogger(logfile,logfilelevel,get_funcname()) 
+        conn = sqlite3.connect(db)
+        cursor = conn.cursor()    
+        l.debug(alist)    
+        fullname = alist[0]
+        artist = alist[1]
+        year = alist[2]
+        album = alist[3]    
+        try:
+            cursor.execute("insert into music values (?,?,?,?)",(fullname,artist,year,album))
+        except sqlite3.IntegrityError as e:
+            l.error(e)
+            l.error('duplicate entry')
+        cursor.close()
+        conn.commit()
+        conn.close()
+
+    def query(self,q='',keyword=''):
+        l = mylogger(logfile,logfilelevel,get_funcname()) 
+        if q in ['fullname','artist','year','album']:
+            cmd = 'select * from music where '+q+' like "%'+keyword+'%" order by artist' 
+        elif keyword =='' and q =='':
+            cmd = 'select * from music'
+        else:
+            l.error('Missing keyword')
+            sys.exit()
+        conn = sqlite3.connect(db)
+        cursor = conn.cursor()  
+        l.debug(cmd)
+        cursor.execute(cmd)
+        num = len(cursor.fetchall())
+        l.debug(num)
+        if num == 0:
+            l.debug('No Entry find')
+            return False
+        cursor.execute(cmd) # need to improve
+        v = from_db_cursor(cursor)
+        v.align['album']='l'
+        cursor.close()
+        conn.close()
+        return v  
+
+
+def build_albumlist(coverdir):        
+    with open(albumlist,'w',encoding='utf-8') as f:
+        for fd in os.listdir(coverdir):
+            if os.path.isdir(os.path.join(coverdir,fd)):
+                for cover in os.listdir(os.path.join(coverdir,fd)):        
+                    f.write(cover[:-4]+'\n')
+
+def build_inventory(archdir):        
+    with open(inventory,'w') as f:
+        for pdir in os.listdir(archdir):
+            pdir = os.path.join(archdir,pdir)
+            for adir in os.listdir(pdir):
+                if adir !=  '_VA':               
+                    f.write(os.path.join(pdir,adir)+'\n')
 
 def find_art(artist,inventory):
     p_art = ''
@@ -24,20 +96,12 @@ def find_art(artist,inventory):
                 break
     return p_art
 
-def build_inventory(archdir):        
-    with open(inventory,'w') as f:
-        for pdir in os.listdir(archdir):
-            pdir = os.path.join(archdir,pdir)
-            for adir in os.listdir(pdir):
-                if adir !=  '_VA':               
-                    f.write(os.path.join(pdir,adir)+'\n')
-
 def rename_mp3(topdir): # based on ID3
     l = mylogger(logfile,logfilelevel,get_funcname()) 
     for mp3 in os.listdir(topdir):        
         p_mp3 = os.path.join(topdir,mp3)
         if p_mp3[-3:] == 'mp3':
-            # print(mp3[:-3])
+            # l.info(mp3[:-3])
             d = readtag(p_mp3)
             singer = str(d[0])
             title = str(d[1])
@@ -152,26 +216,25 @@ def main():
     group.add_argument('-r',action="store_true", help='Rename MP3')
     group.add_argument('-m',action="store_true", help='Move MP3')
     group.add_argument('-f',action="store_true", help='Find Artist')
-    group.add_argument('-c',action="store_true", help='Archive CD Cover')
-    group.add_argument('-i',action="store_true", help='Build Inventory')
+    group.add_argument('-i',action="store_true", help='Update Inventory and archive cover')
     args = parser.parse_args()
 
     if args.a :
-        print('Archive CD')
+        l.info('Archive CD')
         build_inventory(archdir)
         archive_cd(evadir,archdir)
         move_cover(evadir,coverdir)
 
     elif args.e:
-        print('Evaluate artist')
+        l.info('Evaluate artist')
         evaluate_art(evadir,musicure)
 
     elif args.r:
-        print('Rename MP3')
+        l.info('Rename MP3')
         rename_mp3(topdir)
 
     elif args.m:
-        print('Move MP3')
+        l.info('Move MP3')
         move_mp3(topdir,musicure)
 
     elif args.f:
@@ -180,11 +243,10 @@ def main():
         l.info(path)
 
     elif args.i:
-        print('Build Inventory')
-        build_inventory(archdir)
-
-    elif args.c: 
         arch_cover(coverdir)
+        build_inventory(archdir)
+        build_albumlist(coverdir)
+        l.info('Update Inventory Finish')    
 
     else:
         parser.print_help()

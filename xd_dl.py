@@ -15,7 +15,8 @@ from mtag import addtag
 from openlink import op_simple
 from xd_ana import ana_cd
 from xd_xml import get_loc_one, get_loc_cd
-from sharemod import logfilelevel,logfile, create_folder, clean_f,count_f
+from sharemod import logfilelevel,logfile,albumlist
+from sharemod import create_folder, clean_f,count_f
 from mytool import mywait
 
 def dl_one(weburl,workfolder): 
@@ -50,82 +51,87 @@ def dl_cd(web,workfolder):
     l = mylogger(logfile,logfilelevel,get_funcname()) 
     # html = op_simple(web)[0]
     aDict = ana_cd(web)
-    albumdir = create_folder(workfolder,aDict)
-    albumfulldir = os.path.join(workfolder,albumdir)
-    l.debug(albumfulldir)
-    os.chdir(albumfulldir)
-    # download cover
-    m_cover = albumdir+'.png'
-    l.debug(m_cover)    
-    if os.path.isfile(m_cover):
-        l.warning('---- Small cover download already !') 
+    if aDict == False:
+        return False
     else:
-        l.info('Download small cover')
-        myget.dl(aDict['scover'],out=m_cover)
-        # print('\n') 
-    cover = albumdir+'.jpg'
-    if os.path.isfile(cover):
-        l.warning('---- Big Cover download already !') 
-    else:
-        l.info('Download big cover')
-        myget.dl(aDict['bcover'],out=cover)
-        # print('\n') 
-
-    for i in range(aDict['Discs']):
-        CD = str(i+1)
-        tracknum = aDict[CD]
-        for t in range(tracknum):
-            if t in [30,60,90] : mywait(180)
-            t += 1
-            if t < 10: 
-                t = '0'+str(t)
-            else:
-                t = str(t)
-            songid = aDict[CD,t]
-            l.debug('Download Disc '+str(CD)+' track '+str(t)+' id '+songid)
-            SongDic = get_loc_cd(songid)
-            if SongDic == {}:
-                l.error('Disc '+str(CD)+' track '+str(t)+' not published')
-            else:
-                songname = SongDic['singer']+' - '+SongDic['song']
-                l.info(str(CD)+'.'+str(t)+'.'+songname)
-                mp3 = songname+'.mp3'
-                l.debug(mp3)
-                if os.path.isfile(mp3):
-                    l.warning('---- Track download already !') 
-                else:
-                    try:
-                        myget.dl(SongDic['location'],out=mp3) 
-                        # print('\n')   
-                    except Exception as e :
-                        l.error(e)
-                        l.error("Content incomplete -> retry")
-                        myget.dl(SongDic['location'],out=mp3) 
-                        # print('\n')
-                fname = os.path.join(albumfulldir,mp3)
-                # fname = albumfulldir+'\\'+mp3
-                m_song = SongDic['song']
-                m_singer = SongDic['singer']
-                m_album = aDict['album']
-                m_artist = aDict['artist']
-                m_year = aDict['year']
-                m_cd = str(CD)
-                m_trackid = str(t)
-                addtag(fname,m_song,m_album,m_artist,m_singer,m_cover,\
-                        m_year,m_trackid,m_cd) 
-        c = count_f(albumfulldir)
-        if c == int(tracknum) :
-            l.info('Disc '+CD+' Download complete')
-            try:
-                os.remove(m_cover)
-            except FileNotFoundError:
-                pass
+        albumdir = create_folder(workfolder,aDict)
+        albumfulldir = os.path.join(workfolder,albumdir)
+        l.debug(albumfulldir)
+        os.chdir(albumfulldir)
+        # download cover
+        m_cover = albumdir+'.png'
+        l.debug(m_cover)    
+        if os.path.isfile(m_cover):
+            l.warning('---- Small cover download already !') 
         else:
-            l.error('Some track download fail')        
+            l.info('Download small cover')
+            myget.dl(aDict['scover'],out=m_cover)
+            # print('\n') 
+        cover = albumdir+'.jpg'
+        if os.path.isfile(cover):
+            l.warning('---- Big Cover download already !') 
+        else:
+            l.info('Download big cover')
+            myget.dl(aDict['bcover'],out=cover)
+            # print('\n') 
 
-    clean_f(albumfulldir)
-    l.info('Download Complete:  '+albumdir)
+        for i in range(aDict['Discs']):
+            CD = str(i+1)
+            tracknum = aDict[CD]
+            for t in range(tracknum):
+                if t in [30,60,90] : mywait(180)
+                t += 1
+                if t < 10: 
+                    t = '0'+str(t)
+                else:
+                    t = str(t)
+                songid = aDict[CD,t]
+                l.debug('Download Disc '+str(CD)+' track '+str(t)+' id '+songid)
+                SongDic = get_loc_cd(songid)
+                if SongDic == {}:
+                    l.error('Disc '+str(CD)+' track '+str(t)+' not published')
+                else:
+                    songname = SongDic['singer']+' - '+SongDic['song']
+                    l.info(str(CD)+'.'+str(t)+'.'+songname)
+                    mp3 = songname+'.mp3'
+                    l.debug(mp3)
+                    if os.path.isfile(mp3):
+                        l.warning('---- Track download already !') 
+                    else:
+                        try:
+                            myget.dl(SongDic['location'],out=mp3) 
+                            # print('\n')   
+                        except Exception as e :
+                            l.error(e)
+                            l.error("Content incomplete -> retry")
+                            myget.dl(SongDic['location'],out=mp3) 
+                            # print('\n')
+                    fname = os.path.join(albumfulldir,mp3)
+                    # fname = albumfulldir+'\\'+mp3
+                    m_song = SongDic['song']
+                    m_singer = SongDic['singer']
+                    m_album = aDict['album']
+                    m_artist = aDict['artist']
+                    m_year = aDict['year']
+                    m_cd = str(CD)
+                    m_trackid = str(t)
+                    addtag(fname,m_song,m_album,m_artist,m_singer,m_cover,\
+                            m_year,m_trackid,m_cd) 
+            c = count_f(albumfulldir)
+            if c == int(tracknum) :
+                l.info('Disc '+CD+' Download complete')
+                try:
+                    os.remove(m_cover)
+                except FileNotFoundError:
+                    pass
+            else:
+                l.error('Some track download fail')        
 
+        clean_f(albumfulldir)
+        with open(albumlist,'r') as f: 
+            f.write(aDict['fullname']+'\n')
+        l.info('Download Complete:  '+albumdir)
+    return True
 
 
 if __name__=='__main__':

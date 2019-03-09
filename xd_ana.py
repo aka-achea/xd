@@ -9,7 +9,7 @@ from html.parser import HTMLParser
 
 # customized module
 from mylog import get_funcname,mylogger
-from sharemod import modstr,logfile,logfilelevel
+from sharemod import modstr,logfile,logfilelevel,albumlist,find_album
 
 #aDict {'album','artist','year','bcover','scover','Discs','DiskNum','(DiscNum,TrackNum)'}
 
@@ -40,27 +40,31 @@ def ana_cd(page):  # download web first, return album dictionary
     scover = 'http://'+cover[1][2:-1]
     l.debug(scover)
     bcover = scover.split('?')[0]
-    l.debug(bcover)
-    aDict = {'album':album_name,'artist':artist_name,'year':year,
-            'bcover':bcover,'scover':scover }
-    l.debug(aDict)
-
-    discs = bsObj.find_all('div',{'class':'disc'})
-    disc_n = len(discs)
-    aDict['Discs'] = disc_n
-    for d in discs:
-        DiscNum = modstr(d.h3.text[4:])
-        l.debug('DiscNum '+DiscNum)
-        Tracks = d.find_all('span',{'class':'em index'})
-        aDict[DiscNum] = len(Tracks)
-        for t in Tracks:
-            tracknum = t.text
-            l.debug(tracknum)
-            songid = t.parent.parent.next_sibling.div.div.a["href"]
-            songid = songid.split('/')[2]
-            l.debug(songid)
-            aDict[DiscNum,tracknum] = songid
-    l.debug(aDict)
+    l.debug(bcover)    
+    fullname = artist_name+' - '+year+' - '+album_name
+    if find_album(album_name,albumlist):
+        l.warning(fullname+' already downloaded')
+        return False
+    else:
+        aDict = {'album':album_name,'artist':artist_name,'year':year,'fullname':fullname,
+                'bcover':bcover,'scover':scover }
+        l.debug(aDict)
+        discs = bsObj.find_all('div',{'class':'disc'})
+        disc_n = len(discs)
+        aDict['Discs'] = disc_n
+        for d in discs:
+            DiscNum = modstr(d.h3.text[4:])
+            l.debug('DiscNum '+DiscNum)
+            Tracks = d.find_all('span',{'class':'em index'})
+            aDict[DiscNum] = len(Tracks)
+            for t in Tracks:
+                tracknum = t.text
+                l.debug(tracknum)
+                songid = t.parent.parent.next_sibling.div.div.a["href"]
+                songid = songid.split('/')[2]
+                l.debug(songid)
+                aDict[DiscNum,tracknum] = songid
+        l.debug(aDict)
     return aDict
 
 

@@ -2,7 +2,7 @@
 #coding:utf-8
 # tested in win
 
-import os, fnmatch, shutil,configparser
+import os, fnmatch, shutil,configparser,re
 
 # customized module
 from mylog import get_funcname,mylogger
@@ -21,6 +21,8 @@ evadir = config['arch']['evadir']
 coverdir = config['arch']['coverdir']
 musicure = config['arch']['musicure']
 inventory =  config['arch']['inventory']
+albumlist =  config['arch']['albumlist']
+db =  config['arch']['db']
 logfile = config['log']['logfile']
 logfilelevel = int(config['log']['logfilelevel'])
 
@@ -52,10 +54,11 @@ def modstr(text):
 
 def create_folder(workfolder,aDict):
     l = mylogger(logfile,logfilelevel,get_funcname()) 
-    album = aDict['album']
-    artist = aDict['artist']
-    year = aDict['year']
-    albumdir = artist+' - '+year+' - '+album
+    # album = aDict['album']
+    # artist = aDict['artist']
+    # year = aDict['year']
+    # albumdir = artist+' - '+year+' - '+album
+    albumdir = aDict['fullname']
     l.info('Create folder: '+albumdir)
     os.chdir(workfolder)
     albumfulldir = os.path.join(workfolder,albumdir)
@@ -94,6 +97,13 @@ def f_move(src,dst): # fs version: 20181230
     else:
         shutil.move(src,dst)
 
+def find_album(album,albumlist):
+    with open(albumlist,'r',encoding='utf-8') as f:        
+        a = f.readlines()
+        for i in a:
+            if re.search(album,i):
+                return True
+    return False    
 
 if __name__=='__main__':
     text1 = 'ル・デ'

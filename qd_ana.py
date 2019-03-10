@@ -33,7 +33,9 @@ def qd_album(weblink):
     cover = bsObj.find('img',{'id':'albumImg'})
     cover = 'http:'+cover.attrs['src']
     l.debug('Cover link: '+cover)
-    aDict = {'album':album_name,'artist':artist_name,'year':year,'cover':cover }
+
+    fullname = artist_name+' - '+year+' - '+album_name
+    aDict = {'album':album_name,'artist':artist_name,'year':year,'cover':cover,'fullname':fullname }
 
     song = bsObj.findAll('div',{'class':'songlist__number'})
     n = 0

@@ -17,7 +17,7 @@ def qd():
     parser = argparse.ArgumentParser(description = 'QQ Music download tool')
     group = parser.add_mutually_exclusive_group()
     group.add_argument('-s','--song',help='Download single song ')
-    group.add_argument('-c','--cds',help='Download CD')
+    group.add_argument('-c','--cds',help='Download CD Link')
     group.add_argument('-a','--artist',help='Download all CD of artist')
     group.add_argument('-f','--favorite',help='Download favorite list')
     group.add_argument('-t','--top',help='Download top songs')

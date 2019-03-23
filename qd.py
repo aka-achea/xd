@@ -4,7 +4,11 @@
 
 
 
-import argparse,os,time,sys, configparser
+import argparse
+import os
+import time
+import sys
+import configparser
 
 # Customized module
 from qd_dl import dl_album,dl_song
@@ -13,7 +17,7 @@ from sharemod import logfile,logfilelevel,dldir
 from mytool import mywait
 
 def qd():
-    l = mylogger(logfile,logfilelevel,get_funcname()) 
+    ml = mylogger(logfile,logfilelevel,get_funcname()) 
     parser = argparse.ArgumentParser(description = 'QQ Music download tool')
     group = parser.add_mutually_exclusive_group()
     group.add_argument('-s','--song',help='Download single song ')
@@ -24,26 +28,26 @@ def qd():
     args = parser.parse_args()
 
     if args.song:
-        l.info('Begin download single song')
+        ml.info('Begin download single song')
         link = args.song
-        l.debug(link)
+        ml.debug(link)
         dl_song(link)
 
     elif args.cds:
-        l.info('Begin download CDs')
+        ml.info('Begin download CDs')
         link = args.cds
-        l.debug(link)
+        ml.debug(link)
         dl_album(link)
        
     elif args.artist:
-        l.info('Begin download all CD of artist')
+        ml.info('Begin download all CD of artist')
         link = args.artist
-        l.info(link)
+        ml.info(link)
 
     elif args.favorite:
-        l.info('Begin download all CD of artist')
+        ml.info('Begin download all CD of artist')
         link = args.favorite
-        l.info(link)
+        ml.info(link)
 
     else:
         parser.print_help()

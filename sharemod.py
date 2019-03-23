@@ -2,7 +2,11 @@
 #coding:utf-8
 # tested in win
 
-import os, fnmatch, shutil,configparser,re
+import os
+import fnmatch
+import shutil
+import configparser
+import re
 
 # customized module
 from mylog import get_funcname,mylogger
@@ -53,20 +57,20 @@ def modstr(text):
     return text
 
 def create_folder(workfolder,aDict):
-    l = mylogger(logfile,logfilelevel,get_funcname()) 
+    ml = mylogger(logfile,logfilelevel,get_funcname()) 
     # album = aDict['album']
     # artist = aDict['artist']
     # year = aDict['year']
     # albumdir = artist+' - '+year+' - '+album
     albumdir = aDict['fullname']
-    l.info('Create folder: '+albumdir)
+    ml.info('Create folder: '+albumdir)
     os.chdir(workfolder)
     albumfulldir = os.path.join(workfolder,albumdir)
     if not os.path.exists(albumfulldir):
         os.makedirs(albumfulldir)
         os.chdir(albumfulldir)
     else:
-        l.warning('---- Album folder already exists !')
+        ml.warning('---- Album folder already exists !')
         os.chdir(albumfulldir)
     return albumdir
 
@@ -78,21 +82,22 @@ def clean_f(path):
 def count_f(path):
     c = 0
     for f in os.listdir(path):        
-        if fnmatch.fnmatch(f,'*.mp3'): c += 1
+        if fnmatch.fnmatch(f,'*.mp3'): 
+            c += 1
     return c
                 
 def f_move(src,dst): # fs version: 20181230
-    l = mylogger(logfile,logfilelevel,get_funcname()) 
+    ml = mylogger(logfile,logfilelevel,get_funcname()) 
     if os.path.exists(dst):
         print(dst)
         print('DST: '+str(os.path.getsize(dst)))
         print('SRC: '+str(os.path.getsize(src)))
         if os.path.getsize(dst) < os.path.getsize(src):
-            l.warning('Replace small one')
+            ml.warning('Replace small one')
             os.remove(dst)
             shutil.move(src,dst)
         else:
-            l.warning("Already have big one")
+            ml.warning("Already have big one")
             os.remove(src)
     else:
         shutil.move(src,dst)

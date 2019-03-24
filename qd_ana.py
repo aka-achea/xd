@@ -9,14 +9,12 @@ import re
 
 # customized module
 from mylog import get_funcname,mylogger
-from sharemod import modstr,logfile,logfilelevel
+from sharemod import modstr,logfile
 from openlink import op_simple
 
-logfilelevel = 10 # Debug
-# logfile = 'E:\\app.log'
 
-def qd_album(weblink): 
-    ml = mylogger(logfile,logfilelevel,get_funcname()) 
+def ana_album(weblink): 
+    ml = mylogger(logfile,get_funcname()) 
     html = op_simple(weblink)[0]
     bsObj = BeautifulSoup(html,"html.parser") #;print(bsObj)
     album_name = bsObj.find('h1',{'class':'data__name_txt'})
@@ -39,6 +37,7 @@ def qd_album(weblink):
 
     song = bsObj.findAll('div',{'class':'songlist__number'})
     n = 0
+    songtmp = [] # name duplicate check
     for i in song:
         n += 1
         tracknumber = i.text
@@ -47,24 +46,25 @@ def qd_album(weblink):
         si = tmp.find('span',{'class':'songlist__songname_txt'}).a
         songmid = si.attrs['href'].split('/')[-1][:-5]
         songname = si.text
-        singer = tmp.parent.findAll('a',{'class':"singer_name"})
-        if len(singer) > 1:
-            s = reduce(lambda a,b: ",".join(singer[a],singer[b]), range(0,len(singer)) )
-
-            # s = singer[0].text
-            # for a in range(1,len(singer)):
-            #      singer[a].text.
-
-        # singer = singer.attrs['title']
-        ml.info(singer)
-        si = [songmid, songname]
+        if songname in songtmp:
+            songname = songname+'_'+tracknumber
+        songtmp.append(songname)    
+        ml.debug(songname)
+        singers = tmp.parent.findAll('a',{'class':"singer_name"})
+        if len(singers) > 1:
+            s = list(map(lambda x: x.text, singers ))
+            singer = ','.join(s) 
+        else:
+            singer = singers[0].text
+        ml.debug(singer)
+        si = [songmid, songname,singer]
         aDict[int(tracknumber)] = si
     aDict['TrackNum'] = n
     ml.debug(aDict)
     return aDict  # Album dictionary
 
-def qd_song(weblink): # return song dictionary
-    ml = mylogger(logfile,logfilelevel,get_funcname()) 
+def ana_song(weblink): # return song dictionary
+    ml = mylogger(logfile,get_funcname()) 
     songmid = weblink.split('/')[-1]
     songmid = songmid.split('.')[0]
     ml.debug(songmid)
@@ -89,8 +89,14 @@ def qd_song(weblink): # return song dictionary
 
 
 if __name__=='__main__':
+    import os
+    if os.path.exists(logfile):
+        os.remove(logfile)
+    # test ana_album
     page = 'file:///E://1.html'
-    qd_album(page)
+    # page = 'https://y.qq.com/n/yqq/album/004PDvDb4ZxKrR.html'
+    ana_album(page)
 
+    # test ana_song
     # weblink = 'https://y.qq.com/n/yqq/song/003lVR2n4O9XtI.html'
-    # print(qd_song(weblink))
+    # print(ana_song(weblink))

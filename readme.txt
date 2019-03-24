@@ -22,6 +22,7 @@ https://www.jianshu.com/p/b26c0c9c6149
 https://www.cnblogs.com/daxiangxm/p/qq_music_api.html
 
 Xiami Music:
+https://kanoha.org/2011/08/30/xiami-absolute-address/
 
 NetEasy Music:
 https://mp.weixin.qq.com/s/c9CNf-iHPHf0tOtel0euPA
@@ -29,6 +30,7 @@ https://mp.weixin.qq.com/s/c9CNf-iHPHf0tOtel0euPA
 
 
 Change log:
+2019.3.24 fix QQ duplicate name issue v6.7
 2019.3.23 apply PEP8 v6.6
 2019.3.9 add album inventory function v6.5
 2019.3.6 fix some bugs, add QQ song function v6.4

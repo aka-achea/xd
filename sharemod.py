@@ -28,12 +28,12 @@ inventory =  config['arch']['inventory']
 albumlist =  config['arch']['albumlist']
 db =  config['arch']['db']
 logfile = config['log']['logfile']
-logfilelevel = int(config['log']['logfilelevel'])
+# logfilelevel = int(config['log']['logfilelevel'])
 
 
 def modstr(text):
     # base on version 20181127
-    l = mylogger(logfile,logfilelevel,get_funcname()) 
+    l = mylogger(logfile,get_funcname()) 
     #file_name = re.sub(r'\s*:\s*', u' - ', file_name)    # for FAT file system
     text = str(text)    
     before = text
@@ -57,7 +57,7 @@ def modstr(text):
     return text
 
 def create_folder(workfolder,aDict):
-    ml = mylogger(logfile,logfilelevel,get_funcname()) 
+    ml = mylogger(logfile,get_funcname()) 
     # album = aDict['album']
     # artist = aDict['artist']
     # year = aDict['year']
@@ -87,7 +87,7 @@ def count_f(path):
     return c
                 
 def f_move(src,dst): # fs version: 20181230
-    ml = mylogger(logfile,logfilelevel,get_funcname()) 
+    ml = mylogger(logfile,get_funcname()) 
     if os.path.exists(dst):
         print(dst)
         print('DST: '+str(os.path.getsize(dst)))

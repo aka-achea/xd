@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 #coding:utf-8
-
+# tested in win
 
 import os
 import re
@@ -12,8 +12,7 @@ import sys
 from prettytable import from_db_cursor
 
 # customized module
-from sharemod import logfile,logfilelevel,\
-    inventory,topdir,archdir,evadir,musicure,coverdir,db,albumlist
+from sharemod import logfile,inventory,topdir,archdir,evadir,musicure,coverdir,db,albumlist
 from mtag import readtag
 import myfs
 from mylog import get_funcname, mylogger
@@ -33,7 +32,7 @@ class database():
         conn.close()
 
     def insert(self,alist):
-        ml = mylogger(logfile,logfilelevel,get_funcname()) 
+        ml = mylogger(logfile,get_funcname()) 
         conn = sqlite3.connect(db)
         cursor = conn.cursor()    
         ml.debug(alist)    
@@ -51,7 +50,7 @@ class database():
         conn.close()
 
     def query(self,q='',keyword=''):
-        ml = mylogger(logfile,logfilelevel,get_funcname()) 
+        ml = mylogger(logfile,get_funcname()) 
         if q in ['fullname','artist','year','album']:
             cmd = 'select * from music where '+q+' like "%'+keyword+'%" order by artist' 
         elif keyword =='' and q =='':
@@ -85,8 +84,8 @@ def build_albumlist(coverdir):
 
 def build_inventory(archdir):        
     with open(inventory,'w',encoding='utf-8') as f:
-        for pdir in os.listdir(archdir):
-            pdir = os.path.join(archdir,pdir)
+        for p in os.listdir(archdir):
+            pdir = os.path.join(archdir,p)
             for adir in os.listdir(pdir):
                 if adir !=  '_VA':               
                     f.write(os.path.join(pdir,adir)+'\n')
@@ -95,7 +94,7 @@ def find_art(artist,inventory):
     p_art = ''
     if artist[-1] == '.':  # windows folder name cannot end with .
         artist = artist[:-2] 
-    with open(inventory,'r') as f:        
+    with open(inventory,'r',encoding='utf-8') as f:        
         a = f.readlines()
         for i in a:
             if artist == i.strip().split('\\')[-1]:
@@ -103,10 +102,10 @@ def find_art(artist,inventory):
                 break
     return p_art
 
-def rename_mp3(topdir): # based on ID3
-    ml = mylogger(logfile,logfilelevel,get_funcname()) 
-    for mp3 in os.listdir(topdir):        
-        p_mp3 = os.path.join(topdir,mp3)
+def rename_mp3(folder=topdir): # based on ID3
+    ml = mylogger(logfile,get_funcname()) 
+    for mp3 in os.listdir(folder):        
+        p_mp3 = os.path.join(folder,mp3)
         if p_mp3[-3:] == 'mp3':
             # l.info(mp3[:-3])
             d = readtag(p_mp3)
@@ -116,16 +115,16 @@ def rename_mp3(topdir): # based on ID3
             if mp3 != songname:
                 ml.info(f'Change {mp3} ---> {songname}')
                 src = p_mp3
-                dst = os.path.join(topdir,songname)
+                dst = os.path.join(folder,songname)
                 ml.debug(src)
                 ml.debug(dst)
                 os.rename(src,dst)
 
 def archive_cd(evadir,archdir):
-    ml = mylogger(logfile,logfilelevel,get_funcname())     
+    ml = mylogger(logfile,get_funcname())     
     for dirname in os.listdir(evadir):  
         al_src = os.path.join(evadir, dirname)             
-        if os.path.isdir(al_src) == True:
+        if os.path.isdir(al_src):
             ml.debug(al_src)
             m = re.split('\s\-\s\d{4}\s\-\s',str(dirname))
             if len(m) == 2: #find album
@@ -156,7 +155,7 @@ def archive_cd(evadir,archdir):
                     ml.info("Archive complete") 
 
 def move_mp3(topdir,musicure):
-    ml = mylogger(logfile,logfilelevel,get_funcname())    
+    ml = mylogger(logfile,get_funcname())    
     for mp3 in os.listdir(topdir):
         if mp3[-3:] == 'mp3':
             ml.info('Move --> '+mp3)
@@ -167,19 +166,18 @@ def move_mp3(topdir,musicure):
             shutil.move(src,dst)
 
 def move_cover(evadir,coverdir):
-    ml = mylogger(logfile,logfilelevel,get_funcname())        
+    ml = mylogger(logfile,get_funcname())        
     for jpg in os.listdir(evadir):
         if jpg[-3:] == 'jpg':
             ml.info('Move --> '+jpg)
             src = os.path.join(evadir,jpg)
             dst = os.path.join(coverdir,jpg)
-            ml.info(src)
-            ml.info(dst)
+            ml.info(f'{src} --> {dst}')
             shutil.move(src,dst)
 
 #move a-z, manuel check others
 def arch_cover(coverdir):
-    ml = mylogger(logfile,logfilelevel,get_funcname())
+    ml = mylogger(logfile,get_funcname())
     for c in os.listdir(coverdir):
         src = os.path.join(coverdir,c)
         if os.path.isdir(src) == False:
@@ -192,7 +190,7 @@ def arch_cover(coverdir):
                 ml.info(result)          
 
 def evaluate_art(evadir,musicure):
-    ml = mylogger(logfile,logfilelevel,get_funcname())
+    ml = mylogger(logfile,get_funcname())
     for art in os.listdir(evadir):
         if os.path.isdir(os.path.join(evadir,art)) == True:
             ml.info('='*20)
@@ -211,12 +209,11 @@ def evaluate_art(evadir,musicure):
                 rate = str(n/an)[:4]                
                 if float(rate) < 0.5:
                     ml.warning(f'Rate {rate} from {str(an)} Album --> One more CD to evaluate ')
-
                 else:           
                     ml.info(f'Rate {rate} from {str(an)} Album --> Total {str(n)} Tracks') 
 
 def main():
-    ml = mylogger(logfile,logfilelevel,get_funcname()) 
+    ml = mylogger(logfile,get_funcname()) 
     parser = argparse.ArgumentParser(description = 'Archive music tool')
     group = parser.add_mutually_exclusive_group()
     group.add_argument('-a',action="store_true", help='Archive CD')
@@ -233,13 +230,19 @@ def main():
         archive_cd(evadir,archdir)
         move_cover(evadir,coverdir)
 
+    elif args.i:
+        arch_cover(coverdir)
+        build_inventory(archdir)
+        build_albumlist(coverdir)
+        ml.info('Update Inventory Finish')  
+
     elif args.e:
         ml.info('Evaluate artist')
         evaluate_art(evadir,musicure)
 
     elif args.r:
         ml.info('Rename MP3')
-        rename_mp3(topdir)
+        rename_mp3()
 
     elif args.m:
         ml.info('Move MP3')
@@ -250,18 +253,13 @@ def main():
         path = find_art(artist,inventory)
         ml.info(path)
 
-    elif args.i:
-        arch_cover(coverdir)
-        build_inventory(archdir)
-        build_albumlist(coverdir)
-        ml.info('Update Inventory Finish')    
-
     else:
         parser.print_help()
 
 
-
 if __name__ == "__main__":
+    if os.path.exists(logfile):
+        os.remove(logfile)
     try:
         main()
     except KeyboardInterrupt:

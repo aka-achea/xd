@@ -15,12 +15,12 @@ from mtag import addtag
 from openlink import op_simple
 from xd_ana import ana_cd
 from xd_xml import get_loc_one, get_loc_cd
-from sharemod import logfilelevel,logfile,albumlist
+from sharemod import logfile,albumlist
 from sharemod import create_folder, clean_f,count_f
 from mytool import mywait
 
 def dl_one(weburl,workfolder): 
-    l = mylogger(logfile,logfilelevel,get_funcname()) 
+    l = mylogger(logfile,get_funcname()) 
     songid = str(weburl.split('/')[-1])
     songid = songid.split('?')[0]
     l.debug(songid)
@@ -48,7 +48,7 @@ def dl_one(weburl,workfolder):
     
 
 def dl_cd(web,workfolder):
-    l = mylogger(logfile,logfilelevel,get_funcname()) 
+    l = mylogger(logfile,get_funcname()) 
     # html = op_simple(web)[0]
     aDict = ana_cd(web)
     if aDict == False:

@@ -5,7 +5,7 @@
 # import sys,os
 # from mylog import mylogger as ml
 
-# l = ml(logfile,logfilelevel,__name__) 
+# l = ml(logfile,__name__) 
 
 
 
@@ -14,11 +14,11 @@ import argparse,os,time,sys, configparser
 # Customized module
 from xd_dl import dl_cd,dl_one
 from mylog import get_funcname,mylogger
-from sharemod import logfile,logfilelevel,dldir
+from sharemod import logfile,dldir
 from mytool import mywait
 
 def xd():
-    l = mylogger(logfile,logfilelevel,get_funcname()) 
+    l = mylogger(logfile,get_funcname()) 
     parser = argparse.ArgumentParser(description = 'Xiami download tool')
     group = parser.add_mutually_exclusive_group()
     group.add_argument('-s','--song',help='Download single song ')

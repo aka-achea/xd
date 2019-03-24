@@ -8,13 +8,13 @@ from mutagen.id3 import ID3,TIT2,TALB,TPE1,TPE2,COMM,USLT,TCOM,TCON,TPOS,TDRC,TR
 
 # customized module
 from mylog import get_funcname,mylogger
-from sharemod import logfile,logfilelevel
+from sharemod import logfile
 
  
 
 def addtag(fname,m_song,m_album,m_artist,m_singer,\
            m_cover,m_year='',m_trackid='',m_cd=''):
-    l = mylogger(logfile,logfilelevel,get_funcname()) 
+    l = mylogger(logfile,get_funcname()) 
     try:
         tags = ID3(fname)
     except ID3NoHeaderError:
@@ -36,7 +36,7 @@ def addtag(fname,m_song,m_album,m_artist,m_singer,\
     tags.save(fname,v2_version=3)
 
 def addcover(fname,m_cover):
-    l = mylogger(logfile,logfilelevel,get_funcname()) 
+    l = mylogger(logfile,get_funcname()) 
     try:
         tags = ID3(fname)
     except ID3NoHeaderError:
@@ -48,7 +48,7 @@ def addcover(fname,m_cover):
     tags.save(fname,v2_version=3)
 
 def readtag(fname):
-    l = mylogger(logfile,logfilelevel,get_funcname()) 
+    l = mylogger(logfile,get_funcname()) 
     tags = ID3(fname)
     title = tags["TIT2"]
     singer = tags['TPE1']

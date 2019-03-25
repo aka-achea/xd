@@ -16,8 +16,8 @@ from openlink import op_simple , op_requests
 
 def ana_song(weblink):
     ml = mylogger(logfile,get_funcname()) 
-    # html = op_simple(weblink)[0]
-    html = op_requests(url,verify=False).content 
+    html = op_simple(weblink)[0]
+    # html = op_requests(url,verify=False).content 
     bsObj = BeautifulSoup(html,"html.parser")
     # ml.debug(bsObj)
     # title = bsObj.find('title')
@@ -66,8 +66,8 @@ def ana_cd(weblink):
 
 
 if __name__ == "__main__":
-    # url = 'https://music.163.com/#/song?id=1330348068'    
-    # sDict = ana_song(url)
+    url = 'https://music.163.com/#/song?id=1330348068'    
+    sDict = ana_song(url)
     
-    url = 'file:///E://1.html'
-    ana_cd(url)
+    # url = 'file:///E://1.html'
+    # ana_cd(url)

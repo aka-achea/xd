@@ -69,5 +69,5 @@ if __name__ == "__main__":
     music_url = get_dlurl(id)
     print(music_url)
 
-    # import myget
-    # myget.dl(music_url)
+    import myget
+    myget.dl(music_url)

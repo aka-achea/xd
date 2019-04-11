@@ -99,6 +99,9 @@ def find_art(artist,inventory):
         for i in a:
             if artist == i.strip().split('\\')[-1]:
                 p_art = i.strip()
+                al = os.listdir(p_art)
+                for n in al: print(n)
+
                 break
     return p_art
 

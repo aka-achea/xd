@@ -8,16 +8,14 @@ from bs4 import BeautifulSoup
 from urllib.request import unquote
 
 # customized module
-from sharemod import logfile,logfilelevel,modstr
+from sharemod import logfile,modstr
 from openlink import op_simple
 from mylog import get_funcname,mylogger
 
 
 def get_loc_one(song_id):
-    l = mylogger(logfile,logfilelevel,get_funcname()) 
-    url = 'http://www.xiami.com/widget/xml-single/sid/%s'
-    url = url.replace('%s', song_id)
-    # url = 'file:///E://xml.xml'
+    l = mylogger(logfile,get_funcname()) 
+    url = f'http://www.xiami.com/widget/xml-single/sid/{song_id}'
     page = op_simple(url)
     l.debug(page[1])
     bsObj = BeautifulSoup(page[0],"html.parser") #;print(bsObj)
@@ -43,7 +41,7 @@ def get_loc_one(song_id):
     return SongDic
 
 def get_loc_cd(song_id):
-    l = mylogger(logfile,logfilelevel,get_funcname()) 
+    l = mylogger(logfile,get_funcname()) 
     url = 'http://www.xiami.com/widget/xml-single/sid/%s' % song_id
     # url = url.replace('%s', song_id)
     # url = 'file:///E://xml.xml'
@@ -88,11 +86,11 @@ def decry(code): # decrypt download url
 
 if __name__=='__main__':
      
-    song_id = str(1795287087)
-    # d = get_loc_one(song_id)   
-    # print(d) 
-    d = get_loc_cd(song_id)
-    print(d)
+    song_id = str(1810825684)
+    d = get_loc_one(song_id)   
+    print(d) 
+    # d = get_loc_cd(song_id)
+    # print(d)
 
     # Test decry()
     # code = '7h%1m28%E15_753hDE556d3a8t22iF522%417E%_12EE4cfa1tF8.6%F6264723k5%%-cdf8cp%.n9527F1997Fe255%955cf%2xe%E1615%7.ay4EE5259a3Fit26%77458mu%%4-E2215Ama%F95697E%pt35%%-d7b9'

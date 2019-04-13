@@ -91,19 +91,22 @@ def build_inventory(archdir):
                     f.write(os.path.join(pdir,adir)+'\n')
 
 def find_art(artist,inventory):
-    p_art = ''
+    # p_art = ''
     if artist[-1] == '.':  # windows folder name cannot end with .
         artist = artist[:-2] 
     with open(inventory,'r',encoding='utf-8') as f:        
-        a = f.readlines()
-        for i in a:
+        for i in f.readlines():
             if artist == i.strip().split('\\')[-1]:
                 p_art = i.strip()
-                al = os.listdir(p_art)
-                for n in al: print(n)
-
+                # for n in os.listdir(p_art): print(n)
                 break
     return p_art
+
+def find_album(album):
+    with open(albumlist,'r',encoding='utf-8') as f:        
+        for i in f.readlines():
+            if album == i.strip():
+                return True
 
 def rename_mp3(folder=topdir): # based on ID3
     ml = mylogger(logfile,get_funcname()) 

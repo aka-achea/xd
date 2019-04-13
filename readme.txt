@@ -30,6 +30,7 @@ https://mp.weixin.qq.com/s/c9CNf-iHPHf0tOtel0euPA
 
 
 Change log:
+2019.4.13 rebuild xiami download with old json api v6.8
 2019.3.24 fix QQ duplicate name issue v6.7
 2019.3.23 apply PEP8 v6.6
 2019.3.9 add album inventory function v6.5

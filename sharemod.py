@@ -7,6 +7,7 @@ import fnmatch
 import shutil
 import configparser
 import re
+from PIL import Image
 
 # customized module
 from mylog import get_funcname,mylogger
@@ -56,23 +57,22 @@ def modstr(text):
         l.debug("After modify: "+after)
     return text
 
-def create_folder(workfolder,aDict):
+def imgresize(pic):
+    img = Image.open(pic)   
+    return img.resize((70,70),Image.LANCZOS)
+
+def create_folder(workfolder,albumdir):
     ml = mylogger(logfile,get_funcname()) 
-    # album = aDict['album']
-    # artist = aDict['artist']
-    # year = aDict['year']
-    # albumdir = artist+' - '+year+' - '+album
-    albumdir = aDict['fullname']
+    # albumdir = aDict['fullname']
     ml.info('Create folder: '+albumdir)
     os.chdir(workfolder)
     albumfulldir = os.path.join(workfolder,albumdir)
     if not os.path.exists(albumfulldir):
         os.makedirs(albumfulldir)
-        os.chdir(albumfulldir)
     else:
         ml.warning('---- Album folder already exists !')
-        os.chdir(albumfulldir)
-    return albumdir
+    os.chdir(albumfulldir)
+    return albumfulldir
 
 def clean_f(path):
     for f in os.listdir(path):

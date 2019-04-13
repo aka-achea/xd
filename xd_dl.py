@@ -54,7 +54,7 @@ def dl_cd(web,workfolder):
     if aDict == False:
         return False
     else:
-        albumdir = create_folder(workfolder,aDict)
+        albumdir = create_folder(workfolder,aDict['fullname'])
         albumfulldir = os.path.join(workfolder,albumdir)
         l.debug(albumfulldir)
         os.chdir(albumfulldir)

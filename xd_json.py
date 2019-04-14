@@ -5,13 +5,25 @@
 
 from urllib.request import unquote
 import json,os,re,shutil,random
+import win32con
+import win32clipboard as wincld
 
+# customized module
 from sharemod import create_folder,logfile,clean_f,modstr,imgresize
 import myget
 from mtag import addtag
 from mylog import get_funcname,mylogger
 from archive import find_album
 from mytool import mywait
+
+
+def get_text():
+    wincld.OpenClipboard()
+    text_result = wincld.GetClipboardData(win32con.CF_UNICODETEXT)
+    # wincld.EmptyClipboard()
+    wincld.CloseClipboard()
+    return text_result
+
 
 def decry(code): # decrypt download url
     url = code[1:]
@@ -32,17 +44,15 @@ def decry(code): # decrypt download url
     return unquote(url).replace('^', '0')
 
 
-def f2json(jf):     
-    with open(jf,'r',encoding='utf-8') as f:
-        data = re.split('jsonp\d*',f.readline())
-        j = json.loads(data[1][1:-1])
-    return j
+def f2json(text):     
+    data = re.split('jsonp\d*',text)
+    return json.loads(data[1][1:-1])
 
 
 def main(jf):
     ml = mylogger(logfile,get_funcname()) 
 
-    j = f2json(jf)
+    j = f2json(get_text())
     n = 0
 
     artist = j['data']['trackList'][n]['artist']

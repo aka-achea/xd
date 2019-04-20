@@ -19,8 +19,11 @@ from mytool import mywait
 
 def get_text():
     wincld.OpenClipboard()
-    text_result = wincld.GetClipboardData(win32con.CF_UNICODETEXT)
-    # wincld.EmptyClipboard()
+    try:
+        text_result = wincld.GetClipboardData(win32con.CF_UNICODETEXT)
+    except TypeError:
+        return None
+    wincld.EmptyClipboard()
     wincld.CloseClipboard()
     return text_result
 
@@ -54,9 +57,11 @@ def main(jf):
 
     j = f2json(get_text())
     n = 0
-
+  
     artist = j['data']['trackList'][n]['artist']
     album_name = modstr(j['data']['trackList'][n]['album_name'])
+
+
     year = input('Publish year>>')
     if year == '': year = '2019'
     albumdir = f'{artist} - {year} - {album_name}'
@@ -69,7 +74,6 @@ def main(jf):
         album_pic = 'http:'+j['data']['trackList'][n]['album_pic']
         cover = os.path.join(albumfulldir,albumdir+'.jpg')
         m_cover = os.path.join(albumfulldir,albumdir+'.png')
-
 
         if os.path.isfile(cover):
             ml.warning('---- Big Cover download already !') 

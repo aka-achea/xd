@@ -13,7 +13,7 @@ from sharemod import create_folder,logfile,clean_f,modstr,imgresize
 import myget
 from mtag import addtag
 from mylog import get_funcname,mylogger
-from archive import find_album
+from mp3archive import find_album
 from mytool import mywait
 
 

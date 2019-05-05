@@ -47,12 +47,18 @@ def decry(code): # decrypt download url
     return unquote(url).replace('^', '0')
 
 
-def f2json(text):     
-    data = re.split('jsonp\d*',text)
-    return json.loads(data[1][1:-1])
+def f2json(text):  
+    ml = mylogger(logfile,get_funcname()) 
+    try:   
+        data = re.split('jsonp\d*',text)
+        j = json.loads(data[1][1:-1])
+    except TypeError as e:
+        ml.error(e)
+        
+    return j
 
 
-def main(jf):
+def ana_json(jf,force=False):
     ml = mylogger(logfile,get_funcname()) 
 
     j = f2json(get_text())
@@ -66,7 +72,7 @@ def main(jf):
     if year == '': year = '2019'
     albumdir = f'{artist} - {year} - {album_name}'
 
-    if find_album(albumdir):
+    if find_album(albumdir) and force == False:
         ml.warning(f'Album alread archived')
     else:
         albumfulldir = create_folder(workfolder,albumdir)
@@ -125,4 +131,15 @@ def main(jf):
 if __name__ == "__main__":
     workfolder = r'L:\Music\_DL'
     jf = r'L:\Music\r.json'
-    main(jf)
+
+    import sys
+    if sys.argv[1] == 'f':
+        force = True    
+           
+
+    if os.path.exists(logfile):
+        os.remove(logfile)
+    try:
+        ana_json(jf,force)
+    except KeyboardInterrupt:
+        print('ctrl + c')

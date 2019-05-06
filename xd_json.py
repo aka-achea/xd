@@ -133,9 +133,12 @@ if __name__ == "__main__":
     jf = r'L:\Music\r.json'
 
     import sys
-    if sys.argv[1] == 'f':
-        force = True    
-           
+
+    try:
+        if sys.argv[1] == 'f':
+            force = True    
+    except IndexError:
+        force = False
 
     if os.path.exists(logfile):
         os.remove(logfile)

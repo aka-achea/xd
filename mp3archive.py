@@ -82,6 +82,7 @@ def build_albumlist(coverdir):
                 for cover in os.listdir(os.path.join(coverdir,fd)):        
                     f.write(cover[:-4]+'\n')
 
+
 def build_inventory(archdir):        
     with open(inventory,'w',encoding='utf-8') as f:
         for p in os.listdir(archdir):
@@ -90,24 +91,37 @@ def build_inventory(archdir):
                 if adir !=  '_VA':               
                     f.write(os.path.join(pdir,adir)+'\n')
 
-def find_art(artist,inventory):
-    # p_art = ''
+
+def find_art(artist,inventory,match=True):
+    p_art = []
     if artist[-1] == '.':  # windows folder name cannot end with .
         artist = artist[:-2] 
-    with open(inventory,'r',encoding='utf-8') as f:        
-        for i in f.readlines():
-            if artist == i.strip().split('\\')[-1]:
-                p_art = i.strip()
-                # for n in os.listdir(p_art): print(n)
-                return p_art
-    return None
+    with open(inventory,'r',encoding='utf-8') as f:  
+        if match == True:
+            for i in f.readlines():
+                if artist.upper() == i.strip().split('\\')[-1].upper():
+                    p_art = i.strip()
+                    # for n in os.listdir(p_art): print(n)
+                    return p_art
+        else:
+            for i in f.readlines():
+                if artist.upper() in i.strip().split('\\')[-1].upper():
+                    p_art.append(i.strip())
+            return p_art
+    return 'No artist'
     
 
-def find_album(album):
-    with open(albumlist,'r',encoding='utf-8') as f:        
-        for i in f.readlines():
-            if album == i.strip():
-                return True
+def find_album(album,match=True):
+    with open(albumlist,'r',encoding='utf-8') as f:   
+        if match ==  True:     
+            for i in f.readlines():
+                if album == i.strip():
+                    return True
+        else:
+            for i in f.readlines():
+                if album.upper() in i.strip().upper():
+                    return i.strip()
+    return False           
 
 def rename_mp3(folder=topdir): # based on ID3
     ml = mylogger(logfile,get_funcname()) 
@@ -127,6 +141,7 @@ def rename_mp3(folder=topdir): # based on ID3
                 ml.debug(dst)
                 os.rename(src,dst)
 
+
 def archive_cd(evadir,archdir):
     ml = mylogger(logfile,get_funcname())     
     for dirname in os.listdir(evadir):  
@@ -144,7 +159,7 @@ def archive_cd(evadir,archdir):
                 ml.info('Searching Artist: '+m[0])
                 p_art = find_art(m[0],inventory)
                 ml.debug(p_art)
-                if os.path.isdir(p_art) == True :
+                if os.path.isdir(p_art):
                     # l.info(p_art)
                     ml.info('Archive '+dirname)
                     al_dst = p_art
@@ -161,6 +176,7 @@ def archive_cd(evadir,archdir):
                 if os.path.isdir(os.path.join(al_dst,m[0])) == True: 
                     ml.info("Archive complete") 
 
+
 def move_mp3(topdir,musicure):
     ml = mylogger(logfile,get_funcname())    
     for mp3 in os.listdir(topdir):
@@ -172,6 +188,7 @@ def move_mp3(topdir,musicure):
             ml.debug(dst)
             shutil.move(src,dst)
 
+
 def move_cover(evadir,coverdir):
     ml = mylogger(logfile,get_funcname())        
     for jpg in os.listdir(evadir):
@@ -181,6 +198,7 @@ def move_cover(evadir,coverdir):
             dst = os.path.join(coverdir,jpg)
             ml.info(f'{src} --> {dst}')
             shutil.move(src,dst)
+
 
 #move a-z, manuel check others
 def arch_cover(coverdir):
@@ -195,6 +213,7 @@ def arch_cover(coverdir):
                 ml.debug(dst)
                 result = myfs.f_move(src,dst)
                 ml.info(result)          
+
 
 def evaluate_art(evadir,musicure):
     ml = mylogger(logfile,get_funcname())
@@ -219,6 +238,7 @@ def evaluate_art(evadir,musicure):
                 else:           
                     ml.info(f'Rate {rate} from {str(an)} Album --> Total {str(n)} Tracks') 
 
+
 def main():
     ml = mylogger(logfile,get_funcname()) 
     parser = argparse.ArgumentParser(description = 'Archive music tool')
@@ -228,7 +248,7 @@ def main():
     group.add_argument('-r',action="store_true", help='Rename MP3')
     group.add_argument('-m',action="store_true", help='Move MP3')
     group.add_argument('-f',action="store_true", help='Find Artist')
-    group.add_argument('-i',action="store_true", help='Update Inventory and archive cover')
+    group.add_argument('-i',action="store_true", help='Update inventory and archive cover')
     args = parser.parse_args()
 
     if args.a :
@@ -236,6 +256,8 @@ def main():
         build_inventory(archdir)
         archive_cd(evadir,archdir)
         move_cover(evadir,coverdir)
+        build_albumlist(coverdir)
+
 
     elif args.i:
         arch_cover(coverdir)
@@ -257,8 +279,9 @@ def main():
 
     elif args.f:
         artist = input("Find Artist:  ")
-        path = find_art(artist,inventory)
-        ml.info(path)
+        path = find_art(artist,inventory,match=False)
+        for p in path:
+            ml.info(p)
 
     else:
         parser.print_help()

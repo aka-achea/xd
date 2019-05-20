@@ -16,6 +16,7 @@ from qd_dl import qdl_album,qdl_song
 from mylog import get_funcname,mylogger
 from sharemod import logfile,dldir
 from mytool import mywait
+from xm_json import xm_json
 
 def main():
     ml = mylogger(logfile,get_funcname()) 
@@ -26,6 +27,7 @@ def main():
     group.add_argument('-a','--artist',help='Download all CD of artist')
     group.add_argument('-f','--favorite',help='Download favorite list')
     group.add_argument('-t','--top',help='Download top songs')
+    group.add_argument('-x',action="store_true",help='Download xiami songs')
     args = parser.parse_args()
 
     if args.song:
@@ -60,6 +62,10 @@ def main():
         ml.info('Begin download all CD of artist')
         link = args.favorite
         ml.info(link)
+
+    elif args.x:
+        ml.info('Begin download from xiami')
+        xm_json(dldir)
 
     else:
         parser.print_help()

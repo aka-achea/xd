@@ -30,9 +30,10 @@ def addtag(fname,m_song,m_album,m_artist,m_singer,\
     tags["TDRC"] = TDRC(encoding=3, text=m_year)
     tags["TRCK"] = TRCK(encoding=3, text=str(m_trackid))
     tags["TPOS"] = TPOS(encoding=3, text=m_cd)
-    with open(m_cover,'rb') as c:
-            cover = c.read()  #prepare for tag
-    tags["APIC"] = APIC(encoding=3, mime=u'image/png',type=3,desc=u'Cover',data=cover)
+    if m_cover != '':
+        with open(m_cover,'rb') as c:
+                cover = c.read()  #prepare for tag
+        tags["APIC"] = APIC(encoding=3, mime=u'image/png',type=3,desc=u'Cover',data=cover)
     tags.save(fname,v2_version=3)
 
 def addcover(fname,m_cover):

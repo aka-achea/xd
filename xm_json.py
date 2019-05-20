@@ -17,6 +17,9 @@ from mp3archive import find_album
 from mytool import mywait
 
 
+#https://emumo.xiami.com/play?ids=/song/playlist/id/
+
+
 def get_text():
     wincld.OpenClipboard()
     try:
@@ -58,45 +61,48 @@ def f2json(text):
     return j
 
 
-def ana_json(jf,force=False):
+def xm_json(workfolder,force=False):
     ml = mylogger(logfile,get_funcname()) 
 
     j = f2json(get_text())
     n = 0
   
-    artist = j['data']['trackList'][n]['artist']
+    artist_name = modstr(j['data']['trackList'][n]['artist_name'])
     album_name = modstr(j['data']['trackList'][n]['album_name'])
-
+    if album_name == '':
+        album_name = 'unkown' 
 
     year = input('Publish year>>')
     if year == '': year = '2019'
-    albumdir = f'{artist} - {year} - {album_name}'
+    albumdir = f'{artist_name} - {year} - {album_name}'
 
     if find_album(albumdir) and force == False:
         ml.warning(f'Album alread archived')
     else:
         albumfulldir = create_folder(workfolder,albumdir)
+        try:
+            album_pic = 'http:'+j['data']['trackList'][n]['album_pic']        
+            cover = os.path.join(albumfulldir,albumdir+'.jpg')
+            m_cover = os.path.join(albumfulldir,albumdir+'.png')
 
-        album_pic = 'http:'+j['data']['trackList'][n]['album_pic']
-        cover = os.path.join(albumfulldir,albumdir+'.jpg')
-        m_cover = os.path.join(albumfulldir,albumdir+'.png')
+            if os.path.isfile(cover):
+                ml.warning('---- Big Cover download already !') 
+            else:
+                ml.info('Download big cover')
+                myget.dl(album_pic,out=cover)
 
-        if os.path.isfile(cover):
-            ml.warning('---- Big Cover download already !') 
-        else:
-            ml.info('Download big cover')
-            myget.dl(album_pic,out=cover)
-
-        if os.path.isfile(m_cover):
-            ml.warning('---- Small cover ready !') 
-        else:
-            shutil.copy(cover,m_cover)
-            imgresize(m_cover)
+            if os.path.isfile(m_cover):
+                ml.warning('---- Small cover ready !') 
+            else:
+                shutil.copy(cover,m_cover)
+                imgresize(m_cover)
+        except:
+            m_cover = ''
 
         while True:
             try:
                 # songId = j['data']['trackList'][n]['songId']
-                singers = j["data"]["trackList"][n]["singers"]
+                singers = modstr(j["data"]["trackList"][n]["singers"])
                 # singers = modificate(singers)
                 songName = modstr(j["data"]["trackList"][n]["songName"])
                 track = str(j["data"]["trackList"][n]["track"])
@@ -115,7 +121,7 @@ def ana_json(jf,force=False):
                         ml.error(e)
                         ml.error("Content incomplete -> retry")
                         myget.dl(dlurl,out=mp3) 
-                addtag(mp3,songName,album_name,artist,singers,m_cover,\
+                addtag(mp3,songName,album_name,artist_name,singers,m_cover,\
                         year,track,cdSerial) 
                 n += 1
                 mywait(random.randint(1,3))
@@ -130,7 +136,6 @@ def ana_json(jf,force=False):
 
 if __name__ == "__main__":
     workfolder = r'L:\Music\_DL'
-    jf = r'L:\Music\r.json'
 
     import sys
 
@@ -143,6 +148,6 @@ if __name__ == "__main__":
     if os.path.exists(logfile):
         os.remove(logfile)
     try:
-        ana_json(jf,force)
+        xm_json(workfolder,force)
     except KeyboardInterrupt:
         print('ctrl + c')

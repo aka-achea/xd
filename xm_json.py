@@ -18,7 +18,7 @@ from mytool import mywait
 
 
 #https://emumo.xiami.com/play?ids=/song/playlist/id/
-
+#emumo.xiami.com
 
 def get_text():
     wincld.OpenClipboard()
@@ -57,7 +57,7 @@ def f2json(text):
         j = json.loads(data[1][1:-1])
     except TypeError as e:
         ml.error(e)
-        
+        return None
     return j
 
 

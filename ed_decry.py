@@ -1,15 +1,19 @@
 #!/usr/bin/python3
 #coding:utf-8
+#version:20190728
 # tested in win
 
-from Crypto.Cipher import AES
-from Crypto.Util.Padding import pad
+# from Crypto.Cipher import AES
+# from Crypto.Util.Padding import pad
+
+from Cryptodome.Cipher import AES
+from Cryptodome.Util.Padding import pad
 import base64 , requests, sys
 import codecs
 
 headers = {
     'Cookie': 'appver=1.5.0.75771;',
-    'Referer': 'http://music.163.com/',
+    # 'Referer': 'http://music.163.com/',
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36'
 }
 
@@ -28,6 +32,7 @@ def RSA_en(value,text,modulus): # not in use
     return format(rs,'x').zfill(256)
 
 def get_params(first_param):
+    '''twice AES encrypt against songid'''
     iv = "0102030405060708"
     first_key = forth_param
     second_key = 16 * 'F'  # as random str
@@ -35,18 +40,26 @@ def get_params(first_param):
     h_encText = AES_encrypt(h_encText, second_key, iv)
     return h_encText
 
-def AES_encrypt(text, key, iv):
+
+def AES_encrypt(text, key, iv): 
+    '''Return encoded bytes'''
     pad = 16 - len(text) % 16
     if isinstance(text, str):
+        # print('Is string')
         text = text + pad * chr(pad)
     else:
+        # print('Not string')
         text = text.decode('utf-8') + pad * chr(pad)
     encryptor = AES.new(key.encode("utf8"), AES.MODE_CBC, iv.encode("utf8"))
     encrypt_text = encryptor.encrypt(text.encode("utf8"))
+    # print(encrypt_text)
     encrypt_text = base64.b64encode(encrypt_text)
+    # print(encrypt_text)
     return encrypt_text
 
+
 def get_json(url, params, encSecKey):
+    '''Get response of song download url'''
     data = {
         "params": params,
         "encSecKey": encSecKey

@@ -2,21 +2,39 @@
 #coding:utf-8
 # tested in win
 
+'''
+reference: 
+https://github.com/yanunon/NeteaseCloudMusic/blob/master/NeteaseCloudMusic.py
+https://github.com/darknessomi/musicbox/blob/master/NEMbox/encrypt.py
+'''
+
+
 from bs4 import BeautifulSoup
 from urllib.request import urlopen,Request,HTTPError,unquote
 from html.parser import HTMLParser
-import re
+import re,pprint,json
 # from urllib.parse import urlparse
 
 
 # customized module
 from mylog import get_funcname,mylogger
 from sharemod import modstr,logfile
-from openlink import op_simple , op_requests
+from openlink import op_simple , op_requests,ran_header
+
+header = {
+    'Cookie': 'appver=1.5.0.75771;',
+    'Referer': 'http://music.163.com/',
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36'
+}
+
+
+url = 'http://music.163.com/api/album/%d/'
+
+
 
 def ana_song(weblink):
     ml = mylogger(logfile,get_funcname()) 
-    html = op_simple(weblink)[0]
+    html = op_simple(weblink,header)[0]
     # html = op_requests(url,verify=False).content 
     bsObj = BeautifulSoup(html,"html.parser")
     # ml.debug(bsObj)
@@ -45,12 +63,14 @@ def ana_song(weblink):
 
 def ana_cd(weblink):
     ml = mylogger(logfile,get_funcname()) 
-    html = op_simple(weblink)[0]
-    bsObj = BeautifulSoup(html,"html.parser") #;print(bsObj)
+    # html = op_simple(weblink,header)[0]
+    # bsObj = BeautifulSoup(html,"html.parser") #;print(bsObj)
 
-    albumname = bsObj.findAll('h2',{'class':'f-ff2'})
-    print(albumname)
-    ml.info(albumname)
+    # with open(r'M:\GH\xd\t.txt','w',encoding='utf-8') as f:
+    #     f.writelines(html)
+    # albumname = bsObj.findAll('h2',{'class':'f-ff2'})
+    # print(albumname)
+    # ml.info(albumname)
 
     # cover = bsObj.find('div',{'class':'cover u-cover u-cover-alb'})
     # cover = cover.img.attrs['href']
@@ -63,17 +83,17 @@ def ana_cd(weblink):
     # year = bsObj.find(text='发行时间：')
     # ml.info(year)
 
-
+    url = 'http://music.163.com/api/album/780536506/'
+    j = json.load(op_simple(url,header)[0])
+    pprint.pprint(j)
 
 
 if __name__ == "__main__":
-    url = 'https://music.163.com/#/song?id=1330348068'    
-    sDict = ana_song(url)
+    # url = 'https://music.163.com/#/song?id=1330348068'    
+    # sDict = ana_song(url)
     
     # url = 'file:///E://1.html'
-<<<<<<< HEAD
-    url = 'https://music.163.com/#/album?id=75852900'
+    url = 'https://music.163.com/#/album?id=780536506'
     ana_cd(url)
-=======
-    # ana_cd(url)
->>>>>>> 09686cdaacf00af59a8eecf8f5b633f5535dbe3d
+
+   

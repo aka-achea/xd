@@ -30,6 +30,7 @@ https://mp.weixin.qq.com/s/c9CNf-iHPHf0tOtel0euPA
 
 
 Change log:
+2019.7.29 xiami songid fail to decrypt, build neteasy music download v7.0
 2019.5.5 add force download when mp3 archived v6.9 
 2019.4.13 rebuild xiami download with old json api v6.8
 2019.3.24 fix QQ duplicate name issue v6.7

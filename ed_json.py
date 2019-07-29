@@ -3,9 +3,12 @@
 import json
 import pprint
 
+
+
+
 def ana_json(data):
     '''Analyze Json get album song details'''
-    j=json.load(f)
+    j=json.load(data)
     # pprint.pprint(j)
     adict = {}
     adict['cover'] = j['album']['picUrl']
@@ -23,6 +26,12 @@ def ana_json(data):
         # print(sdict)
         adict[s['no']] = sdict
     pprint.pprint(adict)
+    return adict
+
+
+
+
+    
 
 
 if __name__ == "__main__":

@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 #coding:utf-8
+#version: 20190729
 # tested in win
 
 import os
@@ -38,6 +39,7 @@ def modstr(text):
     #file_name = re.sub(r'\s*:\s*', u' - ', file_name)    # for FAT file system
     text = str(text)    
     before = text
+    
     text = text.replace('?', u'？')      # for FAT file system
     text = text.replace('/', u'／')
     text = text.replace('|', '')

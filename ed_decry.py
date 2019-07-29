@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 #coding:utf-8
-#version:20190728
+#version:20190729
 # tested in win
 
 # from Crypto.Cipher import AES
@@ -11,11 +11,13 @@ from Cryptodome.Util.Padding import pad
 import base64 , requests, sys
 import codecs
 
-headers = {
-    'Cookie': 'appver=1.5.0.75771;',
-    # 'Referer': 'http://music.163.com/',
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36'
-}
+from openlink import ran_header
+
+# headers = {
+#     'Cookie': 'appver=1.5.0.75771;',
+#     # 'Referer': 'http://music.163.com/',
+#     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36'
+# }
 
 first_param = "{\"ids\":\"[%d]\",\"br\":128000,\"csrf_token\":\"\"}"
 second_param = "010001"
@@ -30,6 +32,7 @@ def RSA_en(value,text,modulus): # not in use
     text = text[::-1]
     rs = int(codecs.encode(text.encode('utf8'),'hex_codec'),16) ** int(value,16) % int(modulus,16)
     return format(rs,'x').zfill(256)
+
 
 def get_params(first_param):
     '''twice AES encrypt against songid'''
@@ -64,11 +67,13 @@ def get_json(url, params, encSecKey):
         "params": params,
         "encSecKey": encSecKey
     }
-    response = requests.post(url, headers=headers, data=data, verify=False).json()
+    response = requests.post(url,headers=ran_header(),data=data).json()
     # print(response)
     return response['data']
 
+
 def get_dlurl(id):
+    '''Return song download link'''
     first_param = "{\"ids\":\"[%d]\",\"br\":128000,\"csrf_token\":\"\"}" % int(id)
     url = 'https://music.163.com/weapi/song/enhance/player/url?csrf_token='
     params = get_params(first_param)   
@@ -77,10 +82,13 @@ def get_dlurl(id):
     music_url = rsp[0].get('url')
     return music_url
 
+
+
+
 if __name__ == "__main__":
     id = '1352163999'
     music_url = get_dlurl(id)
     print(music_url)
 
-    import myget
-    myget.dl(music_url)
+    # import myget
+    # myget.dl(music_url)

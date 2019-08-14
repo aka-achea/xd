@@ -14,6 +14,7 @@ from sharemod import logfile
 
 def addtag(fname,m_song,m_album,m_artist,m_singer,\
            m_cover,m_year='',m_trackid='',m_cd=''):
+    '''Add Tag for MP3'''
     l = mylogger(logfile,get_funcname()) 
     try:
         tags = ID3(fname)
@@ -36,7 +37,9 @@ def addtag(fname,m_song,m_album,m_artist,m_singer,\
         tags["APIC"] = APIC(encoding=3, mime=u'image/png',type=3,desc=u'Cover',data=cover)
     tags.save(fname,v2_version=3)
 
+
 def addcover(fname,m_cover):
+    '''Add cover image to MP3'''
     l = mylogger(logfile,get_funcname()) 
     try:
         tags = ID3(fname)
@@ -48,11 +51,13 @@ def addcover(fname,m_cover):
     tags["APIC"] = APIC(encoding=3, mime=u'image/png',type=3,desc=u'Cover',data=cover)
     tags.save(fname,v2_version=3)
 
+
 def readtag(fname):
+    '''Read Tag info from MP3'''
     l = mylogger(logfile,get_funcname()) 
     tags = ID3(fname)
-    title = tags["TIT2"]
-    singer = tags['TPE1']
+    title =str(tags["TIT2"])
+    singer = str(tags['TPE1'])
     l.debug(singer)
     l.debug(title)
     return singer,title

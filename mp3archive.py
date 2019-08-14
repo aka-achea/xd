@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 #coding:utf-8
 # tested in win
+#version: 20190804
 
 import os
 import re
@@ -75,7 +76,8 @@ class database():
         return v  
 
 
-def build_albumlist(coverdir):        
+def build_albumlist(coverdir):   
+    '''Build CD inventory'''     
     with open(albumlist,'w',encoding='utf-8') as f:
         for fd in os.listdir(coverdir):
             if os.path.isdir(os.path.join(coverdir,fd)):
@@ -83,7 +85,8 @@ def build_albumlist(coverdir):
                     f.write(cover[:-4]+'\n')
 
 
-def build_inventory(archdir):        
+def build_inventory(archdir):      
+    '''Build Artist Inventory of archive folder'''  
     with open(inventory,'w',encoding='utf-8') as f:
         for p in os.listdir(archdir):
             pdir = os.path.join(archdir,p)
@@ -93,6 +96,7 @@ def build_inventory(archdir):
 
 
 def find_art(artist,inventory,match=True):
+    '''Find artist path in inventory'''
     p_art = []
     if artist[-1] == '.':  # windows folder name cannot end with .
         artist = artist[:-2] 
@@ -109,21 +113,10 @@ def find_art(artist,inventory,match=True):
                     p_art.append(i.strip())
             return p_art
     return 'No artist'
-    
 
-def find_album(album,match=True):
-    with open(albumlist,'r',encoding='utf-8') as f:   
-        if match ==  True:     
-            for i in f.readlines():
-                if album == i.strip():
-                    return True
-        else:
-            for i in f.readlines():
-                if album.upper() in i.strip().upper():
-                    return i.strip()
-    return False           
 
-def rename_mp3(folder=topdir): # based on ID3
+def rename_mp3(folder=topdir): 
+    '''Rename MP3 based on ID3 tag'''
     ml = mylogger(logfile,get_funcname()) 
     for mp3 in os.listdir(folder):        
         p_mp3 = os.path.join(folder,mp3)
@@ -143,6 +136,7 @@ def rename_mp3(folder=topdir): # based on ID3
 
 
 def archive_cd(evadir,archdir):
+    '''Archive album core function'''
     ml = mylogger(logfile,get_funcname())     
     for dirname in os.listdir(evadir):  
         al_src = os.path.join(evadir, dirname)             
@@ -164,7 +158,7 @@ def archive_cd(evadir,archdir):
                     ml.info('Archive '+dirname)
                     al_dst = p_art
                     ml.debug(al_dst)                                
-                elif os.path.isdir(os.path.join(evadir, m[0])) == True:
+                elif os.path.isdir(os.path.join(evadir, m[0])):
                     ml.warning('Already prearchive -> move album '+dirname)
                     al_dst = os.path.join(evadir,m[0])
                 else:
@@ -173,23 +167,24 @@ def archive_cd(evadir,archdir):
                     al_dst = os.path.join(evadir, m[0])
                 result = myfs.d_move(al_src,al_dst)
                 ml.info(result)
-                if os.path.isdir(os.path.join(al_dst,m[0])) == True: 
+                if os.path.isdir(os.path.join(al_dst,m[0])): 
                     ml.info("Archive complete") 
 
 
 def move_mp3(topdir,musicure):
+    '''Move MP3 from Topfolder to Musicure'''
     ml = mylogger(logfile,get_funcname())    
     for mp3 in os.listdir(topdir):
         if mp3[-3:] == 'mp3':
             ml.info('Move --> '+mp3)
             src = os.path.join(topdir,mp3)
             dst = os.path.join(musicure,mp3)
-            ml.debug(src)
-            ml.debug(dst)
+            ml.debug(f'{src} --> {dst}')
             shutil.move(src,dst)
 
 
 def move_cover(evadir,coverdir):
+    '''Move Cover to CoverFolder'''
     ml = mylogger(logfile,get_funcname())        
     for jpg in os.listdir(evadir):
         if jpg[-3:] == 'jpg':
@@ -200,25 +195,24 @@ def move_cover(evadir,coverdir):
             shutil.move(src,dst)
 
 
-#move a-z, manuel check others
 def arch_cover(coverdir):
+    '''move Cover to a-z, manuel check others'''
     ml = mylogger(logfile,get_funcname())
     for c in os.listdir(coverdir):
         src = os.path.join(coverdir,c)
         if os.path.isdir(src) == False:
-            ml.debug(src)    
             dd = os.path.join(coverdir,c[0])     
             if os.path.isdir(dd) == True:
                 dst = os.path.join(dd,c)
-                ml.debug(dst)
                 result = myfs.f_move(src,dst)
                 ml.info(result)          
 
 
 def evaluate_art(evadir,musicure):
+    '''Evaluate Artist in temp evadir'''
     ml = mylogger(logfile,get_funcname())
     for art in os.listdir(evadir):
-        if os.path.isdir(os.path.join(evadir,art)) == True:
+        if os.path.isdir(os.path.join(evadir,art)):
             ml.info('='*20)
             ml.warning(art)
             n = 0
@@ -231,12 +225,12 @@ def evaluate_art(evadir,musicure):
             if n == 0:    
                 ml.warning('Zero !!! Track ---> Move to misc')
             else:
-                an = len(os.listdir(os.path.join(evadir,art)))
-                rate = str(n/an)[:4]                
+                albumnumber = len(os.listdir(os.path.join(evadir,art)))
+                rate = str(n/albumnumber)[:4]                
                 if float(rate) < 0.5:
-                    ml.warning(f'Rate {rate} from {str(an)} Album --> One more CD to evaluate ')
+                    ml.warning(f'Rate {rate} from {str(albumnumber)} Album --> One more CD to evaluate ')
                 else:           
-                    ml.info(f'Rate {rate} from {str(an)} Album --> Total {str(n)} Tracks') 
+                    ml.info(f'Rate {rate} from {str(albumnumber)} Album --> Total {str(n)} Tracks') 
 
 
 def main():

@@ -33,37 +33,35 @@ logfile = config['log']['logfile']
 # logfilelevel = int(config['log']['logfilelevel'])
 
 
-def modstr(text):
-    # base on version 20181127
-    l = mylogger(logfile,get_funcname()) 
-    #file_name = re.sub(r'\s*:\s*', u' - ', file_name)    # for FAT file system
-    text = str(text)    
-    before = text
+# def modstr(text):
+#     # base on version 20181127
+#     l = mylogger(logfile,get_funcname()) 
+#     #file_name = re.sub(r'\s*:\s*', u' - ', file_name)    # for FAT file system
+#     text = str(text)    
+#     before = text
     
-    text = text.replace('?', u'？')      # for FAT file system
-    text = text.replace('/', u'／')
-    text = text.replace('|', '')
-    text = text.replace(':', u'∶')    # for FAT file system
-    text = text.replace('*', u'×')
-    text = text.replace('&amp;', u'&')
-    text = text.replace('&#039;', u'\'')
-    #text = text.replace('\'', u'＇')
-    text = text.replace('\\', u'＼')
-    text = text.replace('"', u'＂')
-    #text = text.replace('\'', u'＇')
-    text = text.strip()
-    #file_name = file_name.replace('$', '\\$')    # for command, see issue #7
-    after = text
-    if before != after :
-        l.debug("Before modify: "+before)
-        l.debug("After modify: "+after)
-    return text
+#     text = text.replace('?', u'？')      # for FAT file system
+#     text = text.replace('/', u'／')
+#     text = text.replace('|', '')
+#     text = text.replace(':', u'∶')    # for FAT file system
+#     text = text.replace('*', u'×')
+#     text = text.replace('&amp;', u'&')
+#     text = text.replace('&#039;', u'\'')
+#     #text = text.replace('\'', u'＇')
+#     text = text.replace('\\', u'＼')
+#     text = text.replace('"', u'＂')
+#     #text = text.replace('\'', u'＇')
+#     text = text.strip()
+#     #file_name = file_name.replace('$', '\\$')    # for command, see issue #7
+#     after = text
+#     if before != after :
+#         l.debug("Before modify: "+before)
+#         l.debug("After modify: "+after)
+#     return text
 
-def imgresize(pic):
-    img = Image.open(pic)   
-    return img.resize((70,70),Image.LANCZOS)
 
 def create_folder(workfolder,albumdir):
+    '''Create Album folder'''
     ml = mylogger(logfile,get_funcname()) 
     # albumdir = aDict['fullname']
     ml.info('Create folder: '+albumdir)
@@ -76,41 +74,35 @@ def create_folder(workfolder,albumdir):
     os.chdir(albumfulldir)
     return albumfulldir
 
-def clean_f(path):
-    for f in os.listdir(path):
-        if fnmatch.fnmatch(f,'*.tmp'):
-            os.remove(f)
 
-def count_f(path):
-    c = 0
-    for f in os.listdir(path):        
-        if fnmatch.fnmatch(f,'*.mp3'): 
-            c += 1
-    return c
-                
-def f_move(src,dst): # fs version: 20181230
-    ml = mylogger(logfile,get_funcname()) 
-    if os.path.exists(dst):
-        print(dst)
-        print('DST: '+str(os.path.getsize(dst)))
-        print('SRC: '+str(os.path.getsize(src)))
-        if os.path.getsize(dst) < os.path.getsize(src):
-            ml.warning('Replace small one')
-            os.remove(dst)
-            shutil.move(src,dst)
+def find_album(album,match=True):
+    '''Find Album in list'''
+    with open(albumlist,'r',encoding='utf-8') as f:   
+        if match == True:     
+            for i in f.readlines():
+                if album == i.strip():
+                    return True
         else:
-            ml.warning("Already have big one")
-            os.remove(src)
-    else:
-        shutil.move(src,dst)
+            for i in f.readlines():
+                if album.upper() in i.strip().upper():
+                    return i.strip()
+    return False  
 
-def find_album(album,albumlist):
-    with open(albumlist,'r',encoding='utf-8') as f:        
-        a = f.readlines()
-        for i in a:
-            if re.search(album,i):
-                return True
-    return False    
+
+
+def compare_mp3folder():
+    question = r'L:\Music\_Jazz\cc.txt'
+    target = r'N:\MusiCure\t.txt'
+    with open(target,'r') as t:
+        tdict = { x.strip().split('\\')[-1]:x.strip() for x in t.readlines()} 
+    with open(question,'r') as q:
+        for x in q.readlines():
+            s = x.strip().split('\\')[-1]
+            if s in tdict.keys():
+                print(x.strip())
+                # print(tdict[s])
+                # print(f_move(x.strip(),adict[a]))
+
 
 if __name__=='__main__':
     text1 = 'ル・デ'

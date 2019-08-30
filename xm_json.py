@@ -5,8 +5,6 @@
 
 from urllib.request import unquote
 import json,os,re,shutil,random
-import win32con
-import win32clipboard as wincld
 
 # customized module
 from sharemod import create_folder,logfile,clean_f,modstr,imgresize
@@ -14,21 +12,11 @@ import myget
 from mtag import addtag
 from mylog import get_funcname,mylogger
 from mp3archive import find_album
-from mytool import mywait
+from mytool import mywait,get_text_clipboard
 
 
 #https://emumo.xiami.com/play?ids=/song/playlist/id/
 #emumo.xiami.com
-
-def get_text():
-    wincld.OpenClipboard()
-    try:
-        text_result = wincld.GetClipboardData(win32con.CF_UNICODETEXT)
-    except TypeError:
-        return None
-    wincld.EmptyClipboard()
-    wincld.CloseClipboard()
-    return text_result
 
 
 def decry(code): # decrypt download url
@@ -64,7 +52,7 @@ def f2json(text):
 def xm_json(workfolder,force=False):
     ml = mylogger(logfile,get_funcname()) 
 
-    j = f2json(get_text())
+    j = f2json(get_text_clipboard())
     n = 0
   
     artist_name = modstr(j['data']['trackList'][n]['artist_name'])

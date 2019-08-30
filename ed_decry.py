@@ -73,7 +73,7 @@ def get_json(url, params, encSecKey):
 
 
 def get_dlurl(id):
-    '''Return song download link'''
+    '''Input song id , Return song download link'''
     first_param = "{\"ids\":\"[%d]\",\"br\":128000,\"csrf_token\":\"\"}" % int(id)
     url = 'https://music.163.com/weapi/song/enhance/player/url?csrf_token='
     params = get_params(first_param)   

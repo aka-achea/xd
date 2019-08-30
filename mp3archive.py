@@ -13,7 +13,7 @@ import sys
 from prettytable import from_db_cursor
 
 # customized module
-from sharemod import logfile,inventory,topdir,archdir,evadir,musicure,coverdir,db,albumlist
+from config import logfile,inventory,topdir,archdir,evadir,musicure,coverdir,db,albumlist
 from mtag import readtag
 import myfs
 from mylog import get_funcname, mylogger
@@ -231,6 +231,50 @@ def evaluate_art(evadir,musicure):
                     ml.warning(f'Rate {rate} from {str(albumnumber)} Album --> One more CD to evaluate ')
                 else:           
                     ml.info(f'Rate {rate} from {str(albumnumber)} Album --> Total {str(n)} Tracks') 
+
+
+def create_folder(workfolder,albumdir):
+    '''Create Album folder'''
+    ml = mylogger(logfile,get_funcname()) 
+    # albumdir = aDict['fullname']
+    ml.info('Create folder: '+albumdir)
+    os.chdir(workfolder)
+    albumfulldir = os.path.join(workfolder,albumdir)
+    if not os.path.exists(albumfulldir):
+        os.makedirs(albumfulldir)
+    else:
+        ml.warning('---- Album folder already exists !')
+    os.chdir(albumfulldir)
+    return albumfulldir
+
+
+def find_album(album,match=True):
+    '''Find Album in list'''
+    with open(albumlist,'r',encoding='utf-8') as f:   
+        if match == True:     
+            for i in f.readlines():
+                if album == i.strip():
+                    return True
+        else:
+            for i in f.readlines():
+                if album.upper() in i.strip().upper():
+                    return i.strip()
+    return False  
+
+
+
+def compare_mp3folder():
+    question = r'L:\Music\_Jazz\cc.txt'
+    target = r'N:\MusiCure\t.txt'
+    with open(target,'r') as t:
+        tdict = { x.strip().split('\\')[-1]:x.strip() for x in t.readlines()} 
+    with open(question,'r') as q:
+        for x in q.readlines():
+            s = x.strip().split('\\')[-1]
+            if s in tdict.keys():
+                print(x.strip())
+                # print(tdict[s])
+                # print(f_move(x.strip(),adict[a]))
 
 
 def main():

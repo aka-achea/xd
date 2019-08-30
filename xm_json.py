@@ -5,18 +5,23 @@
 
 from urllib.request import unquote
 import json,os,re,shutil,random
+from pprint import pprint
+from bs4 import BeautifulSoup
 
 # customized module
-from sharemod import create_folder,logfile,clean_f,modstr,imgresize
+from config import logfile
 import myget
 from mtag import addtag
 from mylog import get_funcname,mylogger
-from mp3archive import find_album
+from mp3archive import find_album,create_folder
 from mytool import mywait,get_text_clipboard
+from myfs import clean_f
+from myimg import squaresize
+from mystr import fnamechecker as modstr
+from openlink import op_simple,ran_header
 
 
-#https://emumo.xiami.com/play?ids=/song/playlist/id/
-#emumo.xiami.com
+headers = ran_header()
 
 
 def decry(code): # decrypt download url
@@ -38,6 +43,15 @@ def decry(code): # decrypt download url
     return unquote(url).replace('^', '0')
 
 
+def get_songlocation(songid):
+    '''Get undecryted location from xml'''
+    url = f'https://emumo.xiami.com/widget/xml-single/sid/{songid}'
+    html = op_simple(url,headers)[0]
+    bsObj = BeautifulSoup(html,"html.parser")
+    location = bsObj.find('location').text
+    return location
+
+#not use any more
 def f2json(text):  
     ml = mylogger(logfile,get_funcname()) 
     try:   
@@ -49,57 +63,53 @@ def f2json(text):
     return j
 
 
-def xm_json(workfolder,force=False):
+def xm_json(workfolder,year=None,force=False):
+    '''Analyze json album data'''
     ml = mylogger(logfile,get_funcname()) 
 
-    j = f2json(get_text_clipboard())
-    n = 0
-  
-    artist_name = modstr(j['data']['trackList'][n]['artist_name'])
-    album_name = modstr(j['data']['trackList'][n]['album_name'])
-    if album_name == '':
-        album_name = 'unkown' 
+    j = json.loads(get_text_clipboard())
+    # j = f2json(get_text_clipboard())
+    j = j['result']['data']['albumDetail']
 
-    year = input('Publish year>>')
-    if year == '': year = '2019'
+    if year is None:
+        year = input('Publish year>>')
+    artist_name = modstr(j['artistName'])
+    album_name = modstr(j['albumName'])
     albumdir = f'{artist_name} - {year} - {album_name}'
-
     if find_album(albumdir) and force == False:
         ml.warning(f'Album alread archived')
     else:
         albumfulldir = create_folder(workfolder,albumdir)
         try:
-            album_pic = 'http:'+j['data']['trackList'][n]['album_pic']        
+            coverlink = j['albumLogo']
             cover = os.path.join(albumfulldir,albumdir+'.jpg')
             m_cover = os.path.join(albumfulldir,albumdir+'.png')
-
             if os.path.isfile(cover):
                 ml.warning('---- Big Cover download already !') 
             else:
                 ml.info('Download big cover')
-                myget.dl(album_pic,out=cover)
-
+                myget.dl(coverlink,out=cover)
             if os.path.isfile(m_cover):
                 ml.warning('---- Small cover ready !') 
             else:
                 shutil.copy(cover,m_cover)
-                imgresize(m_cover)
-        except:
-            m_cover = ''
+                squaresize(m_cover)
 
-        while True:
-            try:
-                # songId = j['data']['trackList'][n]['songId']
-                singers = modstr(j["data"]["trackList"][n]["singers"])
-                # singers = modificate(singers)
-                songName = modstr(j["data"]["trackList"][n]["songName"])
-                track = str(j["data"]["trackList"][n]["track"])
-                cdSerial = str(j["data"]["trackList"][n]["cdSerial"])
-                location = j["data"]["trackList"][n]["location"]
-                dlurl = 'http:'+decry(location)
-                songfullname = f'{singers} - {songName}.mp3'
+            cdcount = j['cdCount']
+            songcount = j['songCount']
+
+            for s in range(songcount):
+                cdserial = str(j['songs'][s]['cdSerial'])
+                track = str(j['songs'][s]['track'])
+                singers = modstr(j['songs'][s]['singers'])
+                songname = modstr(j['songs'][s]['songName'])
+                songid = j['songs'][s]['songId']
+                location = get_songlocation(songid)
+                dlurl = decry(location)
+                # dlurl = 'http:'+decry(location)
+                songfullname = f'{singers} - {songname}.mp3'
                 mp3 = os.path.join(albumfulldir,songfullname)
-                ml.info(f'{cdSerial}.{track} {singers} - {songName}')
+                ml.info(f'{cdserial}.{track} {singers} - {songname}')
                 if os.path.isfile(mp3):
                     ml.warning('---- Track download already !') 
                 else:
@@ -109,33 +119,27 @@ def xm_json(workfolder,force=False):
                         ml.error(e)
                         ml.error("Content incomplete -> retry")
                         myget.dl(dlurl,out=mp3) 
-                addtag(mp3,songName,album_name,artist_name,singers,m_cover,\
-                        year,track,cdSerial) 
-                n += 1
+                addtag(mp3,songname,album_name,artist_name,singers,
+                        m_cover,year,track,cdserial) 
                 mywait(random.randint(1,3))
-            except IndexError:
-                break
-
-        try:
             os.remove(m_cover)
-            clean_f(albumfulldir)
+            clean_f(albumfulldir,'tmp')
         except FileNotFoundError:
             pass
 
+
 if __name__ == "__main__":
     workfolder = r'L:\Music\_DL'
-
     import sys
-
     try:
         if sys.argv[1] == 'f':
             force = True    
     except IndexError:
         force = False
-
     if os.path.exists(logfile):
         os.remove(logfile)
     try:
-        xm_json(workfolder,force)
+        xm_json(workfolder,force=force)
     except KeyboardInterrupt:
         print('ctrl + c')
+

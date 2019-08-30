@@ -2,33 +2,90 @@
 #coding:utf-8
 # tested in win
 
-# import requests
 
-# download_url = "http://music.163.com/song/media/outer/url?id=%s" % '1346093140'
-# try:
-#     with open(i[1]+'.mp3', 'wb') as f:
-#         f.write(requests.get(download_url, headers=headers).content)
-# except:
-#     pass
+import shutil
+import os
+import random
 
 
-from ed_ana import ana_cd,ana_json
+# customized module
+from sharemod import create_folder,logfile,find_album
+import myget
+from myfs import clean_f
+from myimg import squaresize
+from mtag import addtag
+from mylog import get_funcname,mylogger
+from mytool import mywait
+from mystr import fnamechecker as modstr
+from ed_ana import ana_cd
+from ed_decry import get_dlurl
 
 
-def dl(albumlink):
-    jdata = ana_cd(albumlink)
-    adict = ana_json(jdata)
-    cover = adict['cover']
+def dl(albumlink,force=False):
+    ''''''
+    ml = mylogger(logfile,get_funcname()) 
+
+    adict = ana_cd(albumlink)
+    coverlink = adict['cover']
     artist = adict['artist']
-    for s in range(1,adict['number']+1):
-        print(adict[s]['id'])
-        singer = adict[s]['singer']
-        songname = adict[s]['songname'] 
-        adict[s][''] 
-        adict[s]['']        
+    year = adict['year']
+    albumname = adict['albumname']
+
+    albumdir = f'{artist} - {year} - {albumname}'
+    if find_album(albumdir) and force == False:
+        ml.warning(f'Album alread archived')
+    else:
+        albumfulldir = create_folder(workfolder,albumdir)
+        cover = os.path.join(albumfulldir,albumdir+'.jpg')
+        m_cover = os.path.join(albumfulldir,albumdir+'.png')
+
+        if os.path.isfile(cover):
+            ml.warning('---- Big Cover download already !') 
+        else:
+            ml.info('Download big cover')
+            myget.dl(coverlink,out=cover)
+
+        if os.path.isfile(m_cover):
+            ml.warning('---- Small cover ready !') 
+        else:
+            shutil.copy(cover,m_cover)
+            squaresize(m_cover)
+
+
+        for tracknum in range(1,adict['number']+1):
+            songid = adict[tracknum]['id']
+            singer = modstr(adict[tracknum]['singer'])
+            songname = modstr(adict[tracknum]['songname']) 
+            dlurl = get_dlurl(songid)   
+            songfullname = f'{singer} - {songname}.mp3'
+            mp3 = os.path.join(albumfulldir,songfullname)
+            ml.info(f'{tracknum} {singer} - {songname}')
+            if os.path.isfile(mp3):
+                ml.warning('---- Track download already !') 
+            else:
+                try:
+                    myget.dl(dlurl,out=mp3) 
+                except Exception as e :
+                    ml.error(e)
+                    ml.error("Content incomplete -> retry")
+                    myget.dl(dlurl,out=mp3) 
+            addtag(mp3,songname,albumname,artist,singer,
+                    m_cover,year,tracknum) 
+            mywait(random.randint(1,3))
+        try:
+            os.remove(m_cover)
+            clean_f(albumfulldir,'tmp')
+            ml.info(f'Complete download {albumdir}')
+        except FileNotFoundError:
+            pass
 
 
 if __name__ == "__main__":
-    url = 'https://music.163.com/#/album?id=79753582'
-    dl(url)
+    workfolder = r'L:\Music\_DL'
+
+    url = input('Link>>')
+    try:
+        dl(url)
+    except KeyboardInterrupt:
+        print('ctrl + c')    
         

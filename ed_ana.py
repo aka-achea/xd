@@ -1,25 +1,26 @@
 #!/usr/bin/python3
 #coding:utf-8
 # tested in win
-
-'''
-API reference: 
-https://github.com/yanunon/NeteaseCloudMusic/blob/master/NeteaseCloudMusic.py
-https://github.com/darknessomi/musicbox/blob/master/NEMbox/encrypt.py
-'''
+#version:20190828
 
 
 from bs4 import BeautifulSoup
 from urllib.request import urlopen,Request,HTTPError,unquote
-from html.parser import HTMLParser
-import re,pprint,json
+# from html.parser import HTMLParser
+import re,json
+from pprint import pprint
 # from urllib.parse import urlparse
+from selenium import webdriver  
+# from selenium.webdriver.common.keys import Keys  
+from selenium.webdriver.chrome.options import Options  
 
 
 # customized module
 from mylog import get_funcname,mylogger
-from sharemod import modstr,logfile
+from config import logfile
 from openlink import op_simple , op_requests,ran_header
+from mystr import fnamechecker as modstr
+from mystr import splitall
 
 # header = {
 #     'Cookie': 'appver=1.5.0.75771;',
@@ -63,40 +64,26 @@ def ana_song(weblink):
 
 def ana_cd(albumlink):
     '''Get album JSON data'''
-    ml = mylogger(logfile,get_funcname()) 
-    # html = op_simple(weblink,header)[0]
-    # bsObj = BeautifulSoup(html,"html.parser") #;print(bsObj)
-
-    # with open(r'M:\GH\xd\t.txt','w',encoding='utf-8') as f:
-    #     f.writelines(html)
-    # albumname = bsObj.findAll('h2',{'class':'f-ff2'})
-    # print(albumname)
-    # ml.info(albumname)
-
-    # cover = bsObj.find('div',{'class':'cover u-cover u-cover-alb'})
-    # cover = cover.img.attrs['href']
-    # ml.info(cover)
-     
-    # artistname = bsObj.find(text='歌手：')
-    # artistname = artistname.next_siblings.a
-    # ml.info(artistname)
-
-    # year = bsObj.find(text='发行时间：')
-    # ml.info(year)
-
+    # ml = mylogger(logfile,get_funcname()) 
+    # html = op_simple(albumlink,ran_header(ref=agentref))[0]
+    year = op_sel(albumlink)
+    # print(year)
     albumid = albumlink.split('=')[-1]
     # print(albumid)
     url = f'http://music.163.com/api/album/{albumid}/'
-    jdata = op_simple(url,ran_header(ref=agentref))[0]
-    # pprint.pprint(j)
-    # print(type(j))
-    return jdata
+    html = op_simple(url,ran_header(ref=agentref))[0]
+    bsObj = BeautifulSoup(html,"html.parser")
+    jdata = bsObj.prettify()
+    adict = ana_json(jdata)
+    adict['year'] = year
+    # print(jdata)
+    return adict
 
 
 def ana_json(data):
     '''Analyze Json get album song details'''
-    j=json.load(data)
-    # pprint.pprint(j)
+    j=json.loads(data)
+    # pprint(j)
     adict = {}
     adict['cover'] = j['album']['picUrl']
     adict['number'] = j['album']['size']
@@ -111,10 +98,38 @@ def ana_json(data):
             artists.append(x['name'])
         sdict['singer'] = ','.join(artists)
         adict[s['no']] = sdict
-    # pprint.pprint(adict)
+    # pprint(adict)
     return adict
 
 
+def op_sel(web):
+    '''Use selenium + chromedriver to scrap web
+    Put chromedriver into Python folder
+    Need to explicit driver.quit() after invocation
+    '''
+    chrome_options = Options()  
+    chrome_options.add_argument("headless") 
+    # chrome_options.add_experimental_option('excludeSwitches', ['enable-logging'])
+
+    # chrome_options.add_argument("no-sandbox") 
+    # chrome_options.add_argument('user-data-dir="E:\\xm"')   
+    # cpath = 'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe'
+    # chrome_options.binary_location = cpath    
+    # if log != '':
+    cd_arg = [f"--log-path=j:\c.log","--verbose"]
+    # chrome_options.add_argument('log-path=j:\\c.log')
+    # chrome_options.add_argument('verbose')
+    driver = webdriver.Chrome(
+            # executable_path="J:\\DOC\\GH\\test\\chromedriver.exe",
+            service_args=cd_arg,
+            options=chrome_options)  
+    driver.get(web)  
+    driver.switch_to.frame('contentFrame')
+    year = driver.find_elements_by_css_selector('p.intr')
+    year = year[1].text
+    year = splitall(['：','-'],year)[1]
+    driver.quit()
+    return year
 
 
 if __name__ == "__main__":
@@ -122,7 +137,7 @@ if __name__ == "__main__":
     # sDict = ana_song(url)
     
     # url = 'file:///E://1.html'
-    url = 'https://music.163.com/#/album?id=79753582'
-    ana_cd(url)
-
+    url = 'https://www.xiami.com/album/yhWS4Ie1702'
+    adict = ana_cd(url)
+    pprint(adict)
    

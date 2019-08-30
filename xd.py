@@ -14,7 +14,7 @@ import argparse,os,time,sys, configparser
 # Customized module
 from xd_dl import dl_cd,dl_one
 from mylog import get_funcname,mylogger
-from sharemod import logfile,dldir
+from config import logfile,dldir
 from mytool import mywait
 
 def xd():

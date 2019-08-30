@@ -8,7 +8,7 @@ from mutagen.id3 import ID3,TIT2,TALB,TPE1,TPE2,COMM,USLT,TCOM,TCON,TPOS,TDRC,TR
 
 # customized module
 from mylog import get_funcname,mylogger
-from sharemod import logfile
+from config import logfile
 
  
 

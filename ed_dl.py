@@ -9,7 +9,8 @@ import random
 
 
 # customized module
-from sharemod import create_folder,logfile,find_album
+from config import logfile
+from mp3archive import create_folder,find_album
 import myget
 from myfs import clean_f
 from myimg import squaresize
@@ -22,7 +23,7 @@ from ed_decry import get_dlurl
 
 
 def dl(albumlink,force=False):
-    ''''''
+    '''main function to download album'''
     ml = mylogger(logfile,get_funcname()) 
 
     adict = ana_cd(albumlink)
@@ -65,6 +66,9 @@ def dl(albumlink,force=False):
             else:
                 try:
                     myget.dl(dlurl,out=mp3) 
+                except TypeError:
+                    ml.error('Not published Track')
+                    continue
                 except Exception as e :
                     ml.error(e)
                     ml.error("Content incomplete -> retry")
@@ -82,10 +86,11 @@ def dl(albumlink,force=False):
 
 if __name__ == "__main__":
     workfolder = r'L:\Music\_DL'
-
-    url = input('Link>>')
-    try:
-        dl(url)
-    except KeyboardInterrupt:
-        print('ctrl + c')    
+    while True:
+        url = input('Link>>')
+        try:
+            dl(url)
+        except KeyboardInterrupt:
+            print('ctrl + c')  
+            break  
         

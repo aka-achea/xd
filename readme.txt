@@ -25,7 +25,7 @@ https://www.cnblogs.com/daxiangxm/p/qq_music_api.html
 Xiami Music:
 https://kanoha.org/2011/08/30/xiami-absolute-address/
 https://emumo.xiami.com/play?ids=/song/playlist/id/
-https://emumo.xiami.com/widget/xml-single/sid/1769402049
+https://emumo.xiami.com/widget/xml-single/sid/1805029788
 
 
 NetEasy Music:
@@ -37,6 +37,7 @@ https://github.com/darknessomi/musicbox/blob/master/NEMbox/encrypt.py
 
 
 Change log:
+2019.8.31 add autogui for xiami v7.2
 2019.8.28 centralize config v7.1
 2019.7.29 xiami songid fail to decrypt, build neteasy music download v7.0
 2019.5.5 add force download when mp3 archived v6.9 

@@ -109,7 +109,7 @@ def op_sel(web):
     '''
     chrome_options = Options()  
     chrome_options.add_argument("headless") 
-    # chrome_options.add_experimental_option('excludeSwitches', ['enable-logging'])
+    chrome_options.add_experimental_option('excludeSwitches', ['enable-logging'])
 
     # chrome_options.add_argument("no-sandbox") 
     # chrome_options.add_argument('user-data-dir="E:\\xm"')   
@@ -121,7 +121,7 @@ def op_sel(web):
     # chrome_options.add_argument('verbose')
     driver = webdriver.Chrome(
             # executable_path="J:\\DOC\\GH\\test\\chromedriver.exe",
-            service_args=cd_arg,
+            # service_args=cd_arg,  # this work
             options=chrome_options)  
     driver.get(web)  
     driver.switch_to.frame('contentFrame')

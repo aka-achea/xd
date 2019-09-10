@@ -6,10 +6,8 @@
 
 from bs4 import BeautifulSoup
 from urllib.request import urlopen,Request,HTTPError,unquote
-# from html.parser import HTMLParser
 import re,json
 from pprint import pprint
-# from urllib.parse import urlparse
 from selenium import webdriver  
 # from selenium.webdriver.common.keys import Keys  
 from selenium.webdriver.chrome.options import Options  
@@ -72,8 +70,8 @@ def ana_cd(albumlink):
     # print(albumid)
     url = f'http://music.163.com/api/album/{albumid}/'
     html = op_simple(url,ran_header(ref=agentref))[0]
-    bsObj = BeautifulSoup(html,"html.parser")
-    jdata = bsObj.prettify()
+    jdata = BeautifulSoup(html,"html.parser").prettify()
+    # jdata = bsObj.prettify()
     adict = ana_json(jdata)
     adict['year'] = year
     # print(jdata)
@@ -98,7 +96,7 @@ def ana_json(data):
             artists.append(x['name'])
         sdict['singer'] = ','.join(artists)
         adict[s['no']] = sdict
-    # pprint(adict)
+    pprint(adict)
     return adict
 
 

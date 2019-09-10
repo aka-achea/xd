@@ -9,13 +9,15 @@ import re
 
 # customized module
 from mylog import get_funcname,mylogger
-from sharemod import modstr,logfile
-from openlink import op_simple
+from config import logfile
+from openlink import op_simple,ran_header
+from mystr import fnamechecker as modstr
 
+ref = 'https://y.qq.com'
 
 def ana_album(weblink): 
     ml = mylogger(logfile,get_funcname()) 
-    html = op_simple(weblink)[0]
+    html = op_simple(weblink,header=ran_header(ref=ref))[0]
     bsObj = BeautifulSoup(html,"html.parser") #;print(bsObj)
     album_name = bsObj.find('h1',{'class':'data__name_txt'})
     album_name = modstr(album_name.text)
@@ -60,7 +62,7 @@ def ana_album(weblink):
         si = [songmid, songname,singer]
         aDict[int(tracknumber)] = si
     aDict['TrackNum'] = n
-    ml.debug(aDict)
+    # ml.info(aDict)
     return aDict  # Album dictionary
 
 def ana_song(weblink): # return song dictionary

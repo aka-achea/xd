@@ -27,7 +27,6 @@ window = sg.Window('xiami',layout, grab_anywhere=False,size=(150,70))
 
 
 def xmgui(workfolder):
-
     while True:
         event, values = window.Read()  
         if event is None:
@@ -46,6 +45,9 @@ def xmgui(workfolder):
             xm_json(workfolder,year=year)
             auto.hotkey('ctrl','w')
     window.Close()
+
+
+
 
 
 if __name__ == "__main__":

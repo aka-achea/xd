@@ -8,9 +8,11 @@ import random
 import time
 
 # customized module
-from openlink import op_requests
-from qd_ana import ana_album,ana_song
-from sharemod import logfile,dldir,count_f,clean_f,create_folder
+from openlink import op_requests,ran_header
+from qm_ana import ana_album,ana_song
+from config import logfile,dldir
+from myfs import count_f,clean_f
+from mp3archive import create_folder
 from mtag import addtag,addcover
 from mylog import get_funcname,mylogger
 import myget
@@ -28,6 +30,7 @@ quality = { 1:['M500','.mp3','66'], # work, 99
             5:['A000','.ape','64']            
             }
 
+ref = 'https://y.qq.com'
 
 def get_vkeyguid(songmid,q=1):
     ml = mylogger(logfile,get_funcname()) 
@@ -48,9 +51,10 @@ def get_vkeyguid(songmid,q=1):
             'uin':'0',
             'songmid':str(songmid),
             'filename':qly+str(songmid)+t,
-            'guid':guid
+            'guid':str(guid)
             }
-    req = op_requests(url,para)
+    req = op_requests(url,header=ran_header(ref=ref),para=para,verify=False)
+    # print(req.content)
     j = req.json()
     vkey = j['data']['items'][0]['vkey']
     ml.debug(f'vkey:{vkey}')
@@ -99,9 +103,11 @@ def qdl_song(weblink,q=1,dlfolder=dldir):
 def qdl_album(weblink,q=1,dlfolder = dldir): 
     ml = mylogger(logfile,get_funcname()) 
     aDict = ana_album(weblink)
-    albumdir = create_folder(dlfolder,aDict)
-    albumfulldir = os.path.join(dlfolder,albumdir)
-    os.chdir(albumfulldir)
+    m_artist = aDict['artist']
+    m_year = aDict['year']
+    m_album = aDict['album']
+    albumdir = f'{m_artist} - {m_album}'
+    albumfulldir = create_folder(dlfolder,albumdir)
     cover = albumdir+'.jpg'
     m_cover = albumdir+'.png'
     if os.path.isfile(cover):
@@ -109,10 +115,6 @@ def qdl_album(weblink,q=1,dlfolder = dldir):
     else:
         myget.dl(aDict['cover'],out=cover)
         shutil.copyfile(cover,m_cover)
-
-    m_artist = aDict['artist']
-    m_year = aDict['year']
-    m_album = aDict['album']
     
     tracknum = aDict['TrackNum']
     for s in range(1,tracknum+1):
@@ -150,8 +152,7 @@ def qdl_album(weblink,q=1,dlfolder = dldir):
             #     m_year = aDict['year']
             #     m_trackid = str(s)
 
-    c = count_f(albumfulldir)
-    if c == int(tracknum) :
+    if count_f(albumfulldir,'mp3') == int(tracknum) :
         ml.info('Disc Download complete')
         try:
             os.remove(m_cover)
@@ -160,18 +161,33 @@ def qdl_album(weblink,q=1,dlfolder = dldir):
     else:
         ml.error('Some track download fail')    
 
-    clean_f(albumfulldir)
+    clean_f(albumfulldir,'tmp')
     ml.info('Download Complete:  '+albumdir)
-        
-if __name__=='__main__':
-    import os
+
+
+def main():
     if os.path.exists(logfile):
         os.remove(logfile)
+    while True:
+        try:
+            qdl_album(input('Link>>'),1)
+        except KeyboardInterrupt:
+            print('ctrl + c')  
+            break  
+
+
+if __name__=='__main__':
+    main()
+
+
 
     # test get_vkeyguid,get_dlurl
-    # songmid = '003B7qBz1OKVw4'
+    # songmid = '001e2BMO1ERkjz'
     # vkey,guid = get_vkeyguid(songmid)
     # url = get_dlurl(vkey,guid,songmid)
+    # print(url)
+    # myget.dl(url)
+
 
     # test qdl_song
     # weblink = 'https://y.qq.com/n/yqq/song/003lVR2n4O9XtI.html'
@@ -179,7 +195,9 @@ if __name__=='__main__':
 
     # test qdl_album
     # page = 'file:///E://1.html'
-    page = 'https://y.qq.com/n/yqq/album/004PDvDb4ZxKrR.html'
-    qdl_album(page,1)
+    # page = 'https://y.qq.com/n/yqq/album/0012smzU0w03JD.html'
+    
+
+
 
  

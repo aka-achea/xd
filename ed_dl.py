@@ -9,7 +9,7 @@ import random
 
 
 # customized module
-from config import logfile
+from config import logfile, dldir
 from mp3archive import create_folder,find_album
 import myget
 from myfs import clean_f
@@ -36,7 +36,7 @@ def dl(albumlink,force=False):
     if find_album(albumdir) and force == False:
         ml.warning(f'Album alread archived')
     else:
-        albumfulldir = create_folder(workfolder,albumdir)
+        albumfulldir = create_folder(dldir,albumdir)
         cover = os.path.join(albumfulldir,albumdir+'.jpg')
         m_cover = os.path.join(albumfulldir,albumdir+'.png')
 
@@ -52,12 +52,10 @@ def dl(albumlink,force=False):
             shutil.copy(cover,m_cover)
             squaresize(m_cover)
 
-
         for tracknum in range(1,adict['number']+1):
             songid = adict[tracknum]['id']
             singer = modstr(adict[tracknum]['singer'])
             songname = modstr(adict[tracknum]['songname']) 
-            dlurl = get_dlurl(songid)   
             songfullname = f'{singer} - {songname}.mp3'
             mp3 = os.path.join(albumfulldir,songfullname)
             ml.info(f'{tracknum} {singer} - {songname}')
@@ -65,6 +63,7 @@ def dl(albumlink,force=False):
                 ml.warning('---- Track download already !') 
             else:
                 try:
+                    dlurl = get_dlurl(songid)   
                     myget.dl(dlurl,out=mp3) 
                 except TypeError:
                     ml.error('Not published Track')
@@ -73,8 +72,9 @@ def dl(albumlink,force=False):
                     ml.error(e)
                     ml.error("Content incomplete -> retry")
                     myget.dl(dlurl,out=mp3) 
-            addtag(mp3,songname,albumname,artist,singer,
-                    m_cover,year,tracknum) 
+                else:
+                    addtag(mp3,songname,albumname,artist,singer,
+                            m_cover,year,tracknum) 
             mywait(random.randint(1,3))
         try:
             os.remove(m_cover)
@@ -84,8 +84,8 @@ def dl(albumlink,force=False):
             pass
 
 
-if __name__ == "__main__":
-    workfolder = r'L:\Music\_DL'
+def main():
+    # workfolder = r'L:\Music\_DL'
     while True:
         url = input('Link>>')
         try:
@@ -93,4 +93,8 @@ if __name__ == "__main__":
         except KeyboardInterrupt:
             print('ctrl + c')  
             break  
+
+
+if __name__ == "__main__":
+    main()
         

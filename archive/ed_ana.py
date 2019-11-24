@@ -96,7 +96,7 @@ def ana_json(data):
             artists.append(x['name'])
         sdict['singer'] = ','.join(artists)
         adict[s['no']] = sdict
-    pprint(adict)
+    # pprint(adict)
     return adict
 
 

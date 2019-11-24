@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 #coding:utf-8
 # tested in win
+# version: 20190924
 
 import os
 import shutil
@@ -23,11 +24,12 @@ import myget
 #             'C400':{'m4a':'66'} #999
 #             }
 
-quality = { 1:['M500','.mp3','66'], # work, 99
-            2:['M800','.mp3','53'],
-            3:['F000','.flac','99'], 
-            4:['C400','.m4a','66'], # work
-            5:['A000','.ape','64']            
+quality = { 
+    1:['M500','.mp3','66'], # work, 99
+    2:['M800','.mp3','53'],
+    3:['F000','.flac','99'], 
+    4:['C400','.m4a','66'], # work
+    5:['A000','.ape','64']            
             }
 
 ref = 'https://y.qq.com'
@@ -39,7 +41,8 @@ def get_vkeyguid(songmid,q=1):
     url = 'http://c.y.qq.com/base/fcgi-bin/fcg_music_express_mobile3.fcg'
     qly = quality[q][0]
     t = quality[q][1]
-    para = {'loginUin':'0',
+    para = {
+            'loginUin':'0',
             'hostUin':'0',
             'format':'json',
             'inCharset':'utf8',
@@ -60,6 +63,7 @@ def get_vkeyguid(songmid,q=1):
     ml.debug(f'vkey:{vkey}')
     return vkey,guid
 
+
 def get_dlurl(vkey,guid,songmid,q=1):
     ml = mylogger(logfile,get_funcname()) 
     qly = quality[q][0]
@@ -71,15 +75,6 @@ def get_dlurl(vkey,guid,songmid,q=1):
     ml.debug(url)
     return url
 
-    # para = {'guid':'6179861260',
-    #         'vkey':vkey,
-    #         'fromtag':tag
-    #         }
-    # l.debug(para)
-    # content = op_requests(url,para).content
-    # with open(mp3,'wb') as f:
-    #     f.write(content)
-        #f.close()
 
 def qdl_song(weblink,q=1,dlfolder=dldir):
     ml = mylogger(logfile,get_funcname()) 
@@ -100,7 +95,7 @@ def qdl_song(weblink,q=1,dlfolder=dldir):
     # tag contained already
 
 # mulitiple discs?
-def qdl_album(weblink,q=1,dlfolder = dldir): 
+def qdl_album(weblink,q=1,dlfolder=dldir): 
     ml = mylogger(logfile,get_funcname()) 
     aDict = ana_album(weblink)
     m_artist = aDict['artist']
@@ -122,7 +117,7 @@ def qdl_album(weblink,q=1,dlfolder = dldir):
         m_singer = aDict[s][2]
         mp3 = m_singer+' - '+m_song +quality[q][1]
         m_trackid = str(s) 
-        ml.info(f'Download {str(s)}.{aDict[s][1]}') 
+        ml.info(f'{str(s)}.{aDict[s][1]}') 
         if os.path.isfile(mp3):
             ml.warning('---- Track download already !') 
         else:

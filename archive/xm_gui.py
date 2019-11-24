@@ -5,13 +5,15 @@
 
 
 
-import os,sys
+import os,sys,pathlib
 import PySimpleGUI as sg      
 from multiprocessing import Process,freeze_support
+import pyautogui as auto
 
-
+from mytool import clickbutton,mywait,capture
+from xm_json import xm_json
 from config import logfile,dldir
-from xm_json import chromef12
+
 
 layout = [           
     [sg.Text('Year',size=(5, 1)),sg.InputText(size=(20, 1),key='year')],    
@@ -24,15 +26,26 @@ layout = [
 window = sg.Window('xiami',layout, grab_anywhere=False,size=(150,70))      
 
 
-def xmgui(dldir):
+def xmgui(workfolder):
     while True:
         event, values = window.Read()  
         if event is None:
             break        
         elif event == 'go':  
+            imgpath = os.path.join(pathlib.PurePath(__file__).parent,'img')
+            clickbutton( os.path.join(imgpath,'xm.png'))
+            auto.press('f12')
+            mywait(1)
+            auto.press('f5')
+            clickbutton( os.path.join(imgpath,'getalbumdetail.png'))
+            auto.click(button='right')
+            clickbutton( os.path.join(imgpath,'copy.png'))
+            clickbutton( os.path.join(imgpath,'copyresponse.png'))
             year = values['year']
-            chromef12(year)
+            xm_json(workfolder,year=year)
+            auto.hotkey('ctrl','w')
     window.Close()
+
 
 
 

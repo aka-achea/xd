@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 #coding:utf-8
 # tested in win
-#version: 20190804
+__version__ = 20191126
 
 import os
 import re
@@ -76,8 +76,8 @@ class database():
         return v  
 
 
-def build_albumlist(coverdir):   
-    '''Build CD inventory'''     
+def build_albumlist(albumlist,coverdir):   
+    '''Build CD inventory by scanning CD dir'''     
     with open(albumlist,'w',encoding='utf-8') as f:
         for fd in os.listdir(coverdir):
             if os.path.isdir(os.path.join(coverdir,fd)):
@@ -85,7 +85,7 @@ def build_albumlist(coverdir):
                     f.write(cover[:-4]+'\n')
 
 
-def build_inventory(archdir):      
+def build_inventory(inventory,archdir):      
     '''Build Artist Inventory of archive folder'''  
     with open(inventory,'w',encoding='utf-8') as f:
         for p in os.listdir(archdir):
@@ -95,24 +95,39 @@ def build_inventory(archdir):
                     f.write(os.path.join(pdir,adir)+'\n')
 
 
+# def find_art(artist,inventory,match=True):
+#     '''Find artist path in inventory'''
+#     p_art = []
+#     if artist[-1] == '.':  # windows folder name cannot end with .
+#         artist = artist[:-2] 
+#     with open(inventory,'r',encoding='utf-8') as f:  
+#         if match:
+#             for i in f.readlines():
+#                 if artist.upper() == i.strip().split('\\')[-1].upper():
+#                     p_art = i.strip()
+#                     # for n in os.listdir(p_art): print(n)
+#                     return p_art
+#         else:
+#             for i in f.readlines():
+#                 if artist.upper() in i.strip().split('\\')[-1].upper():
+#                     p_art.append(i.strip())
+#             return p_art
+#     return 'No artist'
+
+
 def find_art(artist,inventory,match=True):
     '''Find artist path in inventory'''
     p_art = []
     if artist[-1] == '.':  # windows folder name cannot end with .
         artist = artist[:-2] 
     with open(inventory,'r',encoding='utf-8') as f:  
-        if match == True:
-            for i in f.readlines():
-                if artist.upper() == i.strip().split('\\')[-1].upper():
-                    p_art = i.strip()
-                    # for n in os.listdir(p_art): print(n)
-                    return p_art
-        else:
-            for i in f.readlines():
-                if artist.upper() in i.strip().split('\\')[-1].upper():
+        for i in f.readlines():
+            if artist.upper() in i.strip().split('\\')[-1].upper():
+                if match and artist.upper() == i.strip().split('\\')[-1].upper():
+                    return i.strip()
+                else:
                     p_art.append(i.strip())
-            return p_art
-    return 'No artist'
+    return p_art if p_art != [] else 'No artist'
 
 
 def rename_mp3(folder=topdir): 
@@ -120,7 +135,7 @@ def rename_mp3(folder=topdir):
     ml = mylogger(logfile,get_funcname()) 
     for mp3 in os.listdir(folder):        
         p_mp3 = os.path.join(folder,mp3)
-        if p_mp3[-3:] == 'mp3':
+        if p_mp3[-3:].lower() == 'mp3':
             # l.info(mp3[:-3])
             d = readtag(p_mp3)
             singer = str(d[0])
@@ -175,7 +190,7 @@ def move_mp3(topdir,musicure):
     '''Move MP3 from Topfolder to Musicure'''
     ml = mylogger(logfile,get_funcname())    
     for mp3 in os.listdir(topdir):
-        if mp3[-3:] == 'mp3':
+        if mp3[-3:].lower() == 'mp3':
             ml.info('Move --> '+mp3)
             src = os.path.join(topdir,mp3)
             dst = os.path.join(musicure,mp3)
@@ -187,7 +202,7 @@ def move_cover(evadir,coverdir):
     '''Move Cover to CoverFolder'''
     ml = mylogger(logfile,get_funcname())        
     for jpg in os.listdir(evadir):
-        if jpg[-3:] == 'jpg':
+        if jpg[-3:].lower() == 'jpg':
             ml.info('Move --> '+jpg)
             src = os.path.join(evadir,jpg)
             dst = os.path.join(coverdir,jpg)
@@ -234,7 +249,7 @@ def evaluate_art(evadir,musicure):
 
 
 def create_folder(workfolder,albumdir):
-    '''Create Album folder'''
+    '''Create Album folder and switch to album folder'''
     ml = mylogger(logfile,get_funcname()) 
     # albumdir = aDict['fullname']
     ml.info('Create folder: '+albumdir)
@@ -260,7 +275,6 @@ def find_album(album,match=True):
                 if album.upper() in i.strip().upper():
                     return i.strip()
     return False  
-
 
 
 def compare_mp3folder():
@@ -291,16 +305,16 @@ def main():
 
     if args.a :
         ml.info('Archive CD')
-        build_inventory(archdir)
+        build_inventory(inventory,archdir)
         archive_cd(evadir,archdir)
         move_cover(evadir,coverdir)
-        build_albumlist(coverdir)
+        build_albumlist(albumlist,coverdir)
 
 
     elif args.i:
         arch_cover(coverdir)
-        build_inventory(archdir)
-        build_albumlist(coverdir)
+        build_inventory(inventory,archdir)
+        build_albumlist(albumlist,coverdir)
         ml.info('Update Inventory Finish')  
 
     elif args.e:

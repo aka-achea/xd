@@ -1,12 +1,12 @@
 #!/usr/bin/python3
 #coding:utf-8
 # tested in win
-#version:20190831
+__version__ = 20191126
 
 
 from urllib.request import unquote
 import json,os,re,shutil,random
-import pathlib
+from pathlib import PurePath
 from pprint import pprint
 from bs4 import BeautifulSoup
 import pyautogui as auto
@@ -133,18 +133,31 @@ def xm_json(workfolder,year=None,force=False):
             pass
 
 
-def chromef12(year):
-    imgpath = os.path.join(pathlib.PurePath(__file__).parent,'img')
-    clickbutton( os.path.join(imgpath,'xm.png'))
-    auto.press('f12')
+def chromef12(year,autoclose=False):
+    """Chrome F12 find xhr and close page"""
+    imgpath = os.path.join(PurePath(__file__).parent,'img')
+    if clickbutton( os.path.join(imgpath,'xm.png')):
+        auto.press('f12')
+    else:
+        raise
     mywait(1)
     auto.press('f5')
-    clickbutton( os.path.join(imgpath,'getalbumdetail.png'))
-    auto.click(button='right')
-    clickbutton( os.path.join(imgpath,'copy.png'))
-    clickbutton( os.path.join(imgpath,'copyresponse.png'))
-    xm_json(dldir,year=year)
-    auto.hotkey('ctrl','w')
+    mywait(2)
+    if clickbutton( os.path.join(imgpath,'getalbumdetail.png')):
+        auto.click(button='right')
+        mywait(1)
+    else:
+        raise
+    if clickbutton( os.path.join(imgpath,'copy.png')):
+        mywait(1)
+    else:
+        raise    
+    if clickbutton( os.path.join(imgpath,'copyresponse.png')):
+        xm_json(dldir,year=year)
+    else:
+        raise
+    if autoclose:
+        auto.hotkey('ctrl','w')
 
 
 if __name__ == "__main__":

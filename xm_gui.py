@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 #coding:utf-8
 # test in Win
-# version:20190827
+__version__ = 20191208
 
 
 
@@ -13,8 +13,9 @@ from multiprocessing import Process,freeze_support
 from config import logfile,dldir
 from xm_json import chromef12
 
+
 layout = [           
-    [sg.Text('Year',size=(5, 1)),sg.InputText(size=(20, 1),key='year')],    
+    [sg.Text('Year',size=(5, 1)),sg.InputText(size=(20, 1),key='year',default_text='2019')],    
     # [sg.Text('_'*36,justification='center')],          
     # [sg.Text('_'*36,justification='center')],
     [sg.Button('Go',tooltip='Click to start',key='go'),sg.Button('Stop',key='stop',disabled=True)]      

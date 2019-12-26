@@ -1,5 +1,8 @@
-import .adl
-import .xd_json
-import .mp3archive
-import .config
-import .qm_dl
+# import adl
+import config
+import emusic
+import mtag
+import mp3archive
+import qmusic
+import xm_gui
+import xm_json

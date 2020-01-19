@@ -1,6 +1,7 @@
 # import adl
 import config
-import emusic
+# import emusic
+import qmusic
 import mtag
 import mp3archive
 import qmusic

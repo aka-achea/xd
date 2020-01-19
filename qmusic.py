@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 #coding:utf-8
 # tested in win
-__version__ = 20191125
+__version__ = 20200119
 
 import os
 import shutil
@@ -52,7 +52,7 @@ def get_vkeyguid(songmid,q=1):
             'inCharset':'utf8',
             'outCharset':'utf-8',
             'notice':'0',
-            'platform':'yqq',
+            'platform':'yqq.json',
             'needNewCode':'0',
             'cid':'205361747', #important 
             'uin':'0',
@@ -76,7 +76,8 @@ def get_dlurl(vkey,guid,songmid,q=1):
     tag = quality[q][2]
     # vkey,guid = get_vkeyguid(songmid)
     # url = 'http://dl.stream.qqmusic.qq.com/%s?vkey=%s&guid=%s&uin=0&fromtag=%s' % (qly+songmid+t,vkey,guid,tag)
-    url = f'http://dl.stream.qqmusic.qq.com/{qly+songmid+t}?vkey={vkey}&guid={guid}&uin=0&fromtag={tag}'
+    url = f'http://dl.stream.qqmusic.qq.com/{qly+songmid+t}?guid={guid}&vkey={vkey}&uin=0&fromtag={tag}'
+
     ml.debug(url)
     return url
 
@@ -84,10 +85,9 @@ def get_dlurl(vkey,guid,songmid,q=1):
 def ana_song(weblink):
     '''Analyze song page return song dictionary'''
     ml = mylogger(logfile,get_funcname()) 
-    songmid = weblink.split('/')[-1]
-    songmid = songmid.split('.')[0]
+    songmid = weblink.split('/')[-1].split('.')[0]
     ml.debug(songmid)
-    html = op_simple(weblink)[0]
+    html = op_simple(weblink,header)[0]
     bsObj = BeautifulSoup(html,"html.parser")
 
     artist_name = bsObj.find('div',{'class':'data__singer'})
@@ -107,7 +107,7 @@ def ana_song(weblink):
     return sDict
 
 
-def qdl_song(weblink,q=1,dlfolder=dldir):
+def qdl_song(weblink,q=4,dlfolder=dldir):
     '''Download Single song'''
     ml = mylogger(logfile,get_funcname()) 
     sDict = ana_song(weblink)
@@ -176,7 +176,7 @@ def ana_album(weblink):
 
 # mulitiple discs?
 def qdl_album(weblink,q=1,dlfolder=dldir): 
-    '''QQ Music download'''
+    '''QQ Music Album download'''
     ml = mylogger(logfile,get_funcname()) 
     aDict = ana_album(weblink)
     m_artist = aDict['artist']
@@ -240,20 +240,18 @@ def main():
 
 
 if __name__=='__main__':
-    main()
-
 
 
     # test get_vkeyguid,get_dlurl
-    # songmid = '001e2BMO1ERkjz'
-    # vkey,guid = get_vkeyguid(songmid)
-    # url = get_dlurl(vkey,guid,songmid)
-    # print(url)
-    # myget.dl(url)
+    songmid = '002IvRV43ybv7F'
+    vkey,guid = get_vkeyguid(songmid,q=4)
+    url = get_dlurl(vkey,guid,songmid,q=4)
+    print(url)
+    myget.dl(url)
 
 
     # test qdl_song
-    # weblink = 'https://y.qq.com/n/yqq/song/003lVR2n4O9XtI.html'
+    # weblink = 'https://y.qq.com/n/yqq/song/002IvRV43ybv7F.html'
     # qdl_song(weblink)
 
     # test qdl_album

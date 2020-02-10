@@ -1,9 +1,9 @@
 # import adl
-import config
+from . import config
 # import emusic
-import qmusic
-import mtag
-import mp3archive
-import qmusic
-import xm_gui
-import xm_json
+from . import qmusic
+from . import mtag
+from . import mp3archive
+from . import qmusic
+from . import xm_gui
+from . import xm_json

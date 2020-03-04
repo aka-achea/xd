@@ -11,8 +11,8 @@ import os
 import random
 import re
 import json
-from Cryptodome.Cipher import AES
-from Cryptodome.Util.Padding import pad
+from Crypto.Cipher import AES
+from Crypto.Util.Padding import pad
 from bs4 import BeautifulSoup
 from urllib.request import urlopen,Request,HTTPError,unquote
 from pprint import pprint

@@ -44,7 +44,7 @@ forth_param = "0CoJUm6Qyw8W8jud"
 rankey = 16 * 'F'
 encSecKey = "257348aecb5e556c066de214e531faadd1c55d814f9be95fd06d6bff9f4c7a41f831f6394d5a3fd2e3881736d94a02ca919d952872e7d0a50ebfa1769a7a62d512f5f1ca21aec60bc3819a9c3ffca5eca9a0dba6d6f7249b06f5965ecfff3695b54e1c28f3f624750ed39e7de08fc8493242e26dbc4484a01c76f739e135637c"
 url = 'http://music.163.com/api/album/%d/'
-agentref = 'http://music.163.com/'
+agentref = 'https://music.163.com/'
 host = 'music.163.com'
 
 ######### decode begin ##########
@@ -85,15 +85,14 @@ def get_json(url, params, encSecKey):
         "params": params,
         "encSecKey": encSecKey
     }
-    response = requests.post(url,headers=ran_header(),data=data)
-    print(response)
-    # return response['data']
-
+    response = requests.post(url,headers=ran_header(ref=agentref,host=host),data=data)
+    # print(response.text)
+    return response.json()['data']
 
 def get_dlurl(songid):
     '''Input song id , Return song download link'''
     # first_param = "{\"ids\":\"[%d]\",\"br\":128000,\"csrf_token\":\"\"}" % int(songid)
-    first_param = '{"ids":"[%s]","level":"standard","encodeType":"aac","csrf_token":""}' % songid
+    first_param = '{"ids":"[%s]","level":"standard","encodeType":"mp3","csrf_token":""}' % songid
     # url = 'https://music.163.com/weapi/song/enhance/player/url?csrf_token='
     url = 'https://music.163.com/weapi/song/enhance/player/url/v1?csrf_token='
     params = get_params(first_param)   
@@ -289,11 +288,11 @@ def main():
 
 
 if __name__ == "__main__":
-    # main()
+    main()
 
-    id = '1418069679'
-    music_url = get_dlurl(id)
-    print(music_url)
+    # id = '1418069679'
+    # music_url = get_dlurl(id)
+    # print(music_url)
 
-    import myget
-    myget.dl(music_url)
+    # import myget
+    # myget.dl(music_url)

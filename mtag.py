@@ -7,7 +7,7 @@ from mutagen.id3 import ID3NoHeaderError, error # really need error?
 from mutagen.id3 import ID3,TIT2,TALB,TPE1,TPE2,COMM,USLT,TCOM,TCON,TPOS,TDRC,TRCK,APIC
 
 # customized module
-from mylog import get_funcname,mylogger
+from mylog import mylogger
 from config import logfile
 
  
@@ -15,7 +15,7 @@ from config import logfile
 def addtag(fname,m_song,m_album,m_artist,m_singer,\
            m_cover,m_year='',m_trackid='',m_cd=''):
     '''Add Tag for MP3'''
-    l = mylogger(logfile,get_funcname()) 
+    l = mylogger(logfile) 
     try:
         tags = ID3(fname)
     except ID3NoHeaderError:

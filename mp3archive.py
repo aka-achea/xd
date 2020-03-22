@@ -16,8 +16,9 @@ from prettytable import from_db_cursor
 from config import logfile,inventory,topdir,archdir,evadir,musicure,coverdir,db,albumlist
 from mtag import readtag
 import myfs
-from mylog import get_funcname, mylogger
+from mylog import  mylogger
 
+ml = mylogger(logfile) 
 
 class database():  
     def create(self):
@@ -152,7 +153,7 @@ def rename_mp3(folder=topdir):
 
 def archive_cd(evadir,archdir):
     '''Archive album core function'''
-    ml = mylogger(logfile,get_funcname())     
+    ml = mylogger(logfile)     
     for dirname in os.listdir(evadir):  
         al_src = os.path.join(evadir, dirname)             
         if os.path.isdir(al_src):
@@ -174,10 +175,10 @@ def archive_cd(evadir,archdir):
                     al_dst = p_art
                     ml.debug(al_dst)                                
                 elif os.path.isdir(os.path.join(evadir, m[0])):
-                    ml.warning('Already prearchive -> move album '+dirname)
+                    ml.warn('Already prearchive -> move album '+dirname)
                     al_dst = os.path.join(evadir,m[0])
                 else:
-                    ml.warning('Prearchive '+m[0]+' -> move album '+dirname)
+                    ml.warn('Prearchive '+m[0]+' -> move album '+dirname)
                     os.mkdir(os.path.join(evadir, m[0]))
                     al_dst = os.path.join(evadir, m[0])
                 result = myfs.d_move(al_src,al_dst)
@@ -229,7 +230,7 @@ def evaluate_art(evadir,musicure):
     for art in os.listdir(evadir):
         if os.path.isdir(os.path.join(evadir,art)):
             ml.info('='*20)
-            ml.warning(art)
+            ml.warn(art)
             n = 0
             for dirpath, dirnames, files in os.walk(musicure):
                 for name in files:
@@ -238,27 +239,27 @@ def evaluate_art(evadir,musicure):
                         ml.info(name)
                         n += 1
             if n == 0:    
-                ml.warning('Zero !!! Track ---> Move to misc')
+                ml.warn('Zero !!! Track ---> Move to misc')
             else:
                 albumnumber = len(os.listdir(os.path.join(evadir,art)))
                 rate = str(n/albumnumber)[:4]                
                 if float(rate) < 0.5:
-                    ml.warning(f'Rate {rate} from {str(albumnumber)} Album --> One more CD to evaluate ')
+                    ml.warn(f'Rate {rate} from {str(albumnumber)} Album --> One more CD to evaluate ')
                 else:           
                     ml.info(f'Rate {rate} from {str(albumnumber)} Album --> Total {str(n)} Tracks') 
 
 
 def create_folder(workfolder,albumdir):
     '''Create Album folder and switch to album folder'''
-    ml = mylogger(logfile,get_funcname()) 
     # albumdir = aDict['fullname']
+    ml = mylogger(__name__,logfile)
     ml.info('Create folder: '+albumdir)
     os.chdir(workfolder)
     albumfulldir = os.path.join(workfolder,albumdir)
     if not os.path.exists(albumfulldir):
         os.makedirs(albumfulldir)
     else:
-        ml.warning('---- Album folder already exists !')
+        ml.warn('---- Album folder already exists !')
     os.chdir(albumfulldir)
     return albumfulldir
 

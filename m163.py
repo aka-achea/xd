@@ -1,10 +1,12 @@
 #!/usr/bin/python3
 #coding:utf-8
 # tested in win
-# version: 20190926
+# version: 20200322
 
 
-import base64 , requests, sys
+import base64
+import requests
+import sys
 import codecs
 import shutil
 import os
@@ -105,7 +107,8 @@ def get_dlurl(songid):
 
 
 def op_sel(web):
-    '''Use selenium + chromedriver to scrap web
+    '''
+    Use selenium + chromedriver to scrap web
     Put chromedriver into Python folder
     Need to explicit driver.quit() after invocation
     '''

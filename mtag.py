@@ -2,24 +2,25 @@
 #coding:utf-8
 # tested in win
 
+__version__ = 20200322
+
 from mutagen.mp3 import MP3
-from mutagen.id3 import ID3NoHeaderError, error # really need error?
-from mutagen.id3 import ID3,TIT2,TALB,TPE1,TPE2,COMM,USLT,TCOM,TCON,TPOS,TDRC,TRCK,APIC
+from mutagen.id3 import ID3,TIT2,TALB,TPE1,TPE2,COMM,USLT,TCOM,TCON,TPOS,TDRC,TRCK,APIC,ID3NoHeaderError
 
 # customized module
-from mylog import mylogger
+from mylog import mylogger,get_funcname
 from config import logfile
 
- 
 
-def addtag(fname,m_song,m_album,m_artist,m_singer,\
-           m_cover,m_year='',m_trackid='',m_cd=''):
+
+def addtag(fname,m_song,m_album,m_artist,m_singer,
+            m_cover,m_year='',m_trackid='',m_cd=''):
     '''Add Tag for MP3'''
-    l = mylogger(logfile) 
+    ml = mylogger(logfile,get_funcname()) 
     try:
         tags = ID3(fname)
     except ID3NoHeaderError:
-        l.debug("Adding ID3 header on " + m_trackid)
+        ml.debug("Adding ID3 header on " + m_trackid)
         tags = ID3()
     tags["TIT2"] = TIT2(encoding=3, text=m_song)
     tags["TALB"] = TALB(encoding=3, text=m_album)

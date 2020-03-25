@@ -2,6 +2,10 @@
 #coding:utf-8
 __version__ = 20191126
 
+from mylog import mylogger,get_funcname
+
+
+
 logfilelevel = 10
 
 topdir = r'L:\Music'
@@ -14,3 +18,5 @@ inventory = r'L:\Music\MI.txt'
 albumlist = r'L:\Music\album.txt'
 db = r'L:\Music\music.db'
 logfile = r'L:\Music\xd.log'
+
+

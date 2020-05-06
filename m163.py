@@ -2,7 +2,7 @@
 #coding:utf-8
 # tested in win
 
-__version__ = 20200322
+__version__ = 20200506
 
 
 import base64
@@ -24,7 +24,7 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options  
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
-from invoke import task
+# from invoke import task
 
 # customized module
 import myget

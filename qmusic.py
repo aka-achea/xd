@@ -41,7 +41,7 @@ def get_vkeyguid(songmid,q=1):
     '''Get vkey and guid from songid'''
     ml = mylogger(logfile,get_funcname()) 
     guid = int(random.random()*2147483647)*int(time.time()*1000) % 10000000000
-    ml.debug(f'GUID:{guid}')
+    ml.dbg(f'GUID:{guid}')
     url = 'http://c.y.qq.com/base/fcgi-bin/fcg_music_express_mobile3.fcg'
     qly = quality[q][0]
     t = quality[q][1]
@@ -61,10 +61,10 @@ def get_vkeyguid(songmid,q=1):
             'guid':str(guid)
             }
     req = op_requests(url,header=header,para=para,verify=False)
-    # print(req.content)
+    print(req.content)
     j = req.json()
     vkey = j['data']['items'][0]['vkey']
-    ml.debug(f'vkey:{vkey}')
+    ml.dbg(f'vkey:{vkey}')
     return vkey,guid
 
 
@@ -78,7 +78,7 @@ def get_dlurl(vkey,guid,songmid,q=1):
     # url = 'http://dl.stream.qqmusic.qq.com/%s?vkey=%s&guid=%s&uin=0&fromtag=%s' % (qly+songmid+t,vkey,guid,tag)
     url = f'http://dl.stream.qqmusic.qq.com/{qly+songmid+t}?guid={guid}&vkey={vkey}&uin=0&fromtag={tag}'
 
-    ml.debug(url)
+    ml.dbg(url)
     return url
 
 
@@ -86,24 +86,24 @@ def ana_song(weblink):
     '''Analyze song page return song dictionary'''
     ml = mylogger(logfile,get_funcname()) 
     songmid = weblink.split('/')[-1].split('.')[0]
-    ml.debug(songmid)
+    ml.dbg(songmid)
     html = op_simple(weblink,header)[0]
     bsObj = BeautifulSoup(html,"html.parser")
 
     artist_name = bsObj.find('div',{'class':'data__singer'})
     artist_name = artist_name.attrs['title']
-    ml.debug(artist_name)
+    ml.dbg(artist_name)
 
     song_name = bsObj.find('h1',{'class':'data__name_txt'})
     song_name = modstr(song_name.text.strip())
-    ml.debug(song_name)
+    ml.dbg(song_name)
 
     cover = bsObj.find('img',{'class':'data__photo'})
     cover = 'http:'+cover.attrs['src']
-    ml.debug('Cover link: '+cover)
+    ml.dbg('Cover link: '+cover)
     sDict = {'artist':artist_name,'song_name':song_name,
             'songmid':songmid,'cover':cover }
-    ml.debug(sDict)
+    ml.dbg(sDict)
     return sDict
 
 
@@ -117,7 +117,7 @@ def qdl_song(weblink,q=4,dlfolder=dldir):
     os.chdir(dldir)
     mp3 = sDict['artist']+' - '+sDict['song_name']+quality[q][1]
     fullmp3path = os.path.join(dldir,mp3)
-    ml.debug(fullmp3path)
+    ml.dbg(fullmp3path)
     ml.info(f"Download {sDict['artist']} - {sDict['song_name']}")
     myget.dl(dlurl,fullmp3path)
     fullcoverpath = os.path.join(dldir,'cover.png')
@@ -134,15 +134,15 @@ def ana_album(weblink):
     bsObj = BeautifulSoup(html,"html.parser") #;print(bsObj)
     album_name = bsObj.find('h1',{'class':'data__name_txt'})
     album_name = modstr(album_name.text)
-    ml.debug(album_name)
+    ml.dbg(album_name)
     artist_name = bsObj.find('a',{'class':'js_singer data__singer_txt'})
     artist_name = modstr(artist_name.text)
-    ml.debug(artist_name)
+    ml.dbg(artist_name)
     year = bsObj.find(text = re.compile('^发行时间'))[5:9]
-    ml.debug(year)
+    ml.dbg(year)
     cover = bsObj.find('img',{'id':'albumImg'})
     cover = 'http:'+cover.attrs['src']
-    ml.debug('Cover link: '+cover)
+    ml.dbg('Cover link: '+cover)
     fullname = artist_name+' - '+year+' - '+album_name
     aDict = {'album':album_name,'artist':artist_name,'year':year,'cover':cover,'fullname':fullname }
     songs = bsObj.findAll('div',{'class':'songlist__number'})
@@ -151,7 +151,7 @@ def ana_album(weblink):
     for i in songs:
         n += 1
         tracknumber = i.text
-        ml.debug('Find track '+str(tracknumber))
+        ml.dbg('Find track '+str(tracknumber))
         tmp = i.next_sibling.next_sibling
         si = tmp.find('span',{'class':'songlist__songname_txt'}).a
         songmid = si.attrs['href'].split('/')[-1][:-5]
@@ -159,14 +159,14 @@ def ana_album(weblink):
         if songname in songtmp:
             songname = songname+'_'+tracknumber
         songtmp.append(songname)    
-        ml.debug(songname)
+        ml.dbg(songname)
         singers = tmp.parent.findAll('a',{'class':"singer_name"})
         if len(singers) > 1:
             s = list(map(lambda x:x.text , singers ))
             singer = ','.join(s) 
         else:
             singer = singers[0].text
-        ml.debug(singer)
+        ml.dbg(singer)
         si = [songmid,songname,singer]
         aDict[int(tracknumber)] = si
     aDict['TrackNum'] = n
@@ -187,7 +187,7 @@ def qdl_album(weblink,q=1,dlfolder=dldir):
     cover = albumdir+'.jpg'
     m_cover = albumdir+'.png'
     if os.path.isfile(cover):
-        ml.warning('---- Cover download already !') 
+        ml.warn('---- Cover download already !') 
     else:
         myget.dl(aDict['cover'],out=cover)
         shutil.copyfile(cover,m_cover)
@@ -200,7 +200,7 @@ def qdl_album(weblink,q=1,dlfolder=dldir):
         m_trackid = str(s) 
         ml.info(f'{str(s)}.{aDict[s][1]}') 
         if os.path.isfile(mp3):
-            ml.warning('---- Track download already !') 
+            ml.warn('---- Track download already !') 
         else:
             songmid = aDict[s][0]
             vkey,guid = get_vkeyguid(songmid,q)
@@ -210,7 +210,7 @@ def qdl_album(weblink,q=1,dlfolder=dldir):
                 addtag(mp3,m_song,m_album,m_artist,m_singer,m_cover,m_year,m_trackid)   
             except HTTPError as e:
                 if '403' in str(e):
-                    ml.error('Track download forbidden')
+                    ml.err('Track download forbidden')
                 else:
                     raise
             except ConnectionResetError as e:

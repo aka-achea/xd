@@ -42,7 +42,7 @@ def get_vkeyguid(songmid,q=1):
     ml = mylogger(logfile,get_funcname()) 
     guid = int(random.random()*2147483647)*int(time.time()*1000) % 10000000000
     ml.dbg(f'GUID:{guid}')
-    url = 'http://c.y.qq.com/base/fcgi-bin/fcg_music_express_mobile3.fcg'
+    url = 'https://c.y.qq.com/base/fcgi-bin/fcg_music_express_mobile3.fcg'
     qly = quality[q][0]
     t = quality[q][1]
     para = {

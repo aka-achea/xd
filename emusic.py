@@ -2,7 +2,7 @@
 #coding:utf-8
 # tested in win
 # version: 20190926
-
+# archived
 
 import base64 , requests, sys
 import codecs

@@ -89,7 +89,7 @@ def get_json(url, params, encSecKey):
         "encSecKey": encSecKey
     }
     response = requests.post(url,headers=ran_header(agentref,host,org),data=data)
-    ml.debug(response.json())
+    ml.dbg(response.json())
     return response.json()['data']
 
 def get_dlurl(songid):
@@ -121,7 +121,7 @@ def op_sel(web):
             EC.frame_to_be_available_and_switch_to_it(('contentFrame'))
         )
         year = driver.find_elements_by_css_selector('p.intr')
-        ml.debug(year)
+        ml.dbg(year)
         year = year[1].text
         year = splitall(['：','-'],year)[1]
     finally:
@@ -133,23 +133,23 @@ def ana_song(weblink):
     html = op_simple(weblink,ran_header(agentref,host,org))[0]
     # html = op_requests(url,verify=False).content 
     bsObj = BeautifulSoup(html,"html.parser")
-    # ml.debug(bsObj)
+    # ml.dbg(bsObj)
     # title = bsObj.find('title')
     # print(title)
     song_name = bsObj.find('em',{'class':'f-ff2'})
     songname = modstr(song_name.text.strip())
-    ml.debug(songname)
+    ml.dbg(songname)
     aa = bsObj.findAll('p',{'class':'des s-fc4'})
     artistname = modstr(aa[0].span.a.text)
     albumname = modstr(aa[1].a.text)
-    ml.debug(artistname)
-    ml.debug(albumname)
+    ml.dbg(artistname)
+    ml.dbg(albumname)
     cover = bsObj.find('div',{'class':'u-cover u-cover-6 f-fl'})
     cover = cover.img.attrs['href']
-    ml.debug(cover)
+    ml.dbg(cover)
     songmid = weblink.split('=')[-1]
     sDict = {'artist':artistname,'song_name':songname,'songmid':songmid,'cover':cover }
-    ml.debug(sDict)
+    ml.dbg(sDict)
     return sDict
 
 def ana_cd(albumlink):
@@ -157,15 +157,15 @@ def ana_cd(albumlink):
     ml = mylogger(logfile,get_funcname()) 
     year = op_sel(albumlink)
     albumid = albumlink.split('=')[-1]
-    ml.debug(albumid)
+    ml.dbg(albumid)
     url = f'http://music.163.com/api/album/{albumid}/'
     html = op_simple(url,ran_header(agentref,host,org))[0]
     # print(html)
     jdata = BeautifulSoup(html,"html.parser").prettify()
-    ml.debug(jdata)
+    ml.dbg(jdata)
     adict = ana_json(jdata)
     adict['year'] = year
-    ml.debug(adict)
+    ml.dbg(adict)
     return adict
 
 def ana_json(jdata):
@@ -189,7 +189,7 @@ def ana_json(jdata):
         sdict['singer'] = ','.join(artists)
         adict[count] = sdict
         count += 1
-    ml.debug(adict)
+    ml.dbg(adict)
     return adict
 
 def albumdl(albumlink,force=False):
@@ -208,12 +208,12 @@ def albumdl(albumlink,force=False):
         cover = os.path.join(albumfulldir,albumdir+'.jpg')
         m_cover = os.path.join(albumfulldir,albumdir+'.png')
         # if os.path.isfile(cover):
-        #     ml.debug('Big Cover download already !') 
+        #     ml.dbg('Big Cover download already !') 
         if not os.path.isfile(cover):
             ml.info('Download big cover')
             myget.dl(coverlink,out=cover)
         # if os.path.isfile(m_cover):
-        #     ml.debug('Small cover already generated !') 
+        #     ml.dbg('Small cover already generated !') 
         if not os.path.isfile(m_cover):
             shutil.copy(cover,m_cover)
             squaresize(m_cover)

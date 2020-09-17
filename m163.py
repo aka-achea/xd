@@ -182,7 +182,8 @@ def ana_json(jdata):
         sdict = {}
         sdict['id'] = s['id']
         sdict['songname'] = s['name']
-        sdict['tracknum'] = str(s['disc'])+'.'+str(s['no'])
+        # sdict['tracknum'] = str(s['disc'])+'.'+str(s['no'])
+        sdict['tracknum'] = str(s['no'])
         artists = []         
         for x in s['artists']:
             artists.append(x['name'])
@@ -192,7 +193,7 @@ def ana_json(jdata):
     ml.dbg(adict)
     return adict
 
-def albumdl(albumlink,force=False):
+def albumdl(albumlink,force=True):
     '''main function to download album'''
     ml = mylogger(logfile,get_funcname()) 
     adict = ana_cd(albumlink)

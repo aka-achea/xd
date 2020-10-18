@@ -35,8 +35,8 @@ from mylog import mylogger,get_funcname
 from mytool import mywait
 from mystr import fnamechecker as modstr
 from mystr import splitall
-from openlink import op_simple , op_requests,ran_header
-from config import logfile, dldir
+from openlink import op_simple,op_requests,ran_header
+from config import logfile,dldir
 from mp3archive import create_folder,find_album
 
 
@@ -47,10 +47,13 @@ para3 = "00e0b509f6259df8642dbc35662901477df22677ec152b5ff68ace615bb7b725152b3ab
 para4 = "0CoJUm6Qyw8W8jud"
 rankey = 16 * 'F'
 encSecKey = "257348aecb5e556c066de214e531faadd1c55d814f9be95fd06d6bff9f4c7a41f831f6394d5a3fd2e3881736d94a02ca919d952872e7d0a50ebfa1769a7a62d512f5f1ca21aec60bc3819a9c3ffca5eca9a0dba6d6f7249b06f5965ecfff3695b54e1c28f3f624750ed39e7de08fc8493242e26dbc4484a01c76f739e135637c"
-url = 'http://music.163.com/api/album/%d/'
-agentref = 'https://music.163.com/'
 host = 'music.163.com'
-org = 'https://music.163.com'
+# agentref = 'https://music.163.com/'
+agentref = f'https://{host}/'
+# url = 'https://music.163.com/api/album/%d/'
+url = f'https://{host}/api/album/%d/'
+# org = 'https://music.163.com'
+org = f'https://{host}'
 ######### decode begin ##########
 def RSA_en(value,text,modulus): # not in use
     text = text[::-1]
@@ -158,7 +161,7 @@ def ana_cd(albumlink):
     year = op_sel(albumlink)
     albumid = albumlink.split('=')[-1]
     ml.dbg(albumid)
-    url = f'http://music.163.com/api/album/{albumid}/'
+    url = f'http://{host}/api/album/{albumid}/'
     html = op_simple(url,ran_header(agentref,host,org))[0]
     # print(html)
     jdata = BeautifulSoup(html,"html.parser").prettify()
@@ -193,7 +196,7 @@ def ana_json(jdata):
     ml.dbg(adict)
     return adict
 
-def albumdl(albumlink,force=True):
+def albumdl(albumlink,force=False):
     '''main function to download album'''
     ml = mylogger(logfile,get_funcname()) 
     adict = ana_cd(albumlink)
@@ -202,7 +205,7 @@ def albumdl(albumlink,force=True):
     year = adict['year']
     albumname = adict['albumname']
     albumdir = f'{artist} - {year} - {albumname}'
-    if find_album(albumdir) and force == False:
+    if find_album(albumdir) and not force:
         ml.warn(f'Album alread archived')
     else:
         albumfulldir = create_folder(dldir,albumdir)

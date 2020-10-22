@@ -2,7 +2,7 @@
 #coding:utf-8
 # tested in win
 
-__version__ = 20200506
+__version__ = 20201022
 
 
 import base64
@@ -196,14 +196,14 @@ def ana_json(jdata):
     ml.dbg(adict)
     return adict
 
-def albumdl(albumlink,force=False):
+def albumdl(albumlink,force=True):
     '''main function to download album'''
     ml = mylogger(logfile,get_funcname()) 
     adict = ana_cd(albumlink)
     coverlink = adict['cover']
-    artist = adict['artist']
+    artist = modstr(adict['artist'])
     year = adict['year']
-    albumname = adict['albumname']
+    albumname = modstr(adict['albumname'])
     albumdir = f'{artist} - {year} - {albumname}'
     if find_album(albumdir) and not force:
         ml.warn(f'Album alread archived')

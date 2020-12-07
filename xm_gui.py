@@ -41,8 +41,8 @@ def xmgui(dldir):
 if __name__ == "__main__":
     freeze_support()
     try:
-        if os.path.exists(logfile):
-            os.remove(logfile)
+        # if os.path.exists(logfile):
+        #     os.remove(logfile)
         xmgui(dldir)
     except KeyboardInterrupt:
         print('ctrl + c')

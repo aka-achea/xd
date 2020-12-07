@@ -23,8 +23,8 @@ from myimg import squaresize
 from mystr import fnamechecker as modstr
 import myget
 
-
-headers = ran_header()
+ref = 'https://www.xiami.com/'
+headers = ran_header(ref=ref)
 
 
 def decry(code): 
@@ -62,7 +62,7 @@ def f2json(text):
         data = re.split('jsonp\d*',text)
         j = json.loads(data[1][1:-1])
     except TypeError as e:
-        ml.error(e)
+        ml.err(e)
         return None
     return j
 
@@ -72,6 +72,7 @@ def xm_json(workfolder,year=None,force=False):
     ml = mylogger(logfile,get_funcname()) 
 
     j = json.loads(get_text_clipboard())
+    print(j)
     # j = f2json(get_text_clipboard())
     j = j['result']['data']['albumDetail']
 
@@ -81,7 +82,7 @@ def xm_json(workfolder,year=None,force=False):
     album_name = modstr(j['albumName'])
     albumdir = f'{artist_name} - {year} - {album_name}'
     if find_album(albumdir) and force == False:
-        ml.warning(f'{albumdir} alread archived')
+        ml.warn(f'{albumdir} alread archived')
     else:
         albumfulldir = create_folder(workfolder,albumdir)
         try:
@@ -89,12 +90,12 @@ def xm_json(workfolder,year=None,force=False):
             cover = os.path.join(albumfulldir,albumdir+'.jpg')
             m_cover = os.path.join(albumfulldir,albumdir+'.png')
             if os.path.isfile(cover):
-                ml.warning('---- Big Cover download already !') 
+                ml.warn('---- Big Cover download already !') 
             else:
                 ml.info('Download big cover')
                 myget.dl(coverlink,out=cover)
             if os.path.isfile(m_cover):
-                ml.warning('---- Small cover ready !') 
+                ml.warn('---- Small cover ready !') 
             else:
                 shutil.copy(cover,m_cover)
                 squaresize(m_cover)
@@ -108,7 +109,7 @@ def xm_json(workfolder,year=None,force=False):
                 cdserial = str(j['songs'][s]['cdSerial'])
                 track = str(j['songs'][s]['track'])
                 if os.path.isfile(mp3):
-                    ml.warning(f'---- {songname} download already !') 
+                    ml.warn(f'---- {songname} download already !') 
                 else:
                     try:       
 
@@ -116,13 +117,14 @@ def xm_json(workfolder,year=None,force=False):
                         songid = j['songs'][s]['songId']
                         location = get_songlocation(songid) 
                         dlurl = decry(location)
+                        print(dlurl)
                         # dlurl = 'http:'+decry(location)
-                        myget.dl(dlurl,out=mp3) 
-
+                        # myget.dl(dlurl,out=mp3) 
+                        myget.simpledl(dlurl,mp3,verify=False,headers=headers)
                     except Exception as e :
-                        ml.error(e)
-                        ml.error("Content incomplete -> retry")
-                        myget.dl(dlurl,out=mp3) 
+                        ml.err(e)
+                        ml.err("Content incomplete -> retry")
+                        # myget.dl(dlurl,out=mp3) 
                         mywait(random.randint(1,3))
                 addtag(mp3,songname,album_name,artist_name,singers,
                         m_cover,year,track,cdserial) 
@@ -134,7 +136,8 @@ def xm_json(workfolder,year=None,force=False):
 
 
 def chromef12(year,autoclose=False):
-    """Chrome F12 find xhr and close page"""
+    """Chrome F12 find xhr and close page
+    ensure filter XHR"""
     imgpath = os.path.join(PurePath(__file__).parent,'img')
     if clickbutton( os.path.join(imgpath,'xm.png')):
         auto.press('f12')
@@ -161,16 +164,17 @@ def chromef12(year,autoclose=False):
 
 
 if __name__ == "__main__":
-    import sys
-    try:
-        if sys.argv[1] == 'f':
-            force = True    
-    except IndexError:
-        force = False
-    if os.path.exists(logfile):
-        os.remove(logfile)
-    try:
-        xm_json(dldir,force=force)
-    except KeyboardInterrupt:
-        print('ctrl + c')
-
+    # import sys
+    # try:
+    #     if sys.argv[1] == 'f':
+    #         force = True    
+    # except IndexError:
+    #     force = False
+    # if os.path.exists(logfile):
+    #     os.remove(logfile)
+    # try:
+    #     xm_json(dldir,force=force)
+    # except KeyboardInterrupt:
+    #     print('ctrl + c')
+    id = '1768928710'
+    print(get_songlocation(id))

@@ -20,7 +20,7 @@ def addtag(fname,m_song,m_album,m_artist,m_singer,
     try:
         tags = ID3(fname)
     except ID3NoHeaderError:
-        ml.debug("Adding ID3 header on " + m_trackid)
+        ml.dbg("Adding ID3 header on " + m_trackid)
         tags = ID3()
     tags["TIT2"] = TIT2(encoding=3, text=m_song)
     tags["TALB"] = TALB(encoding=3, text=m_album)
@@ -45,7 +45,7 @@ def addcover(fname,m_cover):
     try:
         tags = ID3(fname)
     except ID3NoHeaderError:
-        l.debug('Adding ID3 header')
+        l.dbg('Adding ID3 header')
         tags = ID3()
     with open(m_cover,'rb') as c:
             cover = c.read()  #prepare for tag
@@ -59,8 +59,8 @@ def readtag(fname):
     tags = ID3(fname)
     title =str(tags["TIT2"])
     singer = str(tags['TPE1'])
-    l.debug(singer)
-    l.debug(title)
+    l.dbg(singer)
+    l.dbg(title)
     return singer,title
 
 

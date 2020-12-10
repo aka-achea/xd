@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 #coding:utf-8
 # tested in win
-__version__ = 20191126
+__version__ = 20201210
 
 import os
 import re
@@ -16,7 +16,7 @@ from prettytable import from_db_cursor
 from config import logfile,inventory,topdir,archdir,evadir,musicure,coverdir,db,albumlist
 from mtag import readtag
 import myfs
-from mylog import  mylogger
+from mylog import  mylogger,get_funcname
 
 ml = mylogger(logfile) 
 
@@ -37,16 +37,16 @@ class database():
         ml = mylogger(logfile,get_funcname()) 
         conn = sqlite3.connect(db)
         cursor = conn.cursor()    
-        ml.debug(alist)    
+        ml.dbg(alist)    
         fullname = alist[0]
         artist = alist[1]
         year = alist[2]
         album = alist[3]    
         try:
             cursor.execute("insert into music values (?,?,?,?)",(fullname,artist,year,album))
-        except sqlite3.IntegrityError as e:
-            ml.error(e)
-            ml.error('duplicate entry')
+        except sqlite3.Integrityerr as e:
+            ml.err(e)
+            ml.err('duplicate entry')
         cursor.close()
         conn.commit()
         conn.close()
@@ -58,16 +58,16 @@ class database():
         elif keyword =='' and q =='':
             cmd = 'select * from music'
         else:
-            ml.error('Missing keyword')
+            ml.err('Missing keyword')
             sys.exit()
         conn = sqlite3.connect(db)
         cursor = conn.cursor()  
-        ml.debug(cmd)
+        ml.dbg(cmd)
         cursor.execute(cmd)
         num = len(cursor.fetchall())
-        ml.debug(num)
+        ml.dbg(num)
         if num == 0:
-            ml.debug('No Entry find')
+            ml.dbg('No Entry find')
             return False
         cursor.execute(cmd) # need to improve
         v = from_db_cursor(cursor)
@@ -121,12 +121,13 @@ def find_art(artist,inventory,match=True):
     p_art = []
     if artist[-1] == '.':  # windows folder name cannot end with .
         artist = artist[:-2] 
-    with open(inventory,'r',encoding='utf-8') as f:  
+    with open(inventory,'r',encoding='utf-8') as f:          
         for i in f.readlines():
-            if artist.upper() in i.strip().split('\\')[-1].upper():
-                if match and artist.upper() == i.strip().split('\\')[-1].upper():
+            if match:
+                if artist.upper() == i.strip().split('\\')[-1].upper():
                     return i.strip()
-                else:
+            else:
+                if artist.upper() in i.strip().split('\\')[-1].upper():
                     p_art.append(i.strip())
     return p_art if p_art != [] else 'No artist'
 
@@ -146,8 +147,8 @@ def rename_mp3(folder=topdir):
                 ml.info(f'Change {mp3} ---> {songname}')
                 src = p_mp3
                 dst = os.path.join(folder,songname)
-                ml.debug(src)
-                ml.debug(dst)
+                ml.dbg(src)
+                ml.dbg(dst)
                 os.rename(src,dst)
 
 
@@ -157,23 +158,23 @@ def archive_cd(evadir,archdir):
     for dirname in os.listdir(evadir):  
         al_src = os.path.join(evadir, dirname)             
         if os.path.isdir(al_src):
-            ml.debug(al_src)
+            ml.dbg(al_src)
             m = re.split('\s\-\s\d{4}\s\-\s',str(dirname))
             if len(m) == 2: #find album
                 pic_src = os.path.join(evadir,dirname,dirname+'.jpg')
-                ml.debug('Cover from '+pic_src)
+                ml.dbg('Cover from '+pic_src)
                 pic_dst = os.path.join(evadir,dirname+'.jpg')
-                ml.debug('Cover to '+pic_dst)
+                ml.dbg('Cover to '+pic_dst)
                 if os.path.exists(pic_dst) == False: 
                     shutil.copyfile(pic_src,pic_dst) 
                 ml.info('Searching Artist: '+m[0])
                 p_art = find_art(m[0],inventory)
-                ml.debug(p_art)
+                ml.dbg(p_art)
                 if os.path.isdir(p_art):
                     # l.info(p_art)
                     ml.info('Archive '+dirname)
                     al_dst = p_art
-                    ml.debug(al_dst)                                
+                    ml.dbg(al_dst)                                
                 elif os.path.isdir(os.path.join(evadir, m[0])):
                     ml.warn('Already prearchive -> move album '+dirname)
                     al_dst = os.path.join(evadir,m[0])
@@ -195,7 +196,7 @@ def move_mp3(topdir,musicure):
             ml.info('Move --> '+mp3)
             src = os.path.join(topdir,mp3)
             dst = os.path.join(musicure,mp3)
-            ml.debug(f'{src} --> {dst}')
+            ml.dbg(f'{src} --> {dst}')
             shutil.move(src,dst)
 
 
@@ -341,8 +342,8 @@ def main():
 
 
 if __name__ == "__main__":
-    if os.path.exists(logfile):
-        os.remove(logfile)
+    # if os.path.exists(logfile):
+    #     os.remove(logfile)
     try:
         main()
     except KeyboardInterrupt:

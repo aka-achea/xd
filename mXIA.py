@@ -188,7 +188,7 @@ class XiaMi:
         pass
 
 
-def xm_json(year=None,force=False):
+def xm_json(year=None,force=True):
     '''Analyze json album data'''
     ml = mylogger(logfile,get_funcname()) 
 
@@ -209,6 +209,7 @@ def xm_json(year=None,force=False):
     albumdir = f'{artist_name} - {year} - {album_name}'
     if find_album(albumdir) and force == False:
         ml.warn(f'{albumdir} alread archived')
+        return None
     else:
         coverlink = j['albumLogo']
         cdcount = j['cdCount']
@@ -263,9 +264,9 @@ def chromef12(year=None,autoclose=False):
 
 
 def main():
-    album_detail = chromef12()
-    xm = XiaMi()
-    xm.download_album(dldir, album_detail)
+    if album_detail := chromef12():
+        xm = XiaMi()
+        xm.download_album(dldir, album_detail)
 
 if __name__ == "__main__":
     main()

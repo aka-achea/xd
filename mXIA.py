@@ -2,7 +2,7 @@
 #coding:utf-8
 # test in Win
 
-__version__ = 20201210
+__version__ = 20201213
 
 import requests,json,os,re,shutil,random
 from pprint import pprint
@@ -124,7 +124,7 @@ class XiaMi:
                 squaresize(m_cover)
             songid_list = album_detail['songid_list']
             download_url_dict = self.get_song_download_url(songid_list)
-            # pprint(download_url_dict)
+            ml.dbg(download_url_dict)
             for s in songid_list:
                 singers = modstr(album_detail['song_detail_list'][s]['singers'])
                 songname = modstr(album_detail['song_detail_list'][s]['songname'])
@@ -137,10 +137,16 @@ class XiaMi:
                     track = str(album_detail['song_detail_list'][s]['track'])
                     ml.info(f'{cdserial}.{track} {singers} - {songname}')
                     if dlurl := download_url_dict[s]:
-                        myget.dl(dlurl,out=mp3)
-                        mywait(random.randint(1,3))
-                        addtag(mp3,songname,album_name,artist_name,singers,m_cover,year,track,cdserial)                    
-
+                        try:
+                            myget.dl(dlurl,out=mp3)
+                            mywait(random.randint(1,3))
+                            addtag(mp3,songname,album_name,artist_name,singers,m_cover,year,track,cdserial)                    
+                        except Exception as e:
+                            print(e)
+                            if "HTTP Error 404: Not Found" in str(e):
+                                ml.err("File Not Found")
+                            else:
+                                raise
             os.remove(m_cover)
             clean_f(albumfulldir,'tmp')
             ml.info('Download Complete')
@@ -197,8 +203,8 @@ def xm_json(year=None,force=True):
     # j = f2json(get_text_clipboard())
     j = j['result']['data']['albumDetail']
     album_detail = {}
-    if year is None:
-        year = input('Publish year>>')
+    # if year is None:
+    #     year = input('Publish year>>')
     artist_name = modstr(j['artistName'])
     album_name = modstr(j['albumName'])
     coverlink = j['albumLogo']
@@ -264,7 +270,8 @@ def chromef12(year=None,autoclose=False):
 
 
 def main():
-    if album_detail := chromef12():
+    year = input('Publish year>>')
+    if album_detail := chromef12(year):
         xm = XiaMi()
         xm.download_album(dldir, album_detail)
 

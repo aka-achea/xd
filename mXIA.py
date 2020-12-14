@@ -140,7 +140,10 @@ class XiaMi:
                         try:
                             myget.dl(dlurl,out=mp3)
                             mywait(random.randint(1,3))
-                            addtag(mp3,songname,album_name,artist_name,singers,m_cover,year,track,cdserial)                    
+                            addtag(mp3,songname,album_name,artist_name,singers,m_cover,year,track,cdserial) 
+                        except AttributeError as e:
+                            if "urllib.error" in str(e):
+                                pass
                         except Exception as e:
                             print(e)
                             if "HTTP Error 404: Not Found" in str(e):

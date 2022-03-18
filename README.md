@@ -1,5 +1,5 @@
-﻿module list:
-sharemod.py - shared function and varies
+﻿## module list:
+- sharemod.py - shared function and varies 
 archive.py - archive mp3 
 mtag.py - handle tag for mp3
 xd.py - consolidation for xiami job
@@ -9,34 +9,36 @@ xd_dl.py - create folder, download song
 qd.py - consolidation for QQ music job
 qd_ana.py - analyze QQ music album, single song page
 qd_dl.py - download QQ music
-ed.py - consolidation for QQ music job
+<!-- ed.py - consolidation for QQ music job
 ed_dl.py - download EasyNet music
-ed_ana.py - anaylze EasyNet music
+ed_ana.py - anaylze EasyNet music -->
+- m163.py - Music.163.com download script
 
-Bug list:
+## Bug list:
 #bug: RecursionError: maximum recursion depth exceeded
 
 
-QQ Music:
-https://www.jianshu.com/p/b26c0c9c6149
-https://www.cnblogs.com/daxiangxm/p/qq_music_api.html
+## QQ Music:
+- https://www.jianshu.com/p/b26c0c9c6149
+- https://www.cnblogs.com/daxiangxm/p/qq_music_api.html
 
 
-Xiami Music:
-https://kanoha.org/2011/08/30/xiami-absolute-address/
-https://emumo.xiami.com/play?ids=/song/playlist/id/
-https://emumo.xiami.com/widget/xml-single/sid/1805029788
+## Xiami Music:
+- https://kanoha.org/2011/08/30/xiami-absolute-address/
+- https://emumo.xiami.com/play?ids=/song/playlist/id/
+- https://emumo.xiami.com/widget/xml-single/sid/1805029788
 
 
-NetEasy Music:
-https://mp.weixin.qq.com/s/c9CNf-iHPHf0tOtel0euPA
-https://github.com/yanunon/NeteaseCloudMusic/blob/master/NeteaseCloudMusic.py
-https://github.com/darknessomi/musicbox/blob/master/NEMbox/encrypt.py
+## NetEasy Music:
+- https://mp.weixin.qq.com/s/c9CNf-iHPHf0tOtel0euPA
+- https://github.com/yanunon/NeteaseCloudMusic/blob/master/NeteaseCloudMusic.py
+- https://github.com/darknessomi/musicbox/blob/master/NEMbox/encrypt.py
 
 
 
 
-Change log:
+## Change log:
+```
 2019.8.31 add autogui for xiami v7.2
 2019.8.28 centralize config v7.1
 2019.7.29 xiami songid fail to decrypt, build neteasy music download v7.0
@@ -101,3 +103,4 @@ http://www.crifan.com/unicodeencodeerror_gbk_codec_can_not_encode_character_in_p
 2017.2.19 extract CD_id, artist_name, CD_id, year v1.2
 2017.2.18 auto select download quality HIGH v1.1
 2017.2.14 build basic download function v1.0
+```
